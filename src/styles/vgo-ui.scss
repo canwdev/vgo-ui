@@ -1,0 +1,87 @@
+:root {
+  --primary-rgb:37,130,146;
+  --primary:rgb(var(--primary-rgb));
+  --primary-opacity: rgba(var(--primary-rgb), .25);
+
+  --color-border: rgba(91, 85, 85, 0.3);
+  --color-hover: rgba(91, 85, 85, 0.1);
+  --mq_mobile_width: 567px;
+}
+
+.font-italic {
+  font-style: italic;
+}
+
+.font-code {
+  font-family: 'Victor Mono Regular', 'Cascadia Code', '等距更纱黑体 SC', 'Monaco', 'Fira Code Medium', Consolas, 'Courier New', monospace;
+}
+
+.font-emoji {
+  font-family: "Segoe UI Emoji", "SF Pro SC", "SF Pro Text", "SF Pro Icons", "PingFang SC", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+}
+
+.btn-no-style {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  color: inherit;
+  padding: 0;
+  text-decoration: none;
+
+  &:active {
+    opacity: 0.8;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.scrollbar-mini * {
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    overflow: overlay;
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+    background-color: rgba(192, 192, 192, 0.63);
+
+    &:hover {
+      background-color: #bebebe;
+    }
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 4px;
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+}
+
+.flex-row-center-gap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.flex-rows {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-cols {
+  display: flex;
+  flex-direction: column;
+}
