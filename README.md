@@ -18,7 +18,7 @@ VgoUI 是一个简单、快速、轻量的 Vue 3 UI 组件库
 ## 技术栈 / Tech Stack
 
 - TypeScript
-- SCSS
+- Sass(scss)
 - Vue 3 / VueUse / ElementPlus (Optional)
 - Storybook
 
