@@ -1,6 +1,6 @@
 
 
-# VProUI
+# VgoUI
 
 - 实用中型 Vue 3 组件库
 - (⚠️ 正在开发中 | Under development ⚠️)
