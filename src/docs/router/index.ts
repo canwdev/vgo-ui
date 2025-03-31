@@ -1,6 +1,6 @@
 import {createRouter, createWebHashHistory} from 'vue-router'
 import {formatSiteTitle} from './router-utils'
-import DocLayout from '../components/DocLayout.vue'
+import DocLayout from '../DocLayout.vue'
 import {pageRoutes} from './glob'
 
 const history = createWebHashHistory()
