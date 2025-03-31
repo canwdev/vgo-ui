@@ -1,3 +1,17 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Production
+docs/.vitepress/dist
+docs/.vitepress/cache
+
+# Local env files
+.env
+.env.local
+.env.*.local
+
 # Logs
 logs
 *.log
@@ -5,26 +19,17 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-.DS_Store
-dist
-dist-ssr
-coverage
-*.local
-
-/cypress/videos/
-/cypress/screenshots/
 
 # Editor directories and files
+.idea
 .vscode/*
 !.vscode/extensions.json
-.idea
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
 
-*.tsbuildinfo
+# System Files
+.DS_Store
+Thumbs.db
