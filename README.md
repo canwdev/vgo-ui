@@ -1,8 +1,9 @@
-(⚠️ 正在开发中 | Under development ⚠️) 
+
 
 # VProUI
 
-- VProUI 实用主义重型 Vue 3 UI 组件库
+- 实用中型 Vue 3 组件库
+- (⚠️ 正在开发中 | Under development ⚠️)
 
 ## 设计原则 / Design Principles
 
@@ -19,6 +20,3 @@
 - Vue 3 / VueUse
 - ElementPlus
 
-## 如何使用 / How to use
-
-[//]: # (1. `yarn install @canwdev/vpro-ui`)
