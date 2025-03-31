@@ -1,4 +1,4 @@
-import DocPage from '../components/DocPage.vue'
+import DocPage from '../DocPage.vue'
 
 const pages = import.meta.glob('../pages/**/*.ts', {
   eager: true,

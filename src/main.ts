@@ -1,1 +1,1 @@
-import './documents/main'
+import '@/docs/main'

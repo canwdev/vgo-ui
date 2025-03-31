@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { pageRoutes } from '../router/glob'
+import {pageRoutes} from './router/glob.ts'
 
 console.log(pageRoutes)
 </script>
 
 <template>
   <div class="document-root">
-    <div class="navbar">VgoUI1</div>
+    <div class="navbar">VProUI</div>
 
     <div class="flex-rows">
       <div>
