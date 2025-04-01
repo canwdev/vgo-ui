@@ -3,12 +3,11 @@ import {computed, defineComponent, PropType, toRefs} from 'vue'
 import {AutoFormItem, AutoFormItemType} from './enum'
 import _get from 'lodash/get'
 import _set from 'lodash/set'
-import VueMonaco from '../VueMonaco/index.vue'
 import VueRender from '../VueRender.vue'
 
 export default defineComponent({
   name: 'AutoFormItem',
-  components: {VueMonaco, VueRender},
+  components: {VueRender},
   props: {
     item: {
       type: Object as PropType<AutoFormItem>,
@@ -87,14 +86,6 @@ export default defineComponent({
       v-model="dynamicValue"
       :placeholder="item.placeholder"
       :disabled="item.disabled"
-      v-bind="item.props"
-    />
-    <VueMonaco
-      v-else-if="item.type === AutoFormItemType.MONACO_EDITOR"
-      v-model="dynamicValue"
-      :placeholder="item.placeholder"
-      :disabled="item.disabled"
-      show-line-numbers
       v-bind="item.props"
     />
 
@@ -177,11 +168,11 @@ export default defineComponent({
       >
     </el-radio-group>
 
-    <VueRender v-if="item.render" :render-fn="item.render" />
+    <VueRender v-if="item.render" :render-fn="item.render" v-model="dynamicValue" />
 
     <template v-if="item.renderLabel" #label="{label}">
-      <VueRender :render-fn="item.renderLabel" :label="label"
-    /></template>
+      <VueRender :render-fn="item.renderLabel" :label="label" />
+    </template>
   </el-form-item>
 </template>
 
