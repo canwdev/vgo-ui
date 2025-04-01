@@ -5,7 +5,7 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import {shallowRef} from 'vue'
+import {computed, onBeforeUnmount, onMounted, reactive, ref, shallowRef, toRefs, watch} from 'vue'
 import {OnMoveParams, WindowController} from './utils/window-controller'
 
 import LayoutHelper from './utils/LayoutHelper.vue'
@@ -112,7 +112,7 @@ const isAllowMove = computed(() => {
 })
 useDynamicClassName(rootRef, '_allow_move', isAllowMove)
 
-let defaultWinOptions: WinOptions = {
+const defaultWinOptions: WinOptions = {
   top: '10px',
   left: '10px',
   width: '300px',

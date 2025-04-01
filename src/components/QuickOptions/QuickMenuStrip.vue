@@ -1,6 +1,7 @@
 <script lang="ts" setup="">
 import {QuickOptionItem} from './enum'
 import QuickContextMenu from './QuickContextMenu.vue'
+import {ref} from 'vue'
 
 const props = withDefaults(
   defineProps<{

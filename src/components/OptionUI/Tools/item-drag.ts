@@ -3,7 +3,7 @@ export const generateItemDragProps = ({index, cb}) => {
   return {
     draggable: true,
     onDragstart: (event) => {
-      const el = getEl(event)
+      // const el = getEl(event)
       // console.log('onDragStart', el)
       event.dataTransfer.setData('data-transfer-index', index)
     },
