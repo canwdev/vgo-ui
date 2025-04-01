@@ -1,14 +1,14 @@
+@use "theme-default" as *;
+
 :root {
-  --primary-rgb: 37, 130, 146;
-  --primary: rgb(var(--primary-rgb));
-  --primary-opacity: rgba(var(--primary-rgb), .25);
-  --radius: 4px;
+  --vgo-primary-rgb:37,130,146;
+  --vgo-primary:rgb(var(--primary-rgb));
+  --vgo-primary-opacity: rgba(var(--primary-rgb), .25);
 
-  --color-border: rgba(91, 85, 85, 0.3);
-  --color-hover: rgba(91, 85, 85, 0.1);
-  --mq_mobile_width: 567px;
+  --vgo-color-border: rgba(91, 85, 85, 0.3);
+  --vgo-color-hover: rgba(91, 85, 85, 0.1);
+  --vgo-radius: 4px;
 }
-
 html,
 body {
   height: 100%;
@@ -23,7 +23,7 @@ body {
 }
 
 .font-code {
-  font-family: 'Victor Mono Regular', 'Cascadia Code', '等距更纱黑体 SC', 'Monaco', 'Fira Code Medium', Consolas, 'Courier New', monospace;
+  font-family: 'Maple Mono NF CN','Maple Mono NF', 'Victor Mono Regular', 'Cascadia Code', '等距更纱黑体 SC', 'Monaco', 'Fira Code Medium', Consolas, 'Courier New', monospace;
 }
 
 .font-emoji {
@@ -48,7 +48,6 @@ body {
     opacity: 0.5;
   }
 }
-
 .scrollbar-mini * {
 
   &::-webkit-scrollbar {
@@ -96,21 +95,147 @@ body {
   flex-direction: column;
 }
 
-.vgo-button {
-  padding: 4px 8px;
-  background-color: #FDFDFD;
-  border: 1px solid var(--primary);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  border-radius: var(--radius);
-  line-height: 1.3;
 
-  &:not(:disabled) {
-    &:hover {
-      outline-offset: -1px;
+//@import "theme-default";
+
+.vgo-bg {
+  background-color: white;
+  color: black;
+}
+.dark {
+  .vgo-bg {
+    background-color: #111;
+    color: white;
+  }
+}
+
+.vgo-button-group {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0 !important;
+  .vgo-button {
+    &:first-child {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
     }
 
-    &:active {
-      opacity: .6;
+    &:not(:first-child):not(:last-child) {
+      border-radius: 0;
+    }
+    &:not(:last-child) {
+      border-right: 0;
+    }
+    &:last-child {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
     }
   }
 }
+
+.vgo-button {
+  padding: 6px 8px;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: .5;
+  }
+  &.danger {
+    color: #f44336;
+  }
+  &.primary {
+    background: var(--vgo-primary) !important;
+    color: white !important;
+  }
+}
+
+.vgo-input {
+  padding: 6px 8px;
+  border: 1px solid var(--vgo-color-border);
+  scrollbar-width: thin;
+  font-family: inherit;
+
+  &:not(&:disabled) {
+    &:focus {
+      border: 1px solid var(--vgo-primary);
+      outline: none;
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: .5;
+  }
+}
+
+
+/* Vue transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+  transform: scale(1);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+
+.fade-up-enter-active,
+.fade-up-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-up-enter-from,
+.fade-up-leave-to {
+  transform: translateY(20px);
+  opacity: 0;
+}
+
+.fade-down-enter-active,
+.fade-down-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-down-enter-from,
+.fade-down-leave-to {
+  transform: translateY(-20px);
+  opacity: 0;
+}
+
+.fade-left-enter-active,
+.fade-left-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-left-enter-from,
+.fade-left-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+.fade-right-enter-active,
+.fade-right-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-right-enter-from,
+.fade-right-leave-to {
+  transform: translateX(-20px);
+  opacity: 0;
+}
+
