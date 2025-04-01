@@ -1,40 +1,26 @@
-<script lang="ts">
-import {defineComponent, PropType} from 'vue'
-import {useModelWrapper} from '@/hooks/use-model-wrapper'
-import VueRender from '@/components/CanUI/packages/OptionUI/Tools/VueRender.vue'
+<script setup lang="ts">
+import VueRender from '../VueRender.vue'
+import {useVModel} from '@vueuse/core'
+
 type TabItem = {
   label?: string
   value: string | number
   title?: string
   render?: any
 }
+const props = withDefaults(
+  defineProps<{
+    modelValue: string | number
+    horizontal?: boolean
+    options: TabItem[]
+  }>(),
+  {
+    horizontal: false,
+  },
+)
+const emit = defineEmits(['update:modelValue'])
 
-export default defineComponent({
-  name: 'TabLayout',
-  components: {VueRender},
-  props: {
-    modelValue: {
-      type: [String, Number],
-      required: true,
-    },
-    horizontal: {
-      type: Boolean,
-      default: false,
-    },
-    options: {
-      type: Array as PropType<TabItem[]>,
-      default() {
-        return []
-      },
-    },
-  },
-  setup(props, {emit}) {
-    const mValue = useModelWrapper(props, emit)
-    return {
-      mValue,
-    }
-  },
-})
+const mValue = useVModel(props, 'modelValue', emit, {passive: true})
 </script>
 
 <template>
