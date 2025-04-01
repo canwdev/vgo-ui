@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import {watchDebounced} from '@vueuse/core'
+import {ref, toRefs} from 'vue'
 
 interface Props {
   text: any
@@ -23,7 +24,7 @@ watchDebounced(
       textDisplay.value = text.value
     }
   },
-  {debounce: 300, immediate: true}
+  {debounce: 300, immediate: true},
 )
 </script>
 

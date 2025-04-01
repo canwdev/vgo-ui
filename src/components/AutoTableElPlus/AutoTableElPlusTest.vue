@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref} from 'vue'
+import {h, ref} from 'vue'
 import AutoTableElPlus from './index.vue'
 import {AutoTableColumn} from './types'
 

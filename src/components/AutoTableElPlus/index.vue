@@ -18,7 +18,7 @@ const emit = defineEmits(['selectionChange'])
 const {
   isShowColumnEdit,
   hiddenColumnKeyMap,
-  tableColumnsOptions,
+  // tableColumnsOptions,
   filteredColumns,
   handleUpdateCheck,
 } = useCustomColumns(props)
@@ -70,16 +70,16 @@ defineExpose({
     </el-table-column>
   </el-table>
 
-  <el-dialog v-model="isShowColumnEdit" :title="'自定义表列'" width="500px" top="5vh">
-    <el-checkbox
-      v-for="vi in tableColumnsOptions"
-      :key="vi.value"
-      :label="vi.label"
-      :value="vi.value"
-      :model-value="!hiddenColumnKeyMap[vi.value]"
-      @update:model-value="handleUpdateCheck(vi.value)"
-    />
-  </el-dialog>
+  <!--<el-dialog v-model="isShowColumnEdit" :title="'Custom Columns'" width="500px" top="5vh">-->
+  <!--  <el-checkbox-->
+  <!--    v-for="vi in tableColumnsOptions"-->
+  <!--    :key="vi.value"-->
+  <!--    :label="vi.label"-->
+  <!--    :value="vi.value"-->
+  <!--    :model-value="!hiddenColumnKeyMap[vi.value]"-->
+  <!--    @update:model-value="handleUpdateCheck(vi.value)"-->
+  <!--  />-->
+  <!--</el-dialog>-->
 </template>
 
 <style lang="scss">

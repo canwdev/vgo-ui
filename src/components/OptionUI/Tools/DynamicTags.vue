@@ -1,16 +1,16 @@
 <script lang="ts" setup="">
 import {useVModel} from '@vueuse/core'
+import {nextTick, ref} from 'vue'
 
 const props = withDefaults(
   defineProps<{
     modelValue?: string[]
   }>(),
   {
-    modelValue: [],
+    modelValue: () => [],
   },
 )
 const emit = defineEmits([])
-const {modelValue} = toRefs(props)
 
 const dynamicTags = useVModel(props, 'modelValue', emit)
 const inputValue = ref('')

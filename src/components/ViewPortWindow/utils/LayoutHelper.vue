@@ -2,6 +2,7 @@
 import {useVModel} from '@vueuse/core'
 import {ILayout, layoutList} from '../enum'
 import LayoutPreview from './LayoutPreview.vue'
+import {ref} from 'vue'
 
 const emit = defineEmits(['update:visible', 'setWindowLayout'])
 interface Props {

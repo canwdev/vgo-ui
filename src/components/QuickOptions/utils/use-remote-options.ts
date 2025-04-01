@@ -1,4 +1,5 @@
 import {QuickOptionItem} from '../enum'
+import {onMounted, ref} from 'vue'
 
 export const useRemoteOptions = ({fetchFn, mapFn}) => {
   const options = ref<QuickOptionItem[]>([])

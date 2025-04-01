@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {computed, toRefs} from 'vue'
+import {computed, inject, toRefs} from 'vue'
 import {StOptionItem, StOptionType, swatches} from './enum'
 import RectSwitch from './Tools/RectSwitch.vue'
 import VueRender from '../VueRender.vue'
@@ -13,7 +13,7 @@ const {item} = toRefs(props)
 const emit = defineEmits(['updateValue'])
 
 // 顶层父组件的数据
-const sharedStore = inject<any>('sharedStore')
+const sharedStore = inject('sharedStore')
 
 const dynamicValue = computed({
   get() {

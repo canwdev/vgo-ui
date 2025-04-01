@@ -1,5 +1,5 @@
 import {useDebounceFn, useEventListener} from '@vueuse/core'
-import {onMounted, Ref} from 'vue'
+import {onMounted, Ref, watch} from 'vue'
 
 /**
  * 检测鼠标是否在元素上，支持延时
