@@ -2,10 +2,17 @@
 
 ## Buttons
 
+<div class="flex-row-center-gap">
   <button class="vgo-button">Button</button>
   <button class="vgo-button" disabled>Disabled</button>
+</div>
 
 ## Input
+
+<div class="flex-row-center-gap">
+  <input type="text" class="vgo-input" placeholder="Input">
+  <input type="text" class="vgo-input" disabled>
+</div>
 
 ## 代码示例
 
