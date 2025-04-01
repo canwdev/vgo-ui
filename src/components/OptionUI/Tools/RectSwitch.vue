@@ -1,8 +1,7 @@
 <script lang="ts">
 import {defineComponent, PropType} from 'vue'
-import {useModelWrapper} from '@/hooks/use-model-wrapper'
-
 import {SwitchOption} from '../enum'
+import {useVModel} from '@vueuse/core'
 
 export default defineComponent({
   name: 'RectSwitch',
@@ -27,7 +26,7 @@ export default defineComponent({
     },
   },
   setup(props, {emit}) {
-    const mValue = useModelWrapper(props, emit)
+    const mValue = useVModel(props, 'modelValue', emit)
     return {
       mValue,
     }

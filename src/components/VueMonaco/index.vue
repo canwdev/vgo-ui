@@ -5,10 +5,14 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import {nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch} from 'vue'
-import {useDebounceFn, useEventListener, useResizeObserver, useThrottleFn} from '@vueuse/core'
-import {useModelWrapper} from '@/hooks/use-model-wrapper'
-import {useMainStore} from '@/store/main'
+import {inject, nextTick, onBeforeUnmount, onMounted, Ref, ref, shallowRef, watch} from 'vue'
+import {
+  useDebounceFn,
+  useEventListener,
+  useResizeObserver,
+  useThrottleFn,
+  useVModel,
+} from '@vueuse/core'
 import monaco from './monaco-helper'
 
 const props = withDefaults(
@@ -28,18 +32,20 @@ const props = withDefaults(
 )
 const emit = defineEmits(['update:modelValue'])
 
-const mValue = useModelWrapper(props, emit)
+const mValue = useVModel(props, 'modelValue', emit)
 const editorContainerRef = ref()
-const editorInstance = shallowRef<any>()
+const editorInstance = shallowRef<monaco.editor.IStandaloneCodeEditor>()
 
-const mainStore = useMainStore()
-const getThemeName = () => (mainStore.isAppDarkMode ? 'vs-dark' : 'vs')
-watch(
-  () => mainStore.isAppDarkMode,
-  () => {
-    editorInstance.value.updateOptions({theme: getThemeName()})
-  },
-)
+const {isAppDarkMode} = inject('darkMode') || {
+  isAppDarkMode: ref(false),
+}
+
+const getThemeName = () => {
+  return isAppDarkMode.value ? 'vs-dark' : 'vs'
+}
+watch(isAppDarkMode, () => {
+  editorInstance.value?.updateOptions({theme: getThemeName()})
+})
 
 watch(
   () => props.modelValue,
@@ -94,18 +100,18 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  editorInstance.value.dispose()
+  editorInstance.value?.dispose()
 })
 const handleEditorChangeDebounced = useDebounceFn(() => {
-  mValue.value = editorInstance.value.getValue()
+  mValue.value = editorInstance.value!.getValue()
 }, props.debounceMs)
 
 const focus = () => {
-  editorInstance.value.focus()
+  editorInstance.value?.focus()
 }
 
 const resize = () => {
-  editorInstance.value.layout()
+  editorInstance.value?.layout()
 }
 
 const getInstance = () => {
