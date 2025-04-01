@@ -9,7 +9,6 @@ export enum AutoFormItemType {
   INPUT = 'input',
   INPUT_NUMBER = 'input_number',
   INPUT_AUTOCOMPLETE = 'input_autocomplete',
-  MONACO_EDITOR = 'monaco_editor',
   SELECT = 'select',
   COLOR_PICKER = 'color_picker',
   BUTTON = 'button',
@@ -21,8 +20,6 @@ export enum AutoFormItemType {
 }
 
 export type AutoFormItem = {
-  // 调试用原始数据
-  _original?: any
   key: string
   label?: string
   // 表单控件类型
