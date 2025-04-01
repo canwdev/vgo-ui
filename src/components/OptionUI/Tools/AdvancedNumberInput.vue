@@ -1,4 +1,6 @@
 <script lang="ts">
+import {computed, defineComponent, PropType, ref, toRefs, watch} from 'vue'
+
 // TODO: Big.js 解决精度问题
 function add(a, b) {
   return a + b
