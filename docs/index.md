@@ -16,7 +16,7 @@ hero:
 
 features:
   - title: 现代化
-    details: 尽可能地使用原生 HTML 和较新的 JS/CSS 技术
+    details: 尽可能地使用原生 HTML 和较新的 JS/TS/CSS 技术
   - title: 实用主义
     details: 复杂组件基于 Element Plus / VueUse 实现，不重复造轮子
   - title: 自动化
