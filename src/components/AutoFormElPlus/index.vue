@@ -26,11 +26,11 @@ const props = withDefaults(
 )
 
 const emit = defineEmits(['onInvalidForm', 'onSubmit', 'onMounted', 'onBeforeUnmount'])
-const {formSchema} = toRefs<any>(props)
+const {formSchema} = toRefs(props)
 
 const formRef = ref<FormInstance>()
 const submitForm = () => {
-  ;(formRef.value as any).validate(async (valid: boolean) => {
+  formRef.value.validate(async (valid: boolean) => {
     if (!valid) {
       console.log('Invalid form')
       emit('onInvalidForm')

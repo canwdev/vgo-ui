@@ -18,6 +18,7 @@ bun link @canwdev/vgo-ui
 ## Pack and Publish
 
 ```shell
+# make sure lint no errors 
 # change package.json version first
 bun pm pack
 bun publish --access public .\canwdev-vgo-ui-0.1.3.tgz

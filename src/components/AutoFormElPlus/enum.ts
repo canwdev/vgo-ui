@@ -1,7 +1,7 @@
 import {FormRules} from 'element-plus'
 
 export interface IOptionItem {
-  value: any
+  value: string | number | boolean | null | undefined
   label: string
 }
 

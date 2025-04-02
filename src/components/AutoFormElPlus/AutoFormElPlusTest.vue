@@ -4,7 +4,7 @@ import {AutoFormItemType, MixedFormItems} from './enum'
 import {FormRules} from 'element-plus'
 import AutoFormElPlus from './index.vue'
 
-const dataForm = ref<any>({
+const dataForm = ref({
   test_input: '',
   test_number: 0,
   test_switch: true,

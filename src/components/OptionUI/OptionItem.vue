@@ -8,10 +8,10 @@ import TransitionBodyCollapse from '../Transitions/TransitionBodyCollapse.vue'
 const props = withDefaults(
   defineProps<{
     item: StOptionItem
-    foldedKeyMap?: any
+    foldedKeyMap?: Record<string, boolean>
   }>(),
   {
-    foldedKeyMap: {},
+    foldedKeyMap: () => ({}),
   },
 )
 const {item, foldedKeyMap} = toRefs(props)
@@ -21,7 +21,7 @@ const isExpanded = computed(() => {
   return !foldedKeyMap.value[item.value.key]
 })
 
-const handleItemClick = (e: Event, fn: any) => {
+const handleItemClick = (e: Event, fn) => {
   if (typeof fn === 'function') {
     fn(e, item.value)
   }

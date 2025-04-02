@@ -63,7 +63,7 @@ export default defineComponent({
     const quickRootRef = ref()
 
     // 点击外部隐藏
-    onClickOutside(quickRootRef, (event) => {
+    onClickOutside(quickRootRef, () => {
       if (isStatic.value) {
         return
       }
@@ -78,7 +78,7 @@ export default defineComponent({
     const scrollToIndex = () => {
       const el = quickRootRef.value.querySelector(`[data-index="${curIndex.value}"]`)
       nextTick(() => {
-        el && el.scrollIntoView({behavior: 'instant', block: 'center'})
+        el?.scrollIntoView({behavior: 'instant', block: 'center'})
       })
     }
 
@@ -142,7 +142,7 @@ export default defineComponent({
 
     const mOptions = computed((): QuickOptionItem[] => {
       if (menuStack.value.length) {
-        const last: any = menuStack.value[menuStack.value.length - 1]
+        const last: QuickOptionItem[] = menuStack.value[menuStack.value.length - 1]
         // 检测列表是否为计算属性
         if (last.__v_isRef) {
           // 获取计算属性的值
@@ -244,7 +244,7 @@ export default defineComponent({
       }
       // 只有静态菜单才允许在原地打开子菜单
       else if (isStatic.value && item.children) {
-        let subList: QuickOptionItem[] | any = []
+        let subList: QuickOptionItem[] = []
         if (typeof item.children === 'function') {
           subList = await item.children()
         } else if (item.children.length) {

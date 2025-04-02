@@ -3,14 +3,13 @@ import {QuickOptionItem} from './enum'
 import QuickContextMenu from './QuickContextMenu.vue'
 import {ref} from 'vue'
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     options: QuickOptionItem[]
   }>(),
   {},
 )
-const emit = defineEmits([])
-// const {text} = toRefs(props)
+defineEmits([])
 
 const verticalMenuRef = ref()
 

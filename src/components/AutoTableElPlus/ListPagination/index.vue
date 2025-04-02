@@ -35,7 +35,7 @@ export default defineComponent({
     const handlePageSizeChange = (size) => {
       // console.log('[handlePageSizeChange]', size)
       if (updateRouter.value) {
-        const queryOrigin = route.query as any
+        const queryOrigin = route.query
         // 标记当前是否为最后一页
         const isEnd =
           parseInt(queryOrigin.pageNum) ===
@@ -74,7 +74,7 @@ export default defineComponent({
 
     onBeforeMount(() => {
       if (updateRouter.value) {
-        let pageSize = Number(route.query.pageSize)
+        const pageSize = Number(route.query.pageSize)
         let pageNum = Number(route.query.pageNum)
         if (!Number.isNaN(pageSize)) {
           paginationData.value.pageSize = pageSize

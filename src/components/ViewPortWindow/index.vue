@@ -74,7 +74,7 @@ const rootRef = ref()
 const titleBarRef = ref()
 const winBodyRef = ref()
 const titleBarButtonsRef = ref()
-const dWindow = shallowRef<any>(null)
+const dWindow = shallowRef<WindowController | null>(null)
 
 const isMaximized = useVModel(props, 'maximized', emit, {passive: true})
 const isMinimized = useVModel(props, 'minimized', emit, {passive: true})

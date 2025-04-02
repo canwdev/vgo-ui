@@ -18,7 +18,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props, {emit}) {
+  setup(props) {
     const {item, model} = toRefs(props)
 
     // 判断store是否为 RefImpl 类型，

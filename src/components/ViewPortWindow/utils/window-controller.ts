@@ -1,4 +1,4 @@
-import {useThrottleFn} from '@vueuse/core'
+import {PromisifyFn, useThrottleFn} from '@vueuse/core'
 import {ILayout, checkWindowAttach} from '../enum'
 
 const ClassNames = {
@@ -19,27 +19,14 @@ enum ResizeDirection {
 const ResizeDirectionList = Object.values(ResizeDirection)
 
 // 兼容触屏和鼠标
-const getPointerXy = (e: any) => {
+const getPointerXy = (e: MouseEvent | TouchEvent) => {
   let x = 0
   let y = 0
-  if (
-    e.type == 'touchstart' ||
-    e.type == 'touchmove' ||
-    e.type == 'touchend' ||
-    e.type == 'touchcancel'
-  ) {
+  if (e instanceof TouchEvent) {
     const touch = e.touches[0] || e.changedTouches[0]
     x = touch.pageX
     y = touch.pageY
-  } else if (
-    e.type == 'mousedown' ||
-    e.type == 'mouseup' ||
-    e.type == 'mousemove' ||
-    e.type == 'mouseover' ||
-    e.type == 'mouseout' ||
-    e.type == 'mouseenter' ||
-    e.type == 'mouseleave'
-  ) {
+  } else if (e instanceof MouseEvent) {
     x = e.clientX
     y = e.clientY
   }
@@ -165,12 +152,13 @@ export class WindowController {
   private deltaX: number
   private deltaY: number
   private readonly options: DraggableOptions
-  private readonly handleResizeDebounced: any
+  private readonly handleResizeDebounced: PromisifyFn<() => void>
   private prevRect: DOMRect
   private currentResizeDirection: string | null
   private alignWhenViewPortResize: 'start' | 'end'
   private allowMove: boolean
   private maximized: boolean
+  private _prevDocWidth?: number
 
   constructor(options: DraggableOptions) {
     const {dragHandleEl, dragTargetEl, onMove, autoPosOnResize} = options
@@ -202,7 +190,9 @@ export class WindowController {
         })
         this.debugLog('handleResizeDebounced', {left, top})
 
-        onMove && onMove({top, left})
+        if (onMove) {
+          onMove({top, left})
+        }
       },
       50,
       true,
@@ -314,13 +304,14 @@ export class WindowController {
       top = dragTargetEl.style.top = Math.round(y) * scaleY + 'px'
     }
 
-    onMove &&
+    if (onMove) {
       onMove({
         pointerX: xy.x,
         pointerY: xy.y,
         top,
         left,
       })
+    }
 
     if (opacify) {
       dragTargetEl.style.opacity = String(opacify)
@@ -406,7 +397,7 @@ export class WindowController {
       dragTargetEl.style.height = rect.height + y + 'px'
     }
     const updateW = () => {
-      const newVal = rect.left + x
+      // const newVal = rect.left + x
       dragTargetEl.style.left = rect.left + x + 'px'
       dragTargetEl.style.width = rect.width - x + 'px'
     }
@@ -444,7 +435,7 @@ export class WindowController {
 
     // this.debugLog('xy', {x, y}, rect)
   }
-  handleResizeStop(event) {
+  handleResizeStop() {
     const {docEl} = this
     ;['mousemove', 'touchmove'].forEach((eventName) => {
       docEl.removeEventListener(eventName, this.handleResizeMove)
@@ -524,13 +515,19 @@ export class WindowController {
   /**
    * 更新 z-index
    */
-  updateZIndex(opt: any = {}) {
+  updateZIndex(
+    opt: {
+      preventOnActive?: boolean
+    } = {},
+  ) {
     const {
       preventOnActive = false, // 传入 true 用于防止死循环
     } = opt
     if (!preventOnActive) {
       const {onActive} = this.options
-      onActive && onActive()
+      if (onActive) {
+        onActive()
+      }
     }
     if (!this.allowMove && !this.maximized) {
       this.debugLog('[updateZIndex] return')
@@ -543,7 +540,7 @@ export class WindowController {
 
     // 获取同类型窗口最大的 z-index
     let maxZIndex = -1
-    let maxZIndexEl: any = null
+    let maxZIndexEl: Element | null = null
     const els: HTMLElement[] = Array.from(windowStateSet)
       .map((item) => {
         return item.options.dragTargetEl
@@ -578,8 +575,7 @@ export class WindowController {
     // 将其它 fixed-element 元素的 z-index 设置为比它小的值
     Array.from(els).forEach((el) => {
       if (el !== dragTargetEl) {
-        // @ts-ignore
-        el.style.zIndex = parseInt(getComputedStyle(el)['z-index']) - 1
+        el.style.zIndex = String(parseInt(getComputedStyle(el)['z-index']) - 1)
         el.classList.remove('_active')
       }
     })
