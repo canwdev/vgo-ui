@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 /* 自动计算长宽比的盒子 */
 export default {
   name: 'AutoRatioBox',

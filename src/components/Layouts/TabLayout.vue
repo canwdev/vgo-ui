@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import VueRender from '../VueRender.vue'
 import {useVModel} from '@vueuse/core'
+import {VNode} from 'vue'
 
 type TabItem = {
   label?: string
   value: string | number
   title?: string
-  render?: any
+  render?: () => VNode
 }
 const props = withDefaults(
   defineProps<{

@@ -5,7 +5,7 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import {inject, nextTick, onBeforeUnmount, onMounted, Ref, ref, shallowRef, watch} from 'vue'
+import {inject, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch} from 'vue'
 import {
   useDebounceFn,
   useEventListener,

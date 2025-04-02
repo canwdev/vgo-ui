@@ -2,8 +2,6 @@ import {BLACK, PRE, PRE_DARK, PRE_LIGHT, WHITE} from './token'
 import {onBeforeMount} from 'vue'
 import {useStyleTag} from '@vueuse/core'
 
-const html = document.documentElement
-
 /**
  * 混合颜色
  */
@@ -34,8 +32,8 @@ export function useElementPlusTheme(color?: string) {
    */
   const changeTheme = (color?: string) => {
     if (!color) return
-    const styleObj: any = {}
-    const styleObjDark: any = {}
+    const styleObj: Record<string, string> = {}
+    const styleObjDark: Record<string, string> = {}
     // 设置主要颜色
     styleObj[PRE] = color
     styleObjDark[PRE] = color

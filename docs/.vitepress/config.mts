@@ -1,6 +1,6 @@
-import { defineConfig } from 'vitepress'
-import { readdirSync, statSync } from 'fs'
-import { join } from 'path'
+import {defineConfig} from 'vitepress'
+import {readdirSync, statSync} from 'fs'
+import {join} from 'path'
 
 function getSidebarItems(dir: string, basePath: string = ''): any[] {
   const items = []
@@ -17,14 +17,15 @@ function getSidebarItems(dir: string, basePath: string = ''): any[] {
       items.push({
         text,
         collapsed: false,
-        items: getSidebarItems(fullPath, relativePath)
+        items: getSidebarItems(fullPath, relativePath),
       })
     } else if (file.endsWith('.md') && file !== 'index.md') {
       // 将文件名转换为标题格式（移除.md后缀）
-      const text = file.replace('.md', '').charAt(0).toUpperCase() + file.replace('.md', '').slice(1)
+      const text =
+        file.replace('.md', '').charAt(0).toUpperCase() + file.replace('.md', '').slice(1)
       items.push({
         text,
-        link: `/components/${relativePath.replace('.md', '')}`
+        link: `/components/${relativePath.replace('.md', '')}`,
       })
     }
   }
@@ -34,7 +35,6 @@ function getSidebarItems(dir: string, basePath: string = ''): any[] {
 
 const componentsDir = join(__dirname, '../components')
 
-
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: 'Vgo UI',
@@ -42,9 +42,9 @@ export default defineConfig({
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Getting Started', link: '/examples/' },
-      { text: 'Components', link: '/components/' }
+      {text: 'Home', link: '/'},
+      {text: 'Getting Started', link: '/examples/'},
+      {text: 'Components', link: '/components/'},
     ],
 
     sidebar: {
@@ -52,22 +52,22 @@ export default defineConfig({
         {
           text: 'Getting Started',
           items: [
-            { text: 'Markdown Examples', link: '/examples/markdown-examples' },
-            { text: 'Runtime API Examples', link: '/examples/api-examples' }
-          ]
+            {text: 'Markdown Examples', link: '/examples/markdown-examples'},
+            {text: 'Runtime API Examples', link: '/examples/api-examples'},
+          ],
         },
       ],
       '/components/': [
         {
           text: 'Components',
-          items: getSidebarItems(componentsDir)
-        }
-      ]
+          items: getSidebarItems(componentsDir),
+        },
+      ],
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/canwdev/vgo-ui' },
-      { icon: 'vitepress', link: 'https://vitepress.dev/reference/default-theme-config' }
-    ]
-  }
+      {icon: 'github', link: 'https://github.com/canwdev/vgo-ui'},
+      {icon: 'vitepress', link: 'https://vitepress.dev/reference/default-theme-config'},
+    ],
+  },
 })

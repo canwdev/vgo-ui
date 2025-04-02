@@ -12,15 +12,15 @@ interface IAutoTableProps {
 const props = withDefaults(defineProps<IAutoTableProps>(), {
   customizeColumnStorageKey: 'ate_hidden_column_keys',
 })
-const emit = defineEmits(['selectionChange'])
+defineEmits(['selectionChange'])
 
 // 自定义表列
 const {
   isShowColumnEdit,
-  hiddenColumnKeyMap,
+  // hiddenColumnKeyMap,
   // tableColumnsOptions,
   filteredColumns,
-  handleUpdateCheck,
+  // handleUpdateCheck,
 } = useCustomColumns(props)
 
 const tableRef = ref()

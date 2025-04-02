@@ -58,7 +58,7 @@ function prepareElement(element: HTMLElement, initialStyle: initialStyle) {
   element.style.visibility = 'hidden'
   element.style.height = ''
 
-  let {height} = getComputedStyle(element)
+  const {height} = getComputedStyle(element)
   element.style.width = initialStyle.width
   element.style.position = initialStyle.position
   element.style.visibility = initialStyle.visibility

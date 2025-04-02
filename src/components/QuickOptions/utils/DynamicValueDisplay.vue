@@ -1,14 +1,9 @@
 <script lang="ts" setup>
 import {watchDebounced} from '@vueuse/core'
 import {ref, toRefs} from 'vue'
+import {DynamicValueDisplayProps} from '../enum.ts'
 
-interface Props {
-  text: any
-  label: string
-  formatFn?: any
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<DynamicValueDisplayProps>(), {
   text: '',
 })
 

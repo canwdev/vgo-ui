@@ -3,7 +3,7 @@ import QuickOptions from './index.vue'
 import {QuickOptionItem} from './enum'
 import {useContextMenu} from './utils/use-context-menu'
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     options: QuickOptionItem[]
     transitionName?: string

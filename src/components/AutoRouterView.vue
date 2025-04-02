@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const isKeepAlive = (route: any) => {
+const isKeepAlive = (route) => {
   // return route.meta && route.meta.keepAlive
   if (!route.meta) {
     return true

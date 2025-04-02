@@ -10,7 +10,7 @@ export const getMenuPosStyle = ({x, y, width, height, isLeftSide = false}) => {
   const vWidth = window.innerWidth
   const vHeight = window.innerHeight
 
-  const style: any = {
+  const style: Record<string, string | number> = {
     position: 'fixed',
     transform: 'none',
     zIndex: 1000,
@@ -50,7 +50,14 @@ export const getMenuPosStyle = ({x, y, width, height, isLeftSide = false}) => {
   return style
 }
 
-export const useContextMenu = (options: any = {}) => {
+export const useContextMenu = (
+  options: {
+    getExtraSize?: () => {
+      width: number
+      height: number
+    }
+  } = {},
+) => {
   const {getExtraSize} = options
 
   const isShow = ref(false)

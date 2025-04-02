@@ -4,18 +4,25 @@ import {onMounted, Ref, watch} from 'vue'
 /**
  * 检测鼠标是否在元素上，支持延时
  */
-export const useMouseOver = (target, options: any = {}) => {
+export const useMouseOver = (
+  target: HTMLElement | Ref<HTMLElement>,
+  options: {
+    timeout?: number
+    onEnter?: (event) => void
+    onOut?: (event) => void
+  } = {},
+) => {
   const {timeout = 0, onEnter, onOut} = options
   let timer
   useEventListener(target, 'mouseover', (event) => {
     clearTimeout(timer)
     timer = setTimeout(() => {
-      onEnter && onEnter(event)
+      onEnter?.(event)
     }, timeout)
   })
   useEventListener(target, 'mouseleave', (event) => {
     clearTimeout(timer)
-    onOut && onOut(event)
+    onOut?.(event)
   })
   useEventListener(target, 'click', () => {
     clearTimeout(timer)

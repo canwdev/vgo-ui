@@ -3,7 +3,7 @@ import {h, ref} from 'vue'
 import AutoTableElPlus from './index.vue'
 import {AutoTableColumn} from './types'
 
-const tableData = ref<any[]>([
+const tableData = ref([
   {id: 1, name: 'test 1', name2: 'test 21'},
   {id: 2, name: 'test 2', name2: 'test 22'},
   {id: 3, name: 'test 3', name2: 'test 23'},
@@ -43,8 +43,8 @@ const tableColumns: AutoTableColumn[] = [
 ]
 
 const autoTableRef = ref()
-const multipleSelection = ref<any[]>([])
-const handleSelectionChange = (val: any[]) => {
+const multipleSelection = ref([])
+const handleSelectionChange = (val) => {
   multipleSelection.value = val
 }
 const clearSelect = () => {
