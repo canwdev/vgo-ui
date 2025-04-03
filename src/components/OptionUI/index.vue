@@ -15,7 +15,7 @@ const props = withDefaults(
     // 选项列表
     optionList: StOptionItem[]
     // 可选 配置存储对象 Ref，可以是 pinia store
-    store?: any
+    store?: unknown
     expandId?: string
   }>(),
   {

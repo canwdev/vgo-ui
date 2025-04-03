@@ -1,3 +1,9 @@
+<script lang="ts">
+export default {
+  name: 'AutoTableElPlus',
+}
+</script>
+
 <script setup lang="ts">
 import {AutoTableColumn} from './types'
 import {useCustomColumns} from './use-custom-columns'

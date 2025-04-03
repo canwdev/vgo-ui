@@ -30,7 +30,7 @@ export type QuickOptionItem = {
     isBack?: boolean | number
     onClick?: (event: MouseEvent) => void
     onContextmenu?: (event: MouseEvent) => void
-    style?: Record<string, string>
-    class?: string
+    style?: unknown
+    class?: unknown
   }
 }

@@ -5,12 +5,12 @@ export type AutoTableColumn = {
   width?: number | string
   minWidth?: number | string
   // column 控件的属性
-  props?: any
+  props?: unknown
   // 内容格式化函数
-  formatter?: (scope: any) => any
+  formatter?: (scope: unknown) => unknown
   // 渲染函数 (scope) => h('div', {}, null)
-  render?: (scope: any) => any
-  headerRender?: any
+  render?: (scope: unknown) => VNode
+  headerRender?: () => VNode
   // 传入此参数，会在表头上显示设置按钮，可让用户自定义部分表列的显示和隐藏
   isCustomizeColumn?: boolean
   type?: string

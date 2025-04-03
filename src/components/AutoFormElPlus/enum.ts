@@ -1,4 +1,5 @@
 import {FormRules} from 'element-plus'
+import {VNode} from 'vue'
 
 export interface IOptionItem {
   value: string | number | boolean | null | undefined
@@ -26,22 +27,22 @@ export type AutoFormItem = {
   type?: AutoFormItemType
   placeholder?: string
   // 表单控件的属性
-  props?: any
+  props?: unknown
   // 当前FormItem的规则
-  rules?: any
-  formItemProps?: any
+  rules?: FormRules
+  formItemProps?: unknown
   // SELECT下拉选项
   options?: IOptionItem[]
   // 渲染函数 h('div', {}, null)
-  render?: any
-  renderLabel?: any
-  selectOptionRender?: any
+  render?: () => VNode
+  renderLabel?: () => VNode
+  selectOptionRender?: () => VNode
   // 按钮的点击执行函数
-  clickHandler?: any
+  clickHandler?: (event: MouseEvent) => void
   // 类名
-  cls?: any
+  cls?: unknown
   // form-item 样式覆盖
-  style?: any
+  style?: unknown
   disabled?: boolean
   width?: string
 }
@@ -57,9 +58,9 @@ export type MixedFormItems = (AutoFormRow | AutoFormItem)[] | AutoFormItem | Aut
 // 表单架构
 export type AutoFormSchema = {
   formItems: MixedFormItems[]
-  model: any
+  model: unknown
   rules?: FormRules
-  props?: any
+  props?: unknown
   labelWidth?: string
   labelPosition?: string
 }
