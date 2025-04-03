@@ -5,36 +5,36 @@ export interface StOptionItem {
   // 键值
   key: string
   // 定义store属性（如settingsStore），传入此值后无需传入value，将根据key动态读写store属性
-  store?: any
+  store?: unknown
   // 选项实际值
   value?: boolean | string | number
   type?: StOptionType
   // 传递给组件的自定义属性
-  props?: any
-  itemProps?: any
+  props?: unknown
+  itemProps?: unknown
   // 当type为 SELECT | MULTIPLE_SWITCH 时，选项的下拉数据
-  options?: any[]
+  options?: unknown[]
   // 是否已禁用
   disabled?: boolean
   hidden?: boolean
-  children?: StOptionItem[] | any
+  children?: StOptionItem[] | unknown
   // 图标
   icon?: string
-  iconRender?: any
-  iconClass?: any
+  iconRender?: () => VNode
+  iconClass?: string
   // 小标题
   subtitle?: string
   // 提示
   tips?: string
   placeholder?: string
   // 自定义类名
-  cls?: string
+  cls?: unknown
   // action渲染函数
-  actionRender?: any
+  actionRender?: () => VNode
   // 整体渲染函数
-  render?: any
+  render?: () => VNode
   // 点击item执行函数
-  clickFn?: any
+  clickFn?: (event: MouseEvent, item: StOptionItem) => void
   // 隐藏展开按钮图标
   hideExpandIcon?: boolean
 }

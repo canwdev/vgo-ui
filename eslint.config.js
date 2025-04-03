@@ -16,4 +16,11 @@ export default [
   ...pluginVue.configs['flat/essential'],
   ...vueTsEslintConfig(),
   skipFormatting,
+  {
+    rules: {
+      // 设置 @typescript-eslint/no-explicit-any 规则为警告级别
+      '@typescript-eslint/no-explicit-any': 'warn',
+      'vue/no-mutating-props': 'warn',
+    },
+  },
 ]

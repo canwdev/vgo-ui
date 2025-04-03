@@ -5,7 +5,7 @@ import {ref} from 'vue'
 
 interface Props {
   options: QuickOptionItem[]
-  props?: any
+  props?: unknown
 }
 
 const props = withDefaults(defineProps<Props>(), {})
