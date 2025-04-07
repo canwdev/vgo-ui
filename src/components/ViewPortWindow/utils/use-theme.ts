@@ -1,5 +1,5 @@
 import {createGlobalState} from '@vueuse/core'
-import {onMounted, ref} from 'vue'
+import {ref} from 'vue'
 
 export interface IOption {
   label: string
@@ -76,8 +76,6 @@ export const useThemeOptions = () => {
       removeCssFile(`./themes-dist/${item.value}.css`)
     })
   }
-
-  onMounted(async () => {})
 
   return {
     themeOptions,

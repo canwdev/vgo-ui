@@ -12,7 +12,7 @@ import {ref} from 'vue'
 
 interface IAutoTableProps {
   columns: AutoTableColumn[]
-  data: any
+  data: unknown
   customizeColumnStorageKey?: string
 }
 const props = withDefaults(defineProps<IAutoTableProps>(), {
