@@ -192,7 +192,7 @@ const handleItemClick = (e: Event, fn) => {
       &.clickable {
         cursor: pointer;
         &:hover {
-          background-color: var(--vgo-color-border);
+          background-color: var(--vgo-color-hover);
         }
       }
 
