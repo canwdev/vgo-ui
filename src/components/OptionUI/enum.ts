@@ -55,7 +55,7 @@ export enum StOptionType {
 
 export type SwitchOption = {
   label: string
-  value: string
+  value: any
 }
 
 export const swatches = [
