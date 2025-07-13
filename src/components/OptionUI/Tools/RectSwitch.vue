@@ -1,36 +1,36 @@
-<script lang="ts">
-import {defineComponent, PropType} from 'vue'
+<script lang="ts" setup>
+import {PropType, watch} from 'vue'
 import {SwitchOption} from '../enum'
 import {useVModel} from '@vueuse/core'
 
-export default defineComponent({
-  name: 'RectSwitch',
-  props: {
-    modelValue: {
-      type: [Boolean, String, Number],
-      default: false,
-    },
-    options: {
-      type: Array as PropType<SwitchOption[]>,
-      default() {
-        return []
-      },
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    isLabelHtml: {
-      type: Boolean,
-      default: false,
-    },
+// 定义组件的 props
+const props = defineProps({
+  modelValue: {
+    type: [Boolean, String, Number] as PropType<boolean | string | number>,
+    default: false,
   },
-  setup(props, {emit}) {
-    const mValue = useVModel(props, 'modelValue', emit)
-    return {
-      mValue,
-    }
+  options: {
+    type: Array as PropType<SwitchOption[]>,
+    default: () => [],
   },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  isLabelHtml: {
+    type: Boolean,
+    default: false,
+  },
+})
+
+// 定义组件的 emits
+const emit = defineEmits(['update:modelValue', 'tabChange'])
+
+// 使用 useVModel 实现双向绑定
+const mValue = useVModel(props, 'modelValue', emit)
+
+watch(mValue, (value) => {
+  emit('tabChange', value)
 })
 </script>
 
