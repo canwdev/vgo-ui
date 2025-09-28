@@ -1,7 +1,7 @@
 # Vgo UI
 
-- 实用中型 Vue 3 组件库
-- (⚠️ 正在开发中 | Under development ⚠️)
+- 实用型 Vue 3 组件库
+- ⚠️ 用于个人项目和学习使用，不建议用于生产环境
 
 ## Link to development
 

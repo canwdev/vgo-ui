@@ -58,15 +58,17 @@ const clearSelect = () => {
 </script>
 
 <template>
-  <el-space>
-    <el-button @click="clearSelect" :disabled="!multipleSelection.length">清空多选</el-button>
-  </el-space>
-  <AutoTableElPlus
-    ref="autoTableRef"
-    :data="tableData"
-    :columns="tableColumns"
-    @selectionChange="handleSelectionChange"
-    :row-key="(row) => row.id"
-  />
-  <pre>{{ multipleSelection }}</pre>
+  <div class="auto-table-demo">
+    <el-space>
+      <el-button @click="clearSelect" :disabled="!multipleSelection.length">清空多选</el-button>
+    </el-space>
+    <AutoTableElPlus
+      ref="autoTableRef"
+      :data="tableData"
+      :columns="tableColumns"
+      @selectionChange="handleSelectionChange"
+      :row-key="(row) => row.id"
+    />
+    <pre>{{ multipleSelection }}</pre>
+  </div>
 </template>

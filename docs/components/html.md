@@ -1,4 +1,6 @@
-# HTML 元素
+# 原生 HTML 元素
+
+以下组件使用原生 html 元素，只需要加上 css 类名即可生效
 
 ## Buttons
 

@@ -43,7 +43,6 @@ export interface StOptionItem {
 export enum StOptionType {
   SWITCH = 'switch',
   MULTIPLE_SWITCH = 'multiple_switch',
-  SLIDER = 'slider',
   SELECT = 'select',
   INPUT = 'input',
   INPUT_NUMBER = 'input_number',
