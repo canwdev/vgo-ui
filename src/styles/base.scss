@@ -2,8 +2,8 @@
 
 :root {
   --vgo-primary-rgb: 37, 130, 146;
-  --vgo-primary: rgb(var(--primary-rgb));
-  --vgo-primary-opacity: rgba(var(--primary-rgb), .25);
+  --vgo-primary: rgb(var(--vgo-primary-rgb));
+  --vgo-primary-opacity: rgba(var(--vgo-primary-rgb), .25);
 
   --vgo-color-border: rgba(91, 85, 85, 0.3);
   --vgo-color-hover: rgba(91, 85, 85, 0.1);

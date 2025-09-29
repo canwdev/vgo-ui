@@ -4,8 +4,8 @@ node_modules
 .pnp.js
 
 # Production
-docs/.vitepress/dist
-docs/.vitepress/cache
+docs.old/.vitepress/dist
+docs.old/.vitepress/cache
 
 # Local env files
 .env
