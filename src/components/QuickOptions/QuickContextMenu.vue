@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import QuickOptions from './index.vue'
-import {QuickOptionItem} from './enum'
-import {useContextMenu} from './utils/use-context-menu'
+import type { QuickOptionItem } from './enum'
+import QuickOptions from './QuickOptions.vue'
+import { useContextMenu } from './utils/use-context-menu'
 
 withDefaults(
   defineProps<{
@@ -13,8 +13,8 @@ withDefaults(
   },
 )
 
-const {menuRef, isShow, ctxMenuStyle, showMenu, showMenuByPoint, showMenuByElement, hideMenu} =
-  useContextMenu()
+const { menuRef, isShow, ctxMenuStyle, showMenu, showMenuByPoint, showMenuByElement, hideMenu }
+  = useContextMenu()
 
 defineExpose({
   isShow,
@@ -32,10 +32,10 @@ defineExpose({
       ref="menuRef"
       v-model:visible="isShow"
       :options="options"
-      @click.stop
       :style="ctxMenuStyle"
       v-bind="$attrs"
       :show-index="false"
+      @click.stop
     />
   </transition>
 </template>

@@ -1,21 +1,19 @@
 <script setup lang="ts">
+import type { QuickOptionItem } from '../enum.ts'
+import { toRefs } from 'vue'
 import VueRender from '../../VueRender.vue'
-import {QuickOptionItem} from '../enum'
+import QuickOptions from '../QuickOptions.vue'
+import { useHoverSubMenu } from '../utils/use-context-menu.ts'
 import DynamicValueDisplay from './DynamicValueDisplay.vue'
-import {useHoverSubMenu} from '../utils/use-context-menu'
-import QuickOptions from '../index.vue'
-import {toRefs} from 'vue'
 
-interface Props {
+const props = withDefaults(defineProps<{
   item: QuickOptionItem
-  index: number
+  index?: number
   curIndex?: number
-  itemCls: string
-  showIndex: boolean
-  isStatic: boolean
-}
-
-const props = withDefaults(defineProps<Props>(), {
+  itemCls?: string
+  showIndex?: boolean
+  isStatic?: boolean
+}>(), {
   index: 0,
   curIndex: -1,
   itemCls: '',
@@ -23,9 +21,9 @@ const props = withDefaults(defineProps<Props>(), {
   isStatic: false,
 })
 const emit = defineEmits(['onArrowClick', 'onClose', 'onSubMenuHide'])
-const {item} = toRefs(props)
+const { item } = toRefs(props)
 
-const {subMenuRef, isMouseOver, isMouseOverSub, hasChildren, subChildren} = useHoverSubMenu(
+const { subMenuRef, isMouseOver, isMouseOverSub, hasChildren, subChildren } = useHoverSubMenu(
   props,
   emit,
 )
@@ -36,10 +34,10 @@ const {subMenuRef, isMouseOver, isMouseOverSub, hasChildren, subChildren} = useH
     class="option-item"
     :class="[
       {
-        focus: curIndex === index,
-        clickable: item?.props?.onClick || item?.props?.isBack || hasChildren,
-        disabled: item.disabled,
-        hover: isMouseOverSub,
+        'focus': curIndex === index,
+        'clickable': item?.props?.onClick || item?.props?.isBack || hasChildren,
+        'disabled': item.disabled,
+        'hover': isMouseOverSub,
         'show-index': showIndex,
       },
       itemCls,
@@ -52,41 +50,41 @@ const {subMenuRef, isMouseOver, isMouseOverSub, hasChildren, subChildren} = useH
   >
     <!-- 鼠标悬浮显示子菜单 -->
     <QuickOptions
-      ref="subMenuRef"
       v-if="!isStatic && hasChildren && isMouseOver"
+      ref="subMenuRef"
       visible
       :options="subChildren"
       :show-index="showIndex"
+      class="sub-option-items"
       @mouseover="isMouseOverSub = true"
       @mouseleave="isMouseOverSub = false"
       @click.stop
-      @onClose="$emit('onClose')"
-      class="sub-option-items"
+      @on-close="$emit('onClose')"
     />
 
-    <div class="index-wrap" v-if="showIndex && index < 9">
+    <div v-if="showIndex && index < 9" class="index-wrap">
       <span>{{ index + 1 }}</span>
     </div>
 
     <div v-if="item.iconRender" class="item-icon">
       <VueRender :render-fn="item.iconRender" />
     </div>
-    <div class="item-icon" v-else-if="item.icon">
-      <img :src="item.icon" alt="icon" />
+    <div v-else-if="item.icon" class="item-icon">
+      <img :src="item.icon" alt="icon">
     </div>
-    <div class="item-icon" v-else-if="item.iconClass" :class="item.iconClass"></div>
-    <div class="item-content" v-if="item.html" v-html="item.html"></div>
-    <div class="item-content" v-else-if="item.render">
+    <div v-else-if="item.iconClass" class="item-icon" :class="item.iconClass" />
+    <div v-if="item.html" class="item-content" v-html="item.html" />
+    <div v-else-if="item.render" class="item-content">
       <VueRender :render-fn="item.render" />
     </div>
-    <div class="item-content" v-else-if="!!item.dynamicProps">
+    <div v-else-if="!!item.dynamicProps" class="item-content">
       <DynamicValueDisplay v-bind="item.dynamicProps" />
     </div>
-    <div class="item-content" v-else>
+    <div v-else class="item-content">
       {{ item.label }}
     </div>
     <div v-if="hasChildren" class="arrow-wrap" @click.stop="$emit('onArrowClick')">
-      <div class="css-arrow right"></div>
+      <div class="css-arrow right" />
     </div>
   </div>
 </template>

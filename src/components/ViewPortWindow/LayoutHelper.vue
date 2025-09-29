@@ -1,23 +1,22 @@
 <script lang="ts" setup>
-import {useVModel} from '@vueuse/core'
-import {ILayout, layoutList} from '../enum'
+import type { ILayout } from './enum.ts'
+import { useVModel } from '@vueuse/core'
+import { ref } from 'vue'
+import { layoutList } from './enum.ts'
 import LayoutPreview from './LayoutPreview.vue'
-import {ref} from 'vue'
 
-const emit = defineEmits(['update:visible', 'setWindowLayout'])
-interface Props {
-  visible: boolean
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<{
+  visible?: boolean
+}>(), {
   visible: false,
 })
+const emit = defineEmits(['update:visible', 'setWindowLayout'])
 
 const mVisible = useVModel(props, 'visible', emit)
 
 const previewData = ref<ILayout>()
 
-const setWindowLayout = (layout: ILayout) => {
+function setWindowLayout(layout: ILayout) {
   emit('setWindowLayout', layout)
   mVisible.value = false
   setTimeout(() => {
@@ -25,10 +24,11 @@ const setWindowLayout = (layout: ILayout) => {
   })
 }
 
-const setLayout = (layout: ILayout) => {
+function setLayout(layout: ILayout) {
   if (mVisible.value) {
     previewData.value = layout
-  } else {
+  }
+  else {
     previewData.value = undefined
   }
 }
@@ -36,7 +36,7 @@ const setLayout = (layout: ILayout) => {
 
 <template>
   <transition name="fade">
-    <div v-if="mVisible" @mouseleave="mVisible = false" class="vgo-layout-helper vgo-panel">
+    <div v-if="mVisible" class="vgo-layout-helper vgo-panel" @mouseleave="mVisible = false">
       <div
         v-for="(layout, index) in layoutList"
         :key="index"
@@ -53,7 +53,7 @@ const setLayout = (layout: ILayout) => {
             height: `${layout.heightRatio * 100}%`,
           }"
           class="layout-inner"
-        ></div>
+        />
       </div>
     </div>
   </transition>

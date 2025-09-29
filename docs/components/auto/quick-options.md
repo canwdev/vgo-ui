@@ -3,7 +3,7 @@
 菜单选项组件
 
 <script lang="ts" setup>
-import QuickOptionsDemo from '../../../src/components/QuickOptions/QuickOptionsDemo.vue' 
+import DemoQuickOptions from '../../../src/components/QuickOptions/DemoQuickOptions.vue' 
 </script>
 
-<QuickOptionsDemo />
+<DemoQuickOptions />

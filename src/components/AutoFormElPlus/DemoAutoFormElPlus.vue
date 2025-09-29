@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import {computed, ref} from 'vue'
-import {AutoFormItemType, MixedFormItems} from './enum'
-import {FormRules} from 'element-plus'
-import AutoFormElPlus from './index.vue'
+import type { FormRules } from 'element-plus'
+import type { MixedFormItems } from './enum'
+import { computed, ref } from 'vue'
+import AutoFormElPlus from './AutoFormElPlus.vue'
+import { AutoFormItemType } from './enum'
 
 const dataForm = ref({
   test_input: '',
@@ -14,8 +15,8 @@ const dataForm = ref({
 })
 const dataFormRules = computed<FormRules>(() => {
   return {
-    test_input: [{required: true, trigger: 'blur'}],
-    test_select: [{required: true, trigger: 'blur'}],
+    test_input: [{ required: true, trigger: 'blur' }],
+    test_select: [{ required: true, trigger: 'blur' }],
   }
 })
 const formItems = computed((): MixedFormItems[] => {
@@ -54,8 +55,8 @@ const formItems = computed((): MixedFormItems[] => {
         key: 'test_checkbox_group',
         label: 'Checkbox Group',
         options: [
-          {label: 'XXX', value: 'xxx'},
-          {label: 'YYY', value: 'yyy'},
+          { label: 'XXX', value: 'xxx' },
+          { label: 'YYY', value: 'yyy' },
         ],
       },
     ],
@@ -65,9 +66,9 @@ const formItems = computed((): MixedFormItems[] => {
       key: 'test_select',
       label: 'Radio Group',
       options: [
-        {label: 'AAA', value: 'aaa'},
-        {label: 'BBB', value: 'bbb'},
-        {label: 'CCC', value: 'ccc'},
+        { label: 'AAA', value: 'aaa' },
+        { label: 'BBB', value: 'bbb' },
+        { label: 'CCC', value: 'ccc' },
       ],
     },
     {
@@ -75,9 +76,9 @@ const formItems = computed((): MixedFormItems[] => {
       key: 'test_select',
       label: 'Select',
       options: [
-        {label: 'AAA', value: 'aaa'},
-        {label: 'BBB', value: 'bbb'},
-        {label: 'CCC', value: 'ccc'},
+        { label: 'AAA', value: 'aaa' },
+        { label: 'BBB', value: 'bbb' },
+        { label: 'CCC', value: 'ccc' },
       ],
     },
   ]

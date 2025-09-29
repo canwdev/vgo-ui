@@ -23,9 +23,3 @@ bun link @canwdev/vgo-ui
 bun pm pack
 bun publish --access public .\canwdev-vgo-ui-0.1.7.tgz
 ```
-
-## Installation
-
-```shell
-bun add @canwdev/vgo-ui
-```

@@ -1,25 +1,20 @@
-<script lang="ts">
-export default {
-  name: 'AutoTableElPlus',
-}
-</script>
-
 <script setup lang="ts">
-import {AutoTableColumn} from './types'
-import {useCustomColumns} from './use-custom-columns'
+import type { AutoTableColumn } from './types'
+import { ref } from 'vue'
 import VueRender from '../VueRender.vue'
-import {ref} from 'vue'
+import { useCustomColumns } from './use-custom-columns'
+
+const props = withDefaults(defineProps<IAutoTableProps>(), {
+  customizeColumnStorageKey: 'ate_hidden_column_keys',
+})
+
+defineEmits(['selectionChange'])
 
 interface IAutoTableProps {
   columns: AutoTableColumn[]
   data: unknown
   customizeColumnStorageKey?: string
 }
-const props = withDefaults(defineProps<IAutoTableProps>(), {
-  customizeColumnStorageKey: 'ate_hidden_column_keys',
-})
-defineEmits(['selectionChange'])
-
 // 自定义表列
 const {
   isShowColumnEdit,
@@ -57,18 +52,18 @@ defineExpose({
       <template v-if="item.headerRender || item.isCustomizeColumn" #header>
         <template v-if="item.isCustomizeColumn">
           <el-button
-            @click="isShowColumnEdit = true"
             icon="ElIconOperation"
             size="small"
             text
-          ></el-button>
+            @click="isShowColumnEdit = true"
+          />
         </template>
         <template v-if="item.headerRender">
           <VueRender :render-fn="item.headerRender" />
         </template>
       </template>
       <template v-if="item.formatter || item.render" #default="scope">
-        <span v-html="item.formatter(scope)" v-if="item.formatter"> </span>
+        <span v-if="item.formatter" v-html="item.formatter(scope)" />
         <template v-if="item.render">
           <VueRender :render-fn="item.render" :params="scope" />
         </template>
@@ -76,16 +71,16 @@ defineExpose({
     </el-table-column>
   </el-table>
 
-  <!--<el-dialog v-model="isShowColumnEdit" :title="'Custom Columns'" width="500px" top="5vh">-->
-  <!--  <el-checkbox-->
-  <!--    v-for="vi in tableColumnsOptions"-->
-  <!--    :key="vi.value"-->
-  <!--    :label="vi.label"-->
-  <!--    :value="vi.value"-->
-  <!--    :model-value="!hiddenColumnKeyMap[vi.value]"-->
-  <!--    @update:model-value="handleUpdateCheck(vi.value)"-->
-  <!--  />-->
-  <!--</el-dialog>-->
+  <!-- <el-dialog v-model="isShowColumnEdit" :title="'Custom Columns'" width="500px" top="5vh"> -->
+  <!--  <el-checkbox -->
+  <!--    v-for="vi in tableColumnsOptions" -->
+  <!--    :key="vi.value" -->
+  <!--    :label="vi.label" -->
+  <!--    :value="vi.value" -->
+  <!--    :model-value="!hiddenColumnKeyMap[vi.value]" -->
+  <!--    @update:model-value="handleUpdateCheck(vi.value)" -->
+  <!--  /> -->
+  <!-- </el-dialog> -->
 </template>
 
 <style lang="scss">

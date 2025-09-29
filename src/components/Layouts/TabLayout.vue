@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import type { VNode } from 'vue'
+import { useVModel } from '@vueuse/core'
 import VueRender from '../VueRender.vue'
-import {useVModel} from '@vueuse/core'
-import {VNode} from 'vue'
 
-type TabItem = {
+interface TabItem {
   label?: string
   value: string | number
   title?: string
@@ -21,28 +21,30 @@ const props = withDefaults(
 )
 const emit = defineEmits(['update:modelValue'])
 
-const mValue = useVModel(props, 'modelValue', emit, {passive: true})
+const mValue = useVModel(props, 'modelValue', emit, { passive: true })
 </script>
 
 <template>
-  <div class="vgo-tab-layout vgo-bg" :class="{horizontal}">
+  <div class="vgo-tab-layout vgo-bg" :class="{ horizontal }">
     <div class="sidebar-wrap">
       <div class="vgo-tab-list">
         <div
           v-for="item in options"
           :key="item.value"
-          :class="{active: item.value === mValue}"
-          @click="mValue = item.value"
+          :class="{ active: item.value === mValue }"
           class="list-item"
           :title="item.title"
+          @click="mValue = item.value"
         >
-          <VueRender v-if="item.render" :render-fn="item.render"></VueRender>
-          <div v-if="item.label" class="item-text">{{ item.label }}</div>
+          <VueRender v-if="item.render" :render-fn="item.render" />
+          <div v-if="item.label" class="item-text">
+            {{ item.label }}
+          </div>
         </div>
       </div>
     </div>
     <div class="content-wrap">
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>

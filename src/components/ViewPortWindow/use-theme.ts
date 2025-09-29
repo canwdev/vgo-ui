@@ -1,5 +1,5 @@
-import {createGlobalState} from '@vueuse/core'
-import {ref} from 'vue'
+import { createGlobalState } from '@vueuse/core'
+import { ref } from 'vue'
 
 export interface IOption {
   label: string
@@ -14,7 +14,7 @@ const defaultThemeOptions = [
   },
 ]
 
-const addCssFile = (filename) => {
+function addCssFile(filename) {
   const head = document.getElementsByTagName('head')[0]
   const links = document.getElementsByTagName('link')
   for (let i = 0; i < links.length; i++) {
@@ -30,7 +30,7 @@ const addCssFile = (filename) => {
   head.appendChild(link)
 }
 
-const removeCssFile = (filename) => {
+function removeCssFile(filename) {
   const links = document.getElementsByTagName('link')
   for (let i = 0; i < links.length; i++) {
     console.log(links[i].id, filename)
@@ -49,8 +49,8 @@ const useThemeState = createGlobalState(() => {
     themeOptions,
   }
 })
-export const useThemeOptions = () => {
-  const {themeOptions, isInitialized} = useThemeState()
+export function useThemeOptions() {
+  const { themeOptions, isInitialized } = useThemeState()
 
   const themes = ref<IOption[]>([])
   const baseUrl = './resources/themes-dist'

@@ -1,4 +1,6 @@
-export type AutoTableColumn = {
+import type { VNode } from 'vue'
+
+export interface AutoTableColumn {
   // 表单的 property，并且是 v-for 循环的 key
   key?: string
   label: string

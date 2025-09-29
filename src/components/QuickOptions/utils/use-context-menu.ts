@@ -1,8 +1,8 @@
-import {QuickOptionItem} from '../enum'
-import {computed, ref, toRefs, watch} from 'vue'
+import type { QuickOptionItem } from '../enum'
+import { computed, ref, toRefs, watch } from 'vue'
 
 // 获取菜单位置样式，自动处理屏幕边缘
-export const getMenuPosStyle = ({x, y, width, height, isLeftSide = false}) => {
+export function getMenuPosStyle({ x, y, width, height, isLeftSide = false }) {
   let mx = x
   let my = y
 
@@ -30,7 +30,7 @@ export const getMenuPosStyle = ({x, y, width, height, isLeftSide = false}) => {
     mx = 0
     style.width = '95%'
   }
-  style.left = mx + 'px'
+  style.left = `${mx}px`
 
   const offset_top = vHeight - (my + height)
   if (offset_top < 0) {
@@ -45,20 +45,18 @@ export const getMenuPosStyle = ({x, y, width, height, isLeftSide = false}) => {
     style.height = '95%'
     style.overflow = 'auto'
   }
-  style.top = my + 'px'
+  style.top = `${my}px`
 
   return style
 }
 
-export const useContextMenu = (
-  options: {
-    getExtraSize?: () => {
-      width: number
-      height: number
-    }
-  } = {},
-) => {
-  const {getExtraSize} = options
+export function useContextMenu(options: {
+  getExtraSize?: () => {
+    width: number
+    height: number
+  }
+} = {}) {
+  const { getExtraSize } = options
 
   const isShow = ref(false)
   const xRef = ref(0)
@@ -67,15 +65,15 @@ export const useContextMenu = (
   const menuWidth = ref(0)
   const menuHeight = ref(0)
 
-  type ByPosition =
-    | 'top'
-    | 'top-left'
-    | 'top-right'
-    | 'bottom'
-    | 'bottom-left'
-    | 'bottom-right'
-    | 'left'
-    | 'right'
+  type ByPosition
+    = | 'top'
+      | 'top-left'
+      | 'top-right'
+      | 'bottom'
+      | 'bottom-left'
+      | 'bottom-right'
+      | 'left'
+      | 'right'
   const byElementPosition = ref<ByPosition | null>(null)
   const byElement = ref<HTMLElement | null>(null)
 
@@ -99,31 +97,6 @@ export const useContextMenu = (
   }
 
   const menuRef = ref()
-  const updateMenuSize = () => {
-    setTimeout(() => {
-      if (!menuRef.value || !menuRef.value.quickRootRef) {
-        return
-      }
-      let w = menuRef.value.quickRootRef.offsetWidth
-      let h = menuRef.value.quickRootRef.offsetHeight
-
-      // 获取额外的宽高
-      if (getExtraSize) {
-        const {width: ew, height: eh} = getExtraSize()
-        w += ew
-        h += eh
-      }
-      menuWidth.value = w
-      menuHeight.value = h
-
-      // console.log(menuWidth.value, menuHeight.value)
-
-      if (byElementPosition.value) {
-        updateMenuPosition()
-      }
-    }, 10)
-  }
-
   const updateMenuPosition = () => {
     const position = byElementPosition.value
     byElementPosition.value = null
@@ -184,15 +157,42 @@ export const useContextMenu = (
     // 确保菜单不超出视口
     if (yRef.value < 0) {
       yRef.value = 0
-    } else if (yRef.value + mh > viewportHeight) {
+    }
+    else if (yRef.value + mh > viewportHeight) {
       yRef.value = viewportHeight - mh
     }
 
     if (xRef.value < 0) {
       xRef.value = 0
-    } else if (xRef.value + mw > viewportWidth) {
+    }
+    else if (xRef.value + mw > viewportWidth) {
       xRef.value = viewportWidth - mw
     }
+  }
+
+  const updateMenuSize = () => {
+    setTimeout(() => {
+      if (!menuRef.value || !menuRef.value.quickRootRef) {
+        return
+      }
+      let w = menuRef.value.quickRootRef.offsetWidth
+      let h = menuRef.value.quickRootRef.offsetHeight
+
+      // 获取额外的宽高
+      if (getExtraSize) {
+        const { width: ew, height: eh } = getExtraSize()
+        w += ew
+        h += eh
+      }
+      menuWidth.value = w
+      menuHeight.value = h
+
+      // console.log(menuWidth.value, menuHeight.value)
+
+      if (byElementPosition.value) {
+        updateMenuPosition()
+      }
+    }, 10)
   }
 
   watch(isShow, (val) => {
@@ -222,7 +222,7 @@ export const useContextMenu = (
     })
   }
 
-  const showMenuByPoint = ({x, y}) => {
+  const showMenuByPoint = ({ x, y }) => {
     xRef.value = x
     yRef.value = y
     isShow.value = true
@@ -249,8 +249,8 @@ export const useContextMenu = (
 }
 
 // 鼠标悬浮显示子菜单
-export const useHoverSubMenu = (props, emit) => {
-  const {item, isStatic} = toRefs(props)
+export function useHoverSubMenu(props, emit) {
+  const { item, isStatic } = toRefs(props)
 
   const subMenuRef = ref()
   const isMouseOver = ref(false)
@@ -260,7 +260,8 @@ export const useHoverSubMenu = (props, emit) => {
     if (!isStatic.value && hasChildren.value) {
       if (!val) {
         emit('onSubMenuHide')
-      } else {
+      }
+      else {
         setTimeout(() => {
           calculateEdge()
         })

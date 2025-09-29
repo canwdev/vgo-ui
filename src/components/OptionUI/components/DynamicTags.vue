@@ -1,6 +1,6 @@
 <script lang="ts" setup="">
-import {useVModel} from '@vueuse/core'
-import {nextTick, ref} from 'vue'
+import { useVModel } from '@vueuse/core'
+import { nextTick, ref } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -17,18 +17,18 @@ const inputValue = ref('')
 const inputVisible = ref(false)
 const InputRef = ref()
 
-const handleClose = (tag: string) => {
+function handleClose(tag: string) {
   dynamicTags.value.splice(dynamicTags.value.indexOf(tag), 1)
 }
 
-const showInput = () => {
+function showInput() {
   inputVisible.value = true
   nextTick(() => {
     InputRef.value!.input!.focus()
   })
 }
 
-const handleInputConfirm = () => {
+function handleInputConfirm() {
   if (inputValue.value) {
     dynamicTags.value.push(inputValue.value)
   }
@@ -57,7 +57,9 @@ const handleInputConfirm = () => {
       @keyup.enter="handleInputConfirm"
       @blur="handleInputConfirm"
     />
-    <el-button v-else class="button-new-tag" size="small" @click="showInput"> + New Tag </el-button>
+    <el-button v-else class="button-new-tag" size="small" @click="showInput">
+      + New Tag
+    </el-button>
   </div>
 </template>
 

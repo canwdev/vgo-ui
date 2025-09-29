@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import {ILayout} from '../enum'
+import type { ILayout } from './enum.ts'
+
 interface Props {
   previewData: ILayout | undefined
 }
@@ -18,7 +19,7 @@ withDefaults(defineProps<Props>(), {})
         width: `${previewData.widthRatio * 100}%`,
         height: `${previewData.heightRatio * 100}%`,
       }"
-    ></div>
+    />
   </transition>
 </template>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {useVModel} from '@vueuse/core'
+import { useVModel } from '@vueuse/core'
 
 const props = withDefaults(
   defineProps<{
@@ -11,14 +11,14 @@ const props = withDefaults(
 )
 const emit = defineEmits(['update:expand'])
 
-const isSidebarExpand = useVModel(props, 'expand', emit, {passive: true})
+const isSidebarExpand = useVModel(props, 'expand', emit, { passive: true })
 </script>
 
 <template>
   <div class="vgo-foldable-sidebar-layout vgo-panel">
-    <div class="layout-sidebar" :class="{_expand: isSidebarExpand}">
+    <div class="layout-sidebar" :class="{ _expand: isSidebarExpand }">
       <div class="sidebar-content">
-        <slot name="sidebar"></slot>
+        <slot name="sidebar" />
       </div>
 
       <button class="btn-toggle-expand btn-no-style" @click="isSidebarExpand = !isSidebarExpand">
@@ -33,13 +33,13 @@ const isSidebarExpand = useVModel(props, 'expand', emit, {passive: true})
             <path
               d="M10.354 3.146a.5.5 0 0 1 0 .708L6.207 8l4.147 4.146a.5.5 0 0 1-.708.708l-4.5-4.5a.5.5 0 0 1 0-.708l4.5-4.5a.5.5 0 0 1 .708 0z"
               fill="currentColor"
-            ></path>
+            />
           </g>
         </svg>
       </button>
     </div>
     <div class="layout-content">
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>

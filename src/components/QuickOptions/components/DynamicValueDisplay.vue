@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import {watchDebounced} from '@vueuse/core'
-import {ref, toRefs} from 'vue'
-import {DynamicValueDisplayProps} from '../enum.ts'
+import type { DynamicValueDisplayProps } from '../enum.ts'
+import { watchDebounced } from '@vueuse/core'
+import { ref, toRefs } from 'vue'
 
 const props = withDefaults(defineProps<DynamicValueDisplayProps>(), {
   text: '',
 })
 
-const {text} = toRefs(props)
+const { text } = toRefs(props)
 
 const textDisplay = ref('')
 watchDebounced(
@@ -15,18 +15,19 @@ watchDebounced(
   () => {
     if (typeof props.formatFn === 'function') {
       textDisplay.value = props.formatFn(text.value)
-    } else {
+    }
+    else {
       textDisplay.value = text.value
     }
   },
-  {debounce: 300, immediate: true},
+  { debounce: 300, immediate: true },
 )
 </script>
 
 <template>
   <div class="dynamic-value-display">
     {{ textDisplay }}
-    <span class="d-label" v-if="label">{{ label }}</span>
+    <span v-if="label" class="d-label">{{ label }}</span>
   </div>
 </template>
 

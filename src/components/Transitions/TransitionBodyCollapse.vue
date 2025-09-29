@@ -1,4 +1,4 @@
-<!--https://github.com/kostyfisik/transition-height-vue3-ts/blob/main/TransitionHeight.vue-->
+<!-- https://github.com/kostyfisik/transition-height-vue3-ts/blob/main/TransitionHeight.vue -->
 
 <script setup lang="ts">
 // import { nextTick } from "vue";
@@ -52,19 +52,19 @@ function getElementStyle(element: HTMLElement) {
 }
 
 function prepareElement(element: HTMLElement, initialStyle: initialStyle) {
-  const {width} = getComputedStyle(element)
+  const { width } = getComputedStyle(element)
   element.style.width = width
   element.style.position = 'absolute'
   element.style.visibility = 'hidden'
   element.style.height = ''
 
-  const {height} = getComputedStyle(element)
+  const { height } = getComputedStyle(element)
   element.style.width = initialStyle.width
   element.style.position = initialStyle.position
   element.style.visibility = initialStyle.visibility
   element.style.height = closed
   element.style.overflow = 'hidden'
-  return initialStyle.height && initialStyle.height != closed ? initialStyle.height : height
+  return initialStyle.height && initialStyle.height !== closed ? initialStyle.height : height
 }
 
 function animateTransition(
@@ -113,19 +113,19 @@ function enterTransition(element: Element, done: () => void) {
   const initialStyle = getElementStyle(HTMLElement)
   const height = prepareElement(HTMLElement, initialStyle)
   const keyframes = getEnterKeyframes(height, initialStyle)
-  const options = {duration: props.duration, easing: props.easingEnter}
+  const options = { duration: props.duration, easing: props.easingEnter }
   animateTransition(HTMLElement, initialStyle, done, keyframes, options)
 }
 
 function leaveTransition(element: Element, done: () => void) {
   const HTMLElement = element as HTMLElement
   const initialStyle = getElementStyle(HTMLElement)
-  const {height} = getComputedStyle(HTMLElement)
+  const { height } = getComputedStyle(HTMLElement)
   HTMLElement.style.height = height
   HTMLElement.style.overflow = 'hidden'
 
   const keyframes = getEnterKeyframes(height, initialStyle).reverse()
-  const options = {duration: props.duration, easing: props.easingLeave}
+  const options = { duration: props.duration, easing: props.easingLeave }
 
   animateTransition(HTMLElement, initialStyle, done, keyframes, options)
 }

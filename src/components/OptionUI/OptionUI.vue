@@ -1,14 +1,7 @@
-<script lang="ts">
-export default {
-  name: 'OptionUI',
-}
-</script>
 <script lang="ts" setup>
-import {provide, ref, toRefs} from 'vue'
+import type { StOptionItem } from './enum'
+import { provide, ref, toRefs } from 'vue'
 import OptionItem from './OptionItem.vue'
-import {StOptionItem} from './enum'
-
-const CONTROL_FOLDED_KEY_MAP = 'option_ui_folded_key_map'
 
 const props = withDefaults(
   defineProps<{
@@ -22,38 +15,47 @@ const props = withDefaults(
     expandId: '',
   },
 )
-const {expandId, store} = toRefs(props)
+
 const emit = defineEmits(['onToggleExpand', 'updateValue'])
 
+const CONTROL_FOLDED_KEY_MAP = 'option_ui_folded_key_map'
+
+const { expandId, store } = toRefs(props)
 // 提供给所有子组件
 provide('sharedStore', store)
 
 // 保存展开状态
 const foldedKeyMap = ref(
-  JSON.parse(localStorage.getItem(CONTROL_FOLDED_KEY_MAP + expandId.value) || 'null') || {},
+  JSON.parse(
+    localStorage.getItem(CONTROL_FOLDED_KEY_MAP + expandId.value) || 'null',
+  ) || {},
 )
 
 // 切换展开状态
-const handleToggleExpand = (item: StOptionItem) => {
+function handleToggleExpand(item: StOptionItem) {
   if (foldedKeyMap.value[item.key]) {
     delete foldedKeyMap.value[item.key]
-  } else {
+  }
+  else {
     foldedKeyMap.value[item.key] = true
   }
-  localStorage.setItem(CONTROL_FOLDED_KEY_MAP + expandId.value, JSON.stringify(foldedKeyMap.value))
+  localStorage.setItem(
+    CONTROL_FOLDED_KEY_MAP + expandId.value,
+    JSON.stringify(foldedKeyMap.value),
+  )
 }
 </script>
 
 <template>
   <div class="option-ui">
     <OptionItem
-      v-show="!item.hidden"
       v-for="item in optionList"
-      :item="item"
+      v-show="!item.hidden"
       :key="item.key"
+      :item="item"
       :folded-key-map="foldedKeyMap"
-      @onToggleExpand="handleToggleExpand"
-      @updateValue="(v) => emit('updateValue', v)"
+      @on-toggle-expand="handleToggleExpand"
+      @update-value="(v) => emit('updateValue', v)"
     />
   </div>
 </template>

@@ -1,5 +1,5 @@
-export const generateItemDragProps = ({index, cb}) => {
-  const getEl = (event) => event.target.closest('.sub-item')
+export function generateItemDragProps({ index, cb }) {
+  const getEl = event => event.target.closest('.sub-item')
   return {
     draggable: true,
     onDragstart: (event) => {

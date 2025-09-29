@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import DefaultTheme from 'vitepress/theme'
-import {onMounted} from 'vue'
+import { onMounted } from 'vue'
 
-const {Layout} = DefaultTheme
+const { Layout } = DefaultTheme
 onMounted(() => {
   const body = document.body
   body.classList.add('vgo-theme-default')
@@ -19,6 +19,6 @@ onMounted(() => {
 
 <template>
   <ClientOnly>
-    <Layout> </Layout>
+    <Layout />
   </ClientOnly>
 </template>

@@ -1,5 +1,5 @@
-import {FormRules} from 'element-plus'
-import {VNode} from 'vue'
+import type { FormRules } from 'element-plus'
+import type { VNode } from 'vue'
 
 export interface IOptionItem {
   value: string | number | boolean | null | undefined
@@ -20,7 +20,7 @@ export enum AutoFormItemType {
   // 需要哪些类型请自行实现
 }
 
-export type AutoFormItem = {
+export interface AutoFormItem {
   key: string
   label?: string
   // 表单控件类型
@@ -48,7 +48,7 @@ export type AutoFormItem = {
 }
 
 // 自定义列数
-export type AutoFormRow = {
+export interface AutoFormRow {
   cols: number
   children: AutoFormItem[]
 }
@@ -56,7 +56,7 @@ export type AutoFormRow = {
 export type MixedFormItems = (AutoFormRow | AutoFormItem)[] | AutoFormItem | AutoFormRow
 
 // 表单架构
-export type AutoFormSchema = {
+export interface AutoFormSchema {
   formItems: MixedFormItems[]
   model: unknown
   rules?: FormRules

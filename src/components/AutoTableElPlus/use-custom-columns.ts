@@ -1,15 +1,16 @@
 // 自定义表列
-import {onBeforeMount, Ref, ref, toRefs, watch} from 'vue'
-import {useStorage} from '@vueuse/core'
-import {AutoTableColumn} from './types'
+import type { Ref } from 'vue'
+import type { AutoTableColumn } from './types'
+import { useStorage } from '@vueuse/core'
+import { onBeforeMount, ref, toRefs, watch } from 'vue'
 
 interface IOption {
   label: string
   value: string
 }
 
-export const useCustomColumns = (props) => {
-  const {columns} = toRefs(props) as {
+export function useCustomColumns(props) {
+  const { columns } = toRefs(props) as {
     columns: Ref<AutoTableColumn[]>
   }
   const isShowColumnEdit = ref(false)
@@ -40,7 +41,8 @@ export const useCustomColumns = (props) => {
   watch(isShowColumnEdit, (val) => {
     if (val) {
       columnsOptions.value = getTableColumnsOptions()
-    } else {
+    }
+    else {
       columnsOptions.value = []
       filteredColumns.value = getFilteredColumns()
     }
@@ -50,7 +52,8 @@ export const useCustomColumns = (props) => {
   const handleUpdateCheck = (key) => {
     if (hiddenColumnKeyMap.value[key]) {
       delete hiddenColumnKeyMap.value[key]
-    } else {
+    }
+    else {
       hiddenColumnKeyMap.value[key] = 1
     }
   }

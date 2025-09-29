@@ -4,8 +4,8 @@ Table 表组件
 
 ::: raw
 <script lang="ts" setup>
-import AutoTableElPlusTest from '../../../src/components/AutoTableElPlus/AutoTableElPlusTest.vue' 
+import DemoAutoTableElPlus from '../../../src/components/AutoTableElPlus/DemoAutoTableElPlus.vue' 
 </script>
 
-<AutoTableElPlusTest />
+<DemoAutoTableElPlus />
 :::

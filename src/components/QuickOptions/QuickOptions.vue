@@ -1,12 +1,13 @@
 <script lang="ts">
-import {computed, defineComponent, nextTick, onMounted, PropType, ref, toRefs, watch} from 'vue'
-import {QuickOptionItem} from './enum'
-import {onClickOutside, useVModel} from '@vueuse/core'
-import QOptionItem from './utils/QOptionItem.vue'
+import type { PropType } from 'vue'
+import type { QuickOptionItem } from './enum'
+import { onClickOutside, useVModel } from '@vueuse/core'
+import { computed, defineComponent, nextTick, onMounted, ref, toRefs, watch } from 'vue'
+import QOptionItem from './components/QOptionItem.vue'
 
 export default defineComponent({
   name: 'QuickOptions',
-  components: {QOptionItem},
+  components: { QOptionItem },
   props: {
     // 是否显示菜单
     visible: {
@@ -57,8 +58,8 @@ export default defineComponent({
     },
   },
   emits: ['onClose', 'update:visible', 'onBack', 'onEnter'],
-  setup(props, {emit}) {
-    const {options, horizontal, isStatic, autoFocus, closeOnClick} = toRefs(props)
+  setup(props, { emit }) {
+    const { options, horizontal, isStatic, autoFocus, closeOnClick } = toRefs(props)
     const mVisible = useVModel(props, 'visible', emit)
     const quickRootRef = ref()
 
@@ -78,7 +79,7 @@ export default defineComponent({
     const scrollToIndex = () => {
       const el = quickRootRef.value.querySelector(`[data-index="${curIndex.value}"]`)
       nextTick(() => {
-        el?.scrollIntoView({behavior: 'instant', block: 'center'})
+        el?.scrollIntoView({ behavior: 'instant', block: 'center' })
       })
     }
 
@@ -122,7 +123,8 @@ export default defineComponent({
         if (autoFocus.value) {
           focus()
         }
-      } else {
+      }
+      else {
         menuStack.value = []
         menuItemStack.value = []
       }
@@ -158,7 +160,8 @@ export default defineComponent({
         menuStack.value.pop()
         menuItemStack.value.pop()
         emit('onBack')
-      } else {
+      }
+      else {
         mVisible.value = false
         setTimeout(() => {
           emit('onClose')
@@ -172,39 +175,51 @@ export default defineComponent({
       let isPreventDefault = true
       if (event.key === 'Escape' || event.key === 'q') {
         handleBack()
-      } else if (event.key === 'Tab') {
+      }
+      else if (event.key === 'Tab') {
         selectNext()
-      } else if (event.key === 'ArrowUp') {
+      }
+      else if (event.key === 'ArrowUp') {
         if (horizontal.value) {
           handleBack()
-        } else {
+        }
+        else {
           selectPrev()
         }
-      } else if (event.key === 'ArrowDown') {
+      }
+      else if (event.key === 'ArrowDown') {
         if (horizontal.value) {
           handleKeyEnter()
-        } else {
+        }
+        else {
           selectNext()
         }
-      } else if (event.key === 'ArrowLeft') {
+      }
+      else if (event.key === 'ArrowLeft') {
         if (horizontal.value) {
           selectPrev()
-        } else {
+        }
+        else {
           handleBack()
         }
-      } else if (event.key === 'ArrowRight') {
+      }
+      else if (event.key === 'ArrowRight') {
         if (horizontal.value) {
           selectNext()
-        } else {
+        }
+        else {
           handleKeyEnter()
         }
-      } else if (event.key === 'Enter') {
+      }
+      else if (event.key === 'Enter') {
         // Enter key is pressed
         handleKeyEnter()
-      } else if (event.key === ' ') {
+      }
+      else if (event.key === ' ') {
         // Space key is pressed
         handleKeyEnter()
-      } else if (event.keyCode >= 49 && event.keyCode <= 57) {
+      }
+      else if (event.keyCode >= 49 && event.keyCode <= 57) {
         // 检测按键 1~9
         const number = Number(String.fromCharCode(event.keyCode))
         if (Number.isNaN(number)) {
@@ -216,7 +231,8 @@ export default defineComponent({
         if (item) {
           handleOptionClick(item)
         }
-      } else {
+      }
+      else {
         isPreventDefault = false
       }
       if (isPreventDefault) {
@@ -247,7 +263,8 @@ export default defineComponent({
         let subList: QuickOptionItem[] = []
         if (typeof item.children === 'function') {
           subList = await item.children()
-        } else if (item.children.length) {
+        }
+        else if (item.children.length) {
           subList = item.children
         }
 
@@ -261,7 +278,8 @@ export default defineComponent({
           for (let i = 0; i < item.props.isBack; i++) {
             handleBack()
           }
-        } else {
+        }
+        else {
           handleBack()
         }
       }
@@ -295,37 +313,39 @@ export default defineComponent({
 <template>
   <div
     v-show="mVisible"
+    ref="quickRootRef"
     class="quick-options"
     :class="{
-      _static: isStatic,
+      '_static': isStatic,
       horizontal,
       'vgo-panel': !horizontal && !isStatic,
     }"
-    @keydown.stop="handleKeyPress"
     tabindex="0"
-    ref="quickRootRef"
+    @keydown.stop="handleKeyPress"
   >
-    <div class="option-title" v-if="title">
+    <div v-if="title" class="option-title">
       {{ title }}
-      <button class="btn-no-style" @click="mVisible = false">×</button>
+      <button class="btn-no-style" @click="mVisible = false">
+        ×
+      </button>
     </div>
 
     <div
       v-if="menuStack.length"
       class="option-item vgo-bg _back clickable"
-      @click="handleBack"
       title="Back (q)"
+      @click="handleBack"
     >
       <div class="index-wrap">
         <div style="transform: scale(0.7)">
-          <div class="css-arrow left"></div>
+          <div class="css-arrow left" />
         </div>
       </div>
-      <span v-html="backTitle"></span>
+      <span v-html="backTitle" />
     </div>
 
     <template v-for="(v, index) in mOptions" :key="v.label || index">
-      <div v-if="v.split" class="option-split"></div>
+      <div v-if="v.split" class="option-split" />
       <QOptionItem
         v-else
         :item="v"
@@ -336,11 +356,11 @@ export default defineComponent({
         :is-static="isStatic"
         @click="handleOptionClick(v, $event)"
         @contextmenu.prevent.stop="handleOptionContextmenu(v, $event)"
-        @onArrowClick="handleOptionClick(v, $event, true)"
-        @onClose="($emit('onClose'), (mVisible = false))"
-        @onSubMenuHide="focus"
+        @on-arrow-click="handleOptionClick(v, $event, true)"
+        @on-close="($emit('onClose'), (mVisible = false))"
+        @on-sub-menu-hide="focus"
       />
-      <!--@mouseover="curIndex = index"-->
+      <!-- @mouseover="curIndex = index" -->
     </template>
   </div>
 </template>

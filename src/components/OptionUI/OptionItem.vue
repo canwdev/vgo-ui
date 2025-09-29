@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import VueRender from '../VueRender.vue'
-import {computed, toRefs} from 'vue'
-import ItemAction from './ItemAction.vue'
-import {StOptionItem} from './enum'
+import type { StOptionItem } from './enum'
+import { computed, toRefs } from 'vue'
 import TransitionBodyCollapse from '../Transitions/TransitionBodyCollapse.vue'
+import VueRender from '../VueRender.vue'
+import ItemAction from './ItemAction.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -14,14 +14,13 @@ const props = withDefaults(
     foldedKeyMap: () => ({}),
   },
 )
-const {item, foldedKeyMap} = toRefs(props)
 const emit = defineEmits(['onToggleExpand', 'updateValue'])
-
+const { item, foldedKeyMap } = toRefs(props)
 const isExpanded = computed(() => {
   return !foldedKeyMap.value[item.value.key]
 })
 
-const handleItemClick = (e: Event, fn) => {
+function handleItemClick(e: Event, fn) {
   if (typeof fn === 'function') {
     fn(e, item.value)
   }
@@ -29,16 +28,18 @@ const handleItemClick = (e: Event, fn) => {
 </script>
 
 <template>
-  <div class="c-panel-item" :data-key="item.key" :key="item.key" :class="[item.cls]">
+  <div :key="item.key" class="c-panel-item" :data-key="item.key" :class="[item.cls]">
     <div class="panel-header vgo-bg">
       <div class="p-left" :title="item.label">
-        <div class="item-label">{{ item.label }}</div>
+        <div class="item-label">
+          {{ item.label }}
+        </div>
       </div>
       <div class="p-right">
         <div
-          class="btn-no-style btn-toggle-expand"
-          :class="{expanded: isExpanded}"
           v-if="!item.hideExpandIcon && item.children && item.children.length"
+          class="btn-no-style btn-toggle-expand"
+          :class="{ expanded: isExpanded }"
           @click="$emit('onToggleExpand', item)"
         >
           <svg
@@ -51,11 +52,11 @@ const handleItemClick = (e: Event, fn) => {
               <path
                 d="M15.794 7.733a.75.75 0 0 1-.026 1.06l-5.25 5.001a.75.75 0 0 1-1.035 0l-5.25-5a.75.75 0 0 1 1.034-1.087l4.734 4.509l4.733-4.51a.75.75 0 0 1 1.06.027z"
                 fill="currentColor"
-              ></path>
+              />
             </g>
           </svg>
         </div>
-        <ItemAction :item="item" @updateValue="(v) => emit('updateValue', v)" />
+        <ItemAction :item="item" @update-value="(v) => emit('updateValue', v)" />
       </div>
     </div>
 
@@ -65,10 +66,10 @@ const handleItemClick = (e: Event, fn) => {
           v-for="(sItem, index) in item.children"
           :key="sItem.key || index"
           class="sub-item"
-          :class="[{clickable: sItem.clickFn}, sItem.cls]"
+          :class="[{ clickable: sItem.clickFn }, sItem.cls]"
           :data-key="sItem.key"
-          @click="handleItemClick($event, sItem.clickFn)"
           v-bind="sItem.itemProps"
+          @click="handleItemClick($event, sItem.clickFn)"
         >
           <VueRender v-if="sItem.render" :render-fn="sItem.render" />
 
@@ -78,10 +79,10 @@ const handleItemClick = (e: Event, fn) => {
                 <VueRender :render-fn="sItem.iconRender" />
               </div>
               <div v-else-if="sItem.icon" class="item-icon" :title="sItem.label">
-                <img :src="sItem.icon" alt="icon" />
+                <img :src="sItem.icon" alt="icon">
               </div>
               <div v-else-if="sItem.iconClass" class="item-icon" :title="sItem.label">
-                <i :class="sItem.iconClass"></i>
+                <i :class="sItem.iconClass" />
               </div>
               <div class="item-title-wrap">
                 <div class="item-label-wrap">
@@ -97,19 +98,19 @@ const handleItemClick = (e: Event, fn) => {
                         <path
                           d="M10 2a8 8 0 1 1 0 16a8 8 0 0 1 0-16zm0 1a7 7 0 1 0 0 14a7 7 0 0 0 0-14zm0 10.5a.75.75 0 1 1 0 1.5a.75.75 0 0 1 0-1.5zm0-8a2.5 2.5 0 0 1 1.651 4.377l-.154.125l-.219.163l-.087.072a1.968 1.968 0 0 0-.156.149c-.339.36-.535.856-.535 1.614a.5.5 0 0 1-1 0c0-1.012.293-1.752.805-2.298a3.11 3.11 0 0 1 .356-.323l.247-.185l.118-.1A1.5 1.5 0 1 0 8.5 8a.5.5 0 0 1-1 .001A2.5 2.5 0 0 1 10 5.5z"
                           fill="currentColor"
-                        ></path>
+                        />
                       </g>
                     </svg>
                     <template #content>
-                      <span v-html="sItem.tips"></span>
+                      <span v-html="sItem.tips" />
                     </template>
                   </el-tooltip>
                 </div>
-                <div class="item-subtitle" v-if="sItem.subtitle" v-html="sItem.subtitle"></div>
+                <div v-if="sItem.subtitle" class="item-subtitle" v-html="sItem.subtitle" />
               </div>
             </div>
             <div class="o-right">
-              <ItemAction :item="sItem" @updateValue="(v) => emit('updateValue', v)" />
+              <ItemAction :item="sItem" @update-value="(v) => emit('updateValue', v)" />
             </div>
           </template>
         </div>

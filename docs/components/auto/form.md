@@ -4,8 +4,8 @@
 
 ::: raw
 <script lang="ts" setup>
-import AutoFormElPlusTest from '../../../src/components/AutoFormElPlus/AutoFormElPlusTest.vue' 
+import DemoAutoFormElPlus from '../../../src/components/AutoFormElPlus/DemoAutoFormElPlus.vue' 
 </script>
 
-<AutoFormElPlusTest />
+<DemoAutoFormElPlus />
 :::

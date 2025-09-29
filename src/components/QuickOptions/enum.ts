@@ -1,4 +1,4 @@
-import {VNode} from 'vue'
+import type { VNode } from 'vue'
 
 export interface DynamicValueDisplayProps {
   text: string
@@ -6,7 +6,7 @@ export interface DynamicValueDisplayProps {
   formatFn?: (text: string) => string
 }
 
-export type QuickOptionItem = {
+export interface QuickOptionItem {
   label?: string
   // 是否为分割线
   split?: boolean
