@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import QuickOptions from './index.vue'
-import {QuickOptionItem} from './enum'
+import type { QuickOptionItem } from './enum'
+import { ref } from 'vue'
 import QuickContextMenu from './QuickContextMenu.vue'
-import {ref} from 'vue'
+import QuickOptions from './QuickOptions.vue'
 
 const menuOptions = ref<QuickOptionItem[]>([
   {
@@ -41,10 +41,10 @@ const menuOptions = ref<QuickOptionItem[]>([
           },
         },
       },
-      {label: 'B.2'},
-      {label: 'B.3'},
-      {label: '长文本自动适应，长文本自动适应，长文本自动适应'},
-      {label: '屏幕边缘自动适应'},
+      { label: 'B.2' },
+      { label: 'B.3' },
+      { label: '长文本自动适应，长文本自动适应，长文本自动适应' },
+      { label: '屏幕边缘自动适应' },
       {
         label: '多层嵌套',
         children: [
@@ -56,27 +56,27 @@ const menuOptions = ref<QuickOptionItem[]>([
               },
             },
           },
-          {label: 'B.2'},
-          {label: 'B.3'},
-          {label: '长文本自动适应，长文本自动适应，长文本自动适应'},
-          {label: '#'},
-          {label: '#'},
-          {label: '#'},
-          {label: '#'},
-          {label: '#'},
-          {label: '#'},
-          {label: '#'},
-          {label: '#'},
-          {label: '#'},
+          { label: 'B.2' },
+          { label: 'B.3' },
+          { label: '长文本自动适应，长文本自动适应，长文本自动适应' },
+          { label: '#' },
+          { label: '#' },
+          { label: '#' },
+          { label: '#' },
+          { label: '#' },
+          { label: '#' },
+          { label: '#' },
+          { label: '#' },
+          { label: '#' },
         ],
       },
     ],
   },
-  {split: true},
+  { split: true },
   {
     label: '动态生成菜单',
     children: () => {
-      return [{label: `可以使用函数动态生成菜单`}, {label: `${Date().toLocaleString()}`}]
+      return [{ label: `可以使用函数动态生成菜单` }, { label: `${String(new Date()).toLocaleString()}` }]
     },
   },
 ])
@@ -85,7 +85,7 @@ const isStaticMenu = ref(true)
 const isShowMenu = ref(true)
 
 const ctxMenuRef = ref()
-const handleContextMenu = (event) => {
+function handleContextMenu(event) {
   ctxMenuRef.value.showMenu(event)
 }
 </script>
@@ -94,17 +94,17 @@ const handleContextMenu = (event) => {
   <div class="quick-options-demo">
     <div class="common-menu-demo">
       <label>
-        <input type="checkbox" v-model="isStaticMenu" />
+        <input v-model="isStaticMenu" type="checkbox">
         静态菜单
       </label>
       <label v-if="!isStaticMenu">
-        <input type="checkbox" v-model="isShowMenu" />
+        <input v-model="isShowMenu" type="checkbox">
         显示菜单
       </label>
 
       <QuickOptions
-        class="vgo-bg"
         v-if="isStaticMenu"
+        class="vgo-bg"
         is-static
         visible
         :options="menuOptions"
@@ -114,8 +114,10 @@ const handleContextMenu = (event) => {
       <QuickOptions v-else v-model:visible="isShowMenu" :options="menuOptions" show-index />
     </div>
     <div class="context-menu-demo" @contextmenu.prevent="handleContextMenu">
-      <div class="inner-text">右键菜单 Demo，在此区域点击右键</div>
-      <QuickContextMenu :options="menuOptions" ref="ctxMenuRef" />
+      <div class="inner-text">
+        右键菜单 Demo，在此区域点击右键
+      </div>
+      <QuickContextMenu ref="ctxMenuRef" :options="menuOptions" />
     </div>
   </div>
 </template>

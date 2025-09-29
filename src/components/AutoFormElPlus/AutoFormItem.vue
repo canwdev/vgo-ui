@@ -1,13 +1,15 @@
 <script lang="ts">
-import {computed, defineComponent, PropType, toRefs} from 'vue'
-import {AutoFormItem, AutoFormItemType} from './enum'
+import type { PropType } from 'vue'
+import type { AutoFormItem } from './enum'
 import _get from 'lodash-es/get'
 import _set from 'lodash-es/set'
+import { computed, defineComponent, toRefs } from 'vue'
 import VueRender from '../VueRender.vue'
+import { AutoFormItemType } from './enum'
 
 export default defineComponent({
   name: 'AutoFormItem',
-  components: {VueRender},
+  components: { VueRender },
   props: {
     item: {
       type: Object as PropType<AutoFormItem>,
@@ -19,7 +21,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const {item, model} = toRefs(props)
+    const { item, model } = toRefs(props)
 
     // 判断store是否为 RefImpl 类型，
     // 一般这种情况出现在 computed 返回的内容
@@ -46,7 +48,6 @@ export default defineComponent({
       set(val) {
         // 支持嵌套读写值
         _set(model.value, autoGetPath(model.value, item.value.key), val)
-        return
       },
     })
 
@@ -64,7 +65,7 @@ export default defineComponent({
     :prop="item.key"
     class="auto-form-item"
     :class="[item.cls]"
-    :style="item.style || {width: item.width}"
+    :style="item.style || { width: item.width }"
   >
     <el-input
       v-if="item.type === AutoFormItemType.INPUT"
@@ -122,11 +123,12 @@ export default defineComponent({
 
     <el-button
       v-else-if="item.type === AutoFormItemType.BUTTON"
-      @click="item.clickHandler"
       :disabled="item.disabled"
       v-bind="item.props"
-      >{{ item.placeholder }}</el-button
+      @click="item.clickHandler"
     >
+      {{ item.placeholder }}
+    </el-button>
     <el-date-picker
       v-else-if="item.type === AutoFormItemType.DATE_PICKER"
       v-model="dynamicValue"
@@ -144,8 +146,9 @@ export default defineComponent({
         v-for="(option, index) in item.options || item.props.options"
         :key="index"
         :value="option.value"
-        >{{ option.label }}</el-checkbox
       >
+        {{ option.label }}
+      </el-checkbox>
     </el-checkbox-group>
 
     <el-switch
@@ -157,20 +160,21 @@ export default defineComponent({
 
     <el-radio-group
       v-else-if="item.type === AutoFormItemType.RADIO_GROUP"
-      :disabled="item.disabled"
       v-model="dynamicValue"
+      :disabled="item.disabled"
     >
       <el-radio
         v-for="(option, index) in item.options || item.props.options"
         :key="index"
         :value="option.value"
-        >{{ option.label }}</el-radio
       >
+        {{ option.label }}
+      </el-radio>
     </el-radio-group>
 
-    <VueRender v-if="item.render" :render-fn="item.render" v-model="dynamicValue" />
+    <VueRender v-if="item.render" v-model="dynamicValue" :render-fn="item.render" />
 
-    <template v-if="item.renderLabel" #label="{label}">
+    <template v-if="item.renderLabel" #label="{ label }">
       <VueRender :render-fn="item.renderLabel" :label="label" />
     </template>
   </el-form-item>

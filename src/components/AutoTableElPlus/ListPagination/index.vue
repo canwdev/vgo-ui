@@ -1,6 +1,6 @@
 <script lang="ts">
-import {useRoute, useRouter} from 'vue-router'
-import {defineComponent, onBeforeMount, toRefs} from 'vue'
+import { defineComponent, onBeforeMount, toRefs } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 export default defineComponent({
   name: 'ListPagination',
@@ -27,8 +27,8 @@ export default defineComponent({
     },
   },
   emits: ['sizeChange', 'currentChange', 'pageInitReady'],
-  setup(props, {emit}) {
-    const {paginationData, updateRouter} = toRefs(props)
+  setup(props, { emit }) {
+    const { paginationData, updateRouter } = toRefs(props)
     const route = useRoute()
     const router = useRouter()
 
@@ -37,9 +37,9 @@ export default defineComponent({
       if (updateRouter.value) {
         const queryOrigin = route.query
         // 标记当前是否为最后一页
-        const isEnd =
-          parseInt(queryOrigin.pageNum) ===
-          Math.ceil(paginationData.value.totalItems / queryOrigin.pageSize)
+        const isEnd
+          = Number.parseInt(queryOrigin.pageNum)
+            === Math.ceil(paginationData.value.totalItems / queryOrigin.pageSize)
 
         // 计算最后一页页数
         if (isEnd) {

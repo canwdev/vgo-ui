@@ -1,5 +1,7 @@
-import {PromisifyFn, useThrottleFn} from '@vueuse/core'
-import {ILayout, checkWindowAttach} from '../enum'
+import type { PromisifyFn } from '@vueuse/core'
+import type { ILayout } from './enum.ts'
+import { useThrottleFn } from '@vueuse/core'
+import { checkWindowAttach } from './enum.ts'
 
 const ClassNames = {
   RESIZE_HANDLE: 'draggable-window-resize',
@@ -19,21 +21,22 @@ enum ResizeDirection {
 const ResizeDirectionList = Object.values(ResizeDirection)
 
 // 兼容触屏和鼠标
-const getPointerXy = (e: MouseEvent | TouchEvent) => {
+function getPointerXy(e: MouseEvent | TouchEvent) {
   let x = 0
   let y = 0
   if (e instanceof TouchEvent) {
     const touch = e.touches[0] || e.changedTouches[0]
     x = touch.pageX
     y = touch.pageY
-  } else if (e instanceof MouseEvent) {
+  }
+  else if (e instanceof MouseEvent) {
     x = e.clientX
     y = e.clientY
   }
-  return {x, y}
+  return { x, y }
 }
 
-export type OnMoveParams = {
+export interface OnMoveParams {
   pointerX?: number
   pointerY?: number
   top?: string
@@ -42,7 +45,7 @@ export type OnMoveParams = {
   moveStop?: boolean
 }
 
-type DraggableOptions = {
+interface DraggableOptions {
   // 被鼠标按下的 handle 元素
   dragHandleEl: HTMLElement
   // 窗体元素
@@ -80,7 +83,7 @@ const windowStateSet: Set<WindowController> = new Set()
  * @param parentEl 上层元素，相对它绝对定位
  * @param direction 方向
  */
-const createResizeBar = (parentEl: HTMLElement, direction: ResizeDirection) => {
+function createResizeBar(parentEl: HTMLElement, direction: ResizeDirection) {
   const resizeHandle = document.createElement('div')
   resizeHandle.className = ClassNames.RESIZE_HANDLE
   resizeHandle.style.position = 'absolute'
@@ -161,7 +164,7 @@ export class WindowController {
   private _prevDocWidth?: number
 
   constructor(options: DraggableOptions) {
-    const {dragHandleEl, dragTargetEl, onMove, autoPosOnResize} = options
+    const { dragHandleEl, dragTargetEl, onMove, autoPosOnResize } = options
 
     this.options = options
 
@@ -183,15 +186,15 @@ export class WindowController {
         if (this.isHidden()) {
           return
         }
-        const {left, top} = this.setInScreenPosition({
+        const { left, top } = this.setInScreenPosition({
           x: dragTargetEl.offsetLeft,
           y: dragTargetEl.offsetTop,
           isViewPortResize: true,
         })
-        this.debugLog('handleResizeDebounced', {left, top})
+        this.debugLog('handleResizeDebounced', { left, top })
 
         if (onMove) {
-          onMove({top, left})
+          onMove({ top, left })
         }
       },
       50,
@@ -234,7 +237,7 @@ export class WindowController {
   }
 
   destroy() {
-    const {dragTargetEl, dragHandleEl, autoPosOnResize, resizeable} = this.options
+    const { dragTargetEl, dragHandleEl, autoPosOnResize, resizeable } = this.options
     ;['mousedown', 'touchstart'].forEach((eventName) => {
       dragHandleEl.removeEventListener(eventName, this.handleDragStart)
       dragTargetEl.removeEventListener(eventName, this.handleMouseDown)
@@ -258,9 +261,9 @@ export class WindowController {
     if (!this.allowMove || this.maximized) {
       return
     }
-    const {docEl} = this
+    const { docEl } = this
 
-    const {preventNode, dragTargetEl} = this.options
+    const { preventNode, dragTargetEl } = this.options
 
     if (preventNode) {
       // console.log(preventNode, event.target)
@@ -286,8 +289,8 @@ export class WindowController {
   }
 
   handleDragMove(event) {
-    const {deltaX, deltaY} = this
-    const {dragTargetEl, onMove, opacify} = this.options
+    const { deltaX, deltaY } = this
+    const { dragTargetEl, onMove, opacify } = this.options
 
     const xy = getPointerXy(event)
     const x = xy.x - deltaX
@@ -295,13 +298,14 @@ export class WindowController {
 
     let left, top
     if (!this.options.allowOut) {
-      const pos = this.setInScreenPosition({x, y})
+      const pos = this.setInScreenPosition({ x, y })
       left = pos.left
       top = pos.top
-    } else {
-      const {scaleX, scaleY} = this.fixZoom()
-      left = dragTargetEl.style.left = Math.round(x) * scaleX + 'px'
-      top = dragTargetEl.style.top = Math.round(y) * scaleY + 'px'
+    }
+    else {
+      const { scaleX, scaleY } = this.fixZoom()
+      left = dragTargetEl.style.left = `${Math.round(x) * scaleX}px`
+      top = dragTargetEl.style.top = `${Math.round(y) * scaleY}px`
     }
 
     if (onMove) {
@@ -322,16 +326,16 @@ export class WindowController {
 
   handleDragStop(event) {
     // console.log('[handleDragStop]', event)
-    const {docEl} = this
-    const {dragTargetEl, opacify, onMove} = this.options
+    const { docEl } = this
+    const { dragTargetEl, opacify, onMove } = this.options
 
-    const {x, y} = event
+    const { x, y } = event
 
     if (onMove) {
       const obj: OnMoveParams = {
         moveStop: true,
       }
-      obj.attachLayout = checkWindowAttach({x, y})
+      obj.attachLayout = checkWindowAttach({ x, y })
 
       onMove(obj)
     }
@@ -350,8 +354,8 @@ export class WindowController {
   }
 
   handleResizeStart(event) {
-    const {docEl} = this
-    const {dragTargetEl} = this.options
+    const { docEl } = this
+    const { dragTargetEl } = this.options
 
     const xy = getPointerXy(event)
 
@@ -363,8 +367,8 @@ export class WindowController {
     // this.debugLog('handleDragStart', event)
 
     if (event.target) {
-      this.currentResizeDirection =
-        (event.target as HTMLElement).getAttribute('data-direction') || null
+      this.currentResizeDirection
+        = (event.target as HTMLElement).getAttribute('data-direction') || null
     }
     ;['mousemove', 'touchmove'].forEach((eventName) => {
       docEl.addEventListener(eventName, this.handleResizeMove)
@@ -376,8 +380,8 @@ export class WindowController {
   }
 
   handleResizeMove(event) {
-    const {deltaX, deltaY} = this
-    const {dragTargetEl} = this.options
+    const { deltaX, deltaY } = this
+    const { dragTargetEl } = this.options
 
     const xy = getPointerXy(event)
     const x = xy.x - deltaX
@@ -387,19 +391,19 @@ export class WindowController {
 
     const updateN = () => {
       const newVal = rect.top + y
-      dragTargetEl.style.top = newVal + 'px'
-      dragTargetEl.style.height = rect.height - y + 'px'
+      dragTargetEl.style.top = `${newVal}px`
+      dragTargetEl.style.height = `${rect.height - y}px`
     }
     const updateE = () => {
-      dragTargetEl.style.width = rect.width + x + 'px'
+      dragTargetEl.style.width = `${rect.width + x}px`
     }
     const updateS = () => {
-      dragTargetEl.style.height = rect.height + y + 'px'
+      dragTargetEl.style.height = `${rect.height + y}px`
     }
     const updateW = () => {
       // const newVal = rect.left + x
-      dragTargetEl.style.left = rect.left + x + 'px'
-      dragTargetEl.style.width = rect.width - x + 'px'
+      dragTargetEl.style.left = `${rect.left + x}px`
+      dragTargetEl.style.width = `${rect.width - x}px`
     }
 
     switch (this.currentResizeDirection) {
@@ -435,15 +439,16 @@ export class WindowController {
 
     // this.debugLog('xy', {x, y}, rect)
   }
+
   handleResizeStop() {
-    const {docEl} = this
+    const { docEl } = this
     ;['mousemove', 'touchmove'].forEach((eventName) => {
       docEl.removeEventListener(eventName, this.handleResizeMove)
     })
     ;['mouseup', 'touchend'].forEach((eventName) => {
       docEl.removeEventListener(eventName, this.handleResizeStop)
     })
-    const {dragTargetEl} = this.options
+    const { dragTargetEl } = this.options
     dragTargetEl.classList.remove('_dragging')
   }
 
@@ -456,12 +461,12 @@ export class WindowController {
   }
 
   isHidden() {
-    const {dragHandleEl} = this.options
+    const { dragHandleEl } = this.options
     return dragHandleEl.offsetParent === null
   }
 
   fixZoom() {
-    const {dragTargetEl} = this.options
+    const { dragTargetEl } = this.options
     const rect = dragTargetEl.getBoundingClientRect()
     const scaleX = rect.width / dragTargetEl.offsetWidth
     const scaleY = rect.height / dragTargetEl.offsetHeight
@@ -479,8 +484,8 @@ export class WindowController {
     // 是否视口正在调整大小
     isViewPortResize = false,
   }) {
-    const {docEl} = this
-    const {dragTargetEl} = this.options
+    const { docEl } = this
+    const { dragTargetEl } = this.options
     const rect = dragTargetEl.getBoundingClientRect()
     const docWidth = docEl.clientWidth - rect.width
     const docHeight = docEl.clientHeight - rect.height
@@ -493,17 +498,18 @@ export class WindowController {
           x = x + addWidth
           this._prevDocWidth = 0
         }
-      } else {
+      }
+      else {
         this._prevDocWidth = docWidth
       }
     }
 
-    const left = (dragTargetEl.style.left =
-      Math.round(Math.max(0, Math.min(docWidth, Math.max(0, x)))) + 'px')
-    const top = (dragTargetEl.style.top =
-      Math.round(Math.max(0, Math.min(docHeight, Math.max(0, y)))) + 'px')
+    const left = (dragTargetEl.style.left
+      = `${Math.round(Math.max(0, Math.min(docWidth, Math.max(0, x))))}px`)
+    const top = (dragTargetEl.style.top
+      = `${Math.round(Math.max(0, Math.min(docHeight, Math.max(0, y))))}px`)
 
-    return {left, top}
+    return { left, top }
   }
 
   debugLog(message, ...args) {
@@ -524,7 +530,7 @@ export class WindowController {
       preventOnActive = false, // 传入 true 用于防止死循环
     } = opt
     if (!preventOnActive) {
-      const {onActive} = this.options
+      const { onActive } = this.options
       if (onActive) {
         onActive()
       }
@@ -533,7 +539,7 @@ export class WindowController {
       this.debugLog('[updateZIndex] return')
       return
     }
-    const {dragTargetEl} = this.options
+    const { dragTargetEl } = this.options
 
     // 获取当前元素的 z-index
     // const currentZIndex = getComputedStyle(dragTargetEl)['z-index']
@@ -549,7 +555,7 @@ export class WindowController {
 
     els.forEach((el) => {
       const val = getComputedStyle(el)['z-index']
-      const idx = parseInt(val) || 0
+      const idx = Number.parseInt(val) || 0
       if (idx > maxZIndex) {
         maxZIndex = idx
         maxZIndexEl = el
@@ -575,7 +581,7 @@ export class WindowController {
     // 将其它 fixed-element 元素的 z-index 设置为比它小的值
     Array.from(els).forEach((el) => {
       if (el !== dragTargetEl) {
-        el.style.zIndex = String(parseInt(getComputedStyle(el)['z-index']) - 1)
+        el.style.zIndex = String(Number.parseInt(getComputedStyle(el)['z-index']) - 1)
         el.classList.remove('_active')
       }
     })

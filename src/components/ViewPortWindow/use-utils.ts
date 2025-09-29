@@ -1,18 +1,16 @@
-import {useDebounceFn, useEventListener} from '@vueuse/core'
-import {onMounted, Ref, watch} from 'vue'
+import type { Ref } from 'vue'
+import { useDebounceFn, useEventListener } from '@vueuse/core'
+import { onMounted, watch } from 'vue'
 
 /**
  * 检测鼠标是否在元素上，支持延时
  */
-export const useMouseOver = (
-  target: HTMLElement | Ref<HTMLElement>,
-  options: {
-    timeout?: number
-    onEnter?: (event) => void
-    onOut?: (event) => void
-  } = {},
-) => {
-  const {timeout = 0, onEnter, onOut} = options
+export function useMouseOver(target: HTMLElement | Ref<HTMLElement>, options: {
+  timeout?: number
+  onEnter?: (event) => void
+  onOut?: (event) => void
+} = {}) {
+  const { timeout = 0, onEnter, onOut } = options
   let timer
   useEventListener(target, 'mouseover', (event) => {
     clearTimeout(timer)
@@ -32,11 +30,12 @@ export const useMouseOver = (
 /**
  * 使用DOM方法动态设置元素的类名
  */
-export const useDynamicClassName = (targetRef, className, enableRef) => {
+export function useDynamicClassName(targetRef, className, enableRef) {
   const toggle = (val) => {
     if (val) {
       targetRef.value.classList.add(className)
-    } else {
+    }
+    else {
       targetRef.value.classList.remove(className)
     }
   }
@@ -51,12 +50,7 @@ export const useDynamicClassName = (targetRef, className, enableRef) => {
 type ByPosition = 'top' | 'bottom' | 'left' | 'right'
 
 // 检测鼠标或触摸按下后，向上移动距离
-export const useElementMoveUpDetection = (
-  elementRef: Ref<HTMLElement | null>,
-  distance: number,
-  position: ByPosition,
-  callback: (event) => void,
-) => {
+export function useElementMoveUpDetection(elementRef: Ref<HTMLElement | null>, distance: number, position: ByPosition, callback: (event) => void) {
   let startPos = 0 // 记录按下时的 Y 轴坐标
   let isMoving = false // 记录是否处于移动状态
 
@@ -76,8 +70,8 @@ export const useElementMoveUpDetection = (
     // console.log('handleMove', event)
     const element = elementRef.value
     if (element) {
-      const clientPos =
-        event instanceof TouchEvent ? event.touches[0][clientPosKey] : event[clientPosKey]
+      const clientPos
+        = event instanceof TouchEvent ? event.touches[0][clientPosKey] : event[clientPosKey]
 
       // 判断是否向上移动指定距离
       if (clientPos * directionFlag < startPos - distance) {

@@ -1,15 +1,9 @@
-<script lang="ts">
-export default {
-  name: 'AutoFormElPlus',
-}
-</script>
-
 <script setup lang="ts">
-import {onBeforeUnmount, onMounted, ref, toRefs} from 'vue'
-import {AutoFormSchema, AutoFormItemType} from './enum'
+import type { FormInstance } from 'element-plus'
+import type { AutoFormSchema } from './enum'
+import { onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 import AutoFormItem from './AutoFormItem.vue'
-import {FormInstance} from 'element-plus'
-
+import { AutoFormItemType } from './enum'
 /**
  * Element Plus 表单生成组件
  */
@@ -25,11 +19,17 @@ const props = withDefaults(
   },
 )
 
-const emit = defineEmits(['onInvalidForm', 'onSubmit', 'onMounted', 'onBeforeUnmount'])
-const {formSchema} = toRefs(props)
+const emit = defineEmits([
+  'onInvalidForm',
+  'onSubmit',
+  'onMounted',
+  'onBeforeUnmount',
+])
+
+const { formSchema } = toRefs(props)
 
 const formRef = ref<FormInstance>()
-const submitForm = () => {
+function submitForm() {
   formRef.value.validate(async (valid: boolean) => {
     if (!valid) {
       console.log('Invalid form')
@@ -64,37 +64,44 @@ defineExpose({
     :rules="formSchema.rules"
     :label-position="formSchema.labelPosition"
     class="auto-form-el-plus"
-    @submit.prevent="submitForm"
     v-bind="formSchema.props"
     :disabled="isLoading"
+    @submit.prevent="submitForm"
   >
     <transition name="fade">
-      <div class="auto-form-loading-container" v-show="isLoading">
-        <div class="loading-text vgo-panel">Loading...</div>
+      <div v-show="isLoading" class="auto-form-loading-container">
+        <div class="loading-text vgo-panel">
+          Loading...
+        </div>
       </div>
     </transition>
 
     <div class="form-content-wrap">
       <template v-for="(item, index) in formSchema.formItems">
-        <!--      自动grid数组-->
+        <!--      自动grid数组 -->
         <div
-          :key="'g_' + index"
+          v-if="Array.isArray(item)"
+          :key="`g_${index}`"
           class="auto-form-grid"
           :class="[`count-${item.length}`]"
-          v-if="Array.isArray(item)"
-          :style="{gridTemplateColumns: `repeat(${item.length}, 1fr)`}"
+          :style="{ gridTemplateColumns: `repeat(${item.length}, 1fr)` }"
         >
           <template v-for="vi in item">
-            <AutoFormItem v-if="'key' in vi" :key="vi.key" :item="vi" :model="formSchema.model" />
+            <AutoFormItem
+              v-if="'key' in vi"
+              :key="vi.key"
+              :item="vi"
+              :model="formSchema.model"
+            />
           </template>
         </div>
-        <!--      手动grid数组(AutoFormRow)-->
+        <!--      手动grid数组(AutoFormRow) -->
         <div
-          :key="'ag_' + index"
+          v-else-if="'children' in item && Array.isArray(item.children)"
+          :key="`ag_${index}`"
           class="auto-form-grid"
           :class="[`count-${item.cols}`]"
-          v-else-if="'children' in item && Array.isArray(item.children)"
-          :style="{gridTemplateColumns: `repeat(${item.cols}, 1fr)`}"
+          :style="{ gridTemplateColumns: `repeat(${item.cols}, 1fr)` }"
         >
           <AutoFormItem
             v-for="vi in item.children"
@@ -103,7 +110,7 @@ defineExpose({
             :model="formSchema.model"
           />
         </div>
-        <!--      单个内容-->
+        <!--      单个内容 -->
         <AutoFormItem
           v-else-if="'key' in item"
           :key="index"
@@ -113,14 +120,16 @@ defineExpose({
       </template>
     </div>
 
-    <!--    操作按钮-->
+    <!--    操作按钮 -->
     <div v-if="!hideActions" class="auto-form-actions">
       <slot name="actions" :submit-form="submitForm">
-        <el-button type="primary" @click="submitForm()">Submit</el-button>
+        <el-button type="primary" @click="submitForm()">
+          Submit
+        </el-button>
       </slot>
     </div>
 
-    <slot></slot>
+    <slot />
   </el-form>
 </template>
 

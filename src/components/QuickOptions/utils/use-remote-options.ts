@@ -1,10 +1,10 @@
-import {QuickOptionItem} from '../enum'
-import {onMounted, ref} from 'vue'
+import type { QuickOptionItem } from '../enum'
+import { onMounted, ref } from 'vue'
 
-export const useRemoteOptions = ({fetchFn, mapFn}) => {
+export function useRemoteOptions({ fetchFn, mapFn }) {
   const options = ref<QuickOptionItem[]>([])
 
-  type ListItem = {
+  interface ListItem {
     children?: ListItem[]
   }
 

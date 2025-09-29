@@ -1,9 +1,9 @@
 <script lang="ts" setup="">
-import {QuickOptionItem} from './enum'
-import QuickContextMenu from './QuickContextMenu.vue'
-import {ref} from 'vue'
+import type { QuickOptionItem } from './enum'
+import { ref } from 'vue'
 import VueRender from '../VueRender.vue'
-import DynamicValueDisplay from './utils/DynamicValueDisplay.vue'
+import DynamicValueDisplay from './components/DynamicValueDisplay.vue'
+import QuickContextMenu from './QuickContextMenu.vue'
 
 withDefaults(
   defineProps<{
@@ -18,7 +18,7 @@ const verticalMenuRef = ref()
 const menuChildren = ref<QuickOptionItem[]>([])
 const activeIndex = ref(-1)
 
-const handleMenuStripItemClick = (event, item: QuickOptionItem, index) => {
+function handleMenuStripItemClick(event, item: QuickOptionItem, index) {
   console.log('handleMenuStripItemClick', item, index)
   if (item.props?.onClick) {
     item.props.onClick(event)
@@ -39,7 +39,7 @@ const handleMenuStripItemClick = (event, item: QuickOptionItem, index) => {
     activeIndex.value = index
   })
 }
-const handleVerticalMenuClose = () => {
+function handleVerticalMenuClose() {
   // console.log('handleVerticalMenuClose')
   menuChildren.value = []
   activeIndex.value = -1
@@ -49,29 +49,29 @@ const handleVerticalMenuClose = () => {
 <template>
   <div v-if="options && options.length" class="quick-menu-strip">
     <template v-for="(item, index) in options" :key="index">
-      <div v-if="item.split" class="option-split"></div>
+      <div v-if="item.split" class="option-split" />
       <button
         v-else
         class="btn-no-style btn-menu"
-        :class="{active: activeIndex === index}"
+        :class="{ active: activeIndex === index }"
         @click="handleMenuStripItemClick($event, item, index)"
       >
         <span v-if="item.iconRender" class="item-icon">
           <VueRender :render-fn="item.iconRender" />
         </span>
-        <span class="item-icon" v-else-if="item.icon">
-          <img :src="item.icon" alt="icon" />
+        <span v-else-if="item.icon" class="item-icon">
+          <img :src="item.icon" alt="icon">
         </span>
-        <span class="item-icon" v-else-if="item.iconClass" :class="item.iconClass"></span>
+        <span v-else-if="item.iconClass" class="item-icon" :class="item.iconClass" />
 
-        <span class="item-content" v-if="item.html" v-html="item.html"></span>
-        <span class="item-content" v-else-if="item.render">
+        <span v-if="item.html" class="item-content" v-html="item.html" />
+        <span v-else-if="item.render" class="item-content">
           <VueRender :render-fn="item.render" />
         </span>
-        <span class="item-content" v-else-if="!!item.dynamicProps">
+        <span v-else-if="!!item.dynamicProps" class="item-content">
           <DynamicValueDisplay v-bind="item.dynamicProps" />
         </span>
-        <span class="item-content" v-else>
+        <span v-else class="item-content">
           {{ item.label }}
         </span>
       </button>
@@ -79,8 +79,8 @@ const handleVerticalMenuClose = () => {
 
     <QuickContextMenu
       ref="verticalMenuRef"
-      @onClose="handleVerticalMenuClose"
       :options="menuChildren"
+      @on-close="handleVerticalMenuClose"
     />
   </div>
 </template>

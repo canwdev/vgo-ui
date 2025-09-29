@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import {PropType, watch} from 'vue'
-import {SwitchOption} from '../enum'
-import {useVModel} from '@vueuse/core'
+import type { PropType } from 'vue'
+import type { SwitchOption } from '../enum.ts'
+import { useVModel } from '@vueuse/core'
+import { watch } from 'vue'
 
 // 定义组件的 props
 const props = defineProps({
@@ -35,15 +36,15 @@ watch(mValue, (value) => {
 </script>
 
 <template>
-  <div class="rect-switch" :class="{disabled}">
+  <div class="rect-switch" :class="{ disabled }">
     <div
       v-for="item in options"
       :key="item.value"
       class="r-item"
+      :class="{ active: item.value === mValue }"
       @click="mValue = item.value"
-      :class="{active: item.value === mValue}"
     >
-      <div v-if="isLabelHtml" v-html="item.label"></div>
+      <div v-if="isLabelHtml" v-html="item.label" />
       <template v-else>
         {{ item.label || item.value }}
       </template>

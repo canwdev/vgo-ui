@@ -1,17 +1,16 @@
 <script lang="ts" setup>
-import {computed, inject, toRefs} from 'vue'
-import {StOptionItem, StOptionType, swatches} from './enum'
-import RectSwitch from './Tools/RectSwitch.vue'
+import type { StOptionItem } from './enum'
+import { computed, inject, toRefs } from 'vue'
 import VueRender from '../VueRender.vue'
-import AdvancedNumberInput from './Tools/AdvancedNumberInput.vue'
-import DynamicTags from './Tools/DynamicTags.vue'
+import DynamicTags from './components/DynamicTags.vue'
+import RectSwitch from './components/RectSwitch.vue'
+import { StOptionType, swatches } from './enum'
 
 const props = defineProps<{
   item: StOptionItem
 }>()
-const {item} = toRefs(props)
 const emit = defineEmits(['updateValue'])
-
+const { item } = toRefs(props)
 // 顶层父组件的数据
 const sharedStore = inject('sharedStore')
 
@@ -24,7 +23,7 @@ const dynamicValue = computed({
     return item.value.value
   },
   set(val) {
-    emit('updateValue', {item: item.value, value: val})
+    emit('updateValue', { item: item.value, value: val })
     const store = item.value.store || sharedStore.value
     if (store) {
       store[item.value.key] = val
@@ -45,15 +44,15 @@ const dynamicValue = computed({
 
     <RectSwitch
       v-else-if="item.type === StOptionType.MULTIPLE_SWITCH"
-      :options="item.options"
       v-model="dynamicValue"
+      :options="item.options"
       v-bind="item.props"
     />
 
     <el-input
-      class="option-select option-input"
       v-else-if="item.type === StOptionType.INPUT"
       v-model="dynamicValue"
+      class="option-select option-input"
       clearable
       v-bind="item.props"
     />
@@ -70,9 +69,9 @@ const dynamicValue = computed({
     </el-select>
 
     <DynamicTags
-      class="dynamic-tags"
       v-else-if="item.type === StOptionType.DYNAMIC_TAGS"
       v-model="dynamicValue"
+      class="dynamic-tags"
       v-bind="item.props"
     />
 
@@ -83,8 +82,8 @@ const dynamicValue = computed({
       :predefine="swatches"
     />
 
-    <!-- 高级的数字输入框-->
-    <AdvancedNumberInput
+    <!-- 高级的数字输入框 -->
+    <el-input-number
       v-else-if="item.type === StOptionType.INPUT_NUMBER"
       v-model="dynamicValue"
       :disabled="item.disabled"

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
+import type { QuickOptionItem } from './enum'
+import { ref } from 'vue'
 import QuickOptions from './index.vue'
-import {QuickOptionItem} from './enum'
-import {ref} from 'vue'
 
 interface Props {
   options: QuickOptionItem[]
@@ -12,13 +12,14 @@ const props = withDefaults(defineProps<Props>(), {})
 const visible = ref(false)
 
 const timer = ref()
-const handleVisibleChange = (val) => {
+function handleVisibleChange(val) {
   clearTimeout(timer.value)
   if (!val) {
     timer.value = setTimeout(() => {
       visible.value = false
     }, 300)
-  } else {
+  }
+  else {
     visible.value = true
   }
 }
@@ -43,7 +44,7 @@ const handleVisibleChange = (val) => {
             <path
               d="M10 6a1.25 1.25 0 1 1 0-2.5A1.25 1.25 0 0 1 10 6zm0 5.25a1.25 1.25 0 1 1 0-2.5a1.25 1.25 0 0 1 0 2.5zm-1.25 4a1.25 1.25 0 1 0 2.5 0a1.25 1.25 0 0 0-2.5 0z"
               fill="currentColor"
-            ></path>
+            />
           </g>
         </svg>
       </button>

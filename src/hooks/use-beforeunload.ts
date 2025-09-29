@@ -1,11 +1,11 @@
-import {useEventListener} from '@vueuse/core'
-import {onBeforeUnmount, onMounted, ref} from 'vue'
+import { useEventListener } from '@vueuse/core'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 /**
  * 防止页面关闭
  * @param checkIsChanged 回调函数
  */
-export const useBeforeUnload = (checkIsChanged) => {
+export function useBeforeUnload(checkIsChanged) {
   const handleBeforeUnload = (e) => {
     if (checkIsChanged()) {
       e.preventDefault()
@@ -22,7 +22,7 @@ export const useBeforeUnload = (checkIsChanged) => {
   })
 }
 
-export const useUnSavedChanges = () => {
+export function useUnSavedChanges() {
   const isChanged = ref(false)
   useBeforeUnload(() => isChanged.value)
   return {
@@ -31,7 +31,7 @@ export const useUnSavedChanges = () => {
 }
 
 // replace ctrl+s save action
-export const useSaveShortcut = (saveFn) => {
+export function useSaveShortcut(saveFn) {
   useEventListener(document, 'keydown', (event) => {
     if (event.ctrlKey && event.key === 's') {
       event.preventDefault() // 阻止默认的保存操作

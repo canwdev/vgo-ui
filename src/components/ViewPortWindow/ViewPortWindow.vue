@@ -1,20 +1,23 @@
-<script lang="ts">
-export default {
-  name: 'ViewPortWindow',
-}
-</script>
-
 <script lang="ts" setup>
-import {computed, onBeforeUnmount, onMounted, reactive, ref, shallowRef, toRefs, watch} from 'vue'
-import {OnMoveParams, WindowController} from './utils/window-controller'
+import type { ILayout, WinOptions } from './enum'
+import type { OnMoveParams } from './window-controller.ts'
 
-import LayoutHelper from './utils/LayoutHelper.vue'
-import {useDynamicClassName, useMouseOver} from './utils/use-utils'
-import {useThrottleFn, useVModel, watchDebounced} from '@vueuse/core'
-import {checkWindowAttach, ILayout, WinOptions} from './enum'
-import LayoutPreview from './utils/LayoutPreview.vue'
-
-const LS_KEY_VP_WINDOW_OPTION = 'vp_window'
+import { useThrottleFn, useVModel, watchDebounced } from '@vueuse/core'
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+  shallowRef,
+  toRefs,
+  watch,
+} from 'vue'
+import { checkWindowAttach } from './enum'
+import LayoutHelper from './LayoutHelper.vue'
+import LayoutPreview from './LayoutPreview.vue'
+import { useDynamicClassName, useMouseOver } from './use-utils.ts'
+import { WindowController } from './window-controller.ts'
 
 const props = withDefaults(
   defineProps<{
@@ -57,6 +60,7 @@ const props = withDefaults(
     transitionName: 'fade-scale',
   },
 )
+
 const emit = defineEmits([
   'update:visible',
   'resize',
@@ -66,9 +70,12 @@ const emit = defineEmits([
   'update:minimized',
   'update:maximized',
 ])
-const {allowMaximum, allowMove, noTitleBar, allowSnap} = toRefs(props)
 
-const storageKey = LS_KEY_VP_WINDOW_OPTION + '_' + props.wid
+const LS_KEY_VP_WINDOW_OPTION = 'vp_window'
+
+const { allowMaximum, allowMove, noTitleBar, allowSnap } = toRefs(props)
+
+const storageKey = `${LS_KEY_VP_WINDOW_OPTION}_${props.wid}`
 const mVisible = useVModel(props, 'visible', emit)
 const rootRef = ref()
 const titleBarRef = ref()
@@ -76,8 +83,8 @@ const winBodyRef = ref()
 const titleBarButtonsRef = ref()
 const dWindow = shallowRef<WindowController | null>(null)
 
-const isMaximized = useVModel(props, 'maximized', emit, {passive: true})
-const isMinimized = useVModel(props, 'minimized', emit, {passive: true})
+const isMaximized = useVModel(props, 'maximized', emit, { passive: true })
+const isMinimized = useVModel(props, 'minimized', emit, { passive: true })
 
 watch(isMinimized, (val) => {
   if (!val && mVisible.value) {
@@ -91,10 +98,11 @@ onMounted(() => {
 })
 
 const isTransition = ref(false)
-const setIsTransition = (val: boolean) => {
+function setIsTransition(val: boolean) {
   if (val) {
     isTransition.value = val
-  } else {
+  }
+  else {
     setTimeout(() => {
       // 等待动画播放结束
       isTransition.value = val
@@ -120,7 +128,7 @@ const defaultWinOptions: WinOptions = {
   maximized: false,
 }
 
-const winOptions = reactive<WinOptions>({...defaultWinOptions})
+const winOptions = reactive<WinOptions>({ ...defaultWinOptions })
 watchDebounced(
   winOptions,
   () => {
@@ -140,10 +148,10 @@ watchDebounced(
     }
     if (props.wid) {
       // console.log(`save ${storageKey}`, {...winOptions})
-      localStorage.setItem(storageKey, JSON.stringify({...winOptions}))
+      localStorage.setItem(storageKey, JSON.stringify({ ...winOptions }))
     }
   },
-  {deep: Boolean(props.wid), debounce: 500},
+  { deep: Boolean(props.wid), debounce: 500 },
 )
 
 watch(allowMove, (val) => {
@@ -159,6 +167,7 @@ watch(isMaximized, (val) => {
   winOptions.maximized = val
 })
 
+const isInit = ref(false)
 watch(mVisible, (val) => {
   if (val) {
     if (!isInit.value) {
@@ -167,6 +176,18 @@ watch(mVisible, (val) => {
     dWindow.value.updateZIndex()
   }
 })
+
+const handleSelfResize = useThrottleFn(() => {
+  if (!mVisible.value || !rootRef.value) {
+    return
+  }
+
+  const size = getComputedStyle(rootRef.value)
+
+  winOptions.width = size.width
+  winOptions.height = size.height
+  emit('resize', winOptions)
+}, 100)
 
 onMounted(() => {
   dWindow.value = new WindowController({
@@ -195,12 +216,11 @@ onMounted(() => {
   initWindowStyle()
 })
 
-const setPos = (dir: string, value: string) => {
+function setPos(dir: string, value: string) {
   rootRef.value.style[dir] = winOptions[dir] = value
 }
 
-const isInit = ref(false)
-const initWindowStyle = () => {
+function initWindowStyle() {
   if (!mVisible.value) {
     // 防止初始化不可见时的位置错误
     return
@@ -219,7 +239,8 @@ const initWindowStyle = () => {
   let lsVal
   if (!props.wid) {
     lsState = defaultOptions
-  } else {
+  }
+  else {
     lsVal = JSON.parse(localStorage.getItem(storageKey) || 'null')
     // console.log(`load ${storageKey}`, lsVal)
     lsState = lsVal || defaultOptions
@@ -237,35 +258,36 @@ const initWindowStyle = () => {
       const cx = Math.round(window.innerWidth / 2 - rect.width / 2)
       const cy = Math.round(window.innerHeight / 2 - rect.height / 2)
 
-      winOptions.left = rootRef.value.style.left = cx + 'px'
-      winOptions.top = rootRef.value.style.top = cy + 'px'
-    } else {
+      winOptions.left = rootRef.value.style.left = `${cx}px`
+      winOptions.top = rootRef.value.style.top = `${cy}px`
+    }
+    else {
       // 初始化后检查窗口是否在视口外，如果在则修复
       dWindow.value.handleResizeDebounced()
     }
   })
 }
 
-const fixWindowInScreen = (delayMs = 400): Promise<void> => {
+function fixWindowInScreen(delayMs = 400): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(() => {
       const rect = rootRef.value.getBoundingClientRect()
       // console.log(rect)
       let flagFixed = false
       if (rect.y < 0) {
-        setPos('top', 0 + 'px')
+        setPos('top', `${0}px`)
         flagFixed = true
       }
       if (rect.x <= -rect.width) {
-        setPos('left', 0 + 'px')
+        setPos('left', `${0}px`)
         flagFixed = true
       }
       if (!flagFixed) {
         if (rect.y > window.innerHeight) {
-          setPos('top', window.innerHeight - rect.height + 'px')
+          setPos('top', `${window.innerHeight - rect.height}px`)
         }
         if (rect.x > window.innerWidth) {
-          setPos('left', window.innerWidth - rect.width + 'px')
+          setPos('left', `${window.innerWidth - rect.width}px`)
         }
       }
 
@@ -274,6 +296,7 @@ const fixWindowInScreen = (delayMs = 400): Promise<void> => {
   })
 }
 
+const layoutPreviewData = ref<ILayout | undefined>(undefined)
 // 窗口边缘贴靠检测 (Aero Snap)
 const checkSnap = useThrottleFn(
   (params) => {
@@ -283,7 +306,7 @@ const checkSnap = useThrottleFn(
   true,
 )
 
-const handleMove = async (data: OnMoveParams) => {
+async function handleMove(data: OnMoveParams) {
   // console.log('[onMove]', data)
   if (data.moveStop) {
     setTimeout(() => {
@@ -298,27 +321,15 @@ const handleMove = async (data: OnMoveParams) => {
     }
     return
   }
-  const {top, left, pointerX, pointerY} = data
+  const { top, left, pointerX, pointerY } = data
 
   if (allowSnap.value) {
-    checkSnap({x: pointerX, y: pointerY})
+    checkSnap({ x: pointerX, y: pointerY })
   }
 
   winOptions.top = top
   winOptions.left = left
 }
-
-const handleSelfResize = useThrottleFn(() => {
-  if (!mVisible.value || !rootRef.value) {
-    return
-  }
-
-  const size = getComputedStyle(rootRef.value)
-
-  winOptions.width = size.width
-  winOptions.height = size.height
-  emit('resize', winOptions)
-}, 100)
 
 onBeforeUnmount(() => {
   if (dWindow.value) {
@@ -326,11 +337,11 @@ onBeforeUnmount(() => {
   }
 })
 
-const setActive = () => {
-  dWindow.value.updateZIndex({preventOnActive: true})
+function setActive() {
+  dWindow.value.updateZIndex({ preventOnActive: true })
 }
 
-const toggleMaximized = () => {
+function toggleMaximized() {
   if (allowMaximum.value) {
     setIsTransition(true)
     isMaximized.value = !isMaximized.value
@@ -338,21 +349,21 @@ const toggleMaximized = () => {
   }
 }
 
-const handleClose = () => {
+function handleClose() {
   mVisible.value = false
   emit('onClose')
 }
 
 const isShowLayoutHelper = ref(false)
 
-const setWindowLayout = (layout: ILayout) => {
-  const {xRatio, yRatio, widthRatio, heightRatio, maximize} = layout
+function setWindowLayout(layout: ILayout) {
+  const { xRatio, yRatio, widthRatio, heightRatio, maximize } = layout
   if (maximize) {
     toggleMaximized()
     return
   }
 
-  const {innerWidth: maxWidth, innerHeight: maxHeight} = window
+  const { innerWidth: maxWidth, innerHeight: maxHeight } = window
   const left = Math.ceil(maxWidth * xRatio)
   const top = Math.ceil(maxHeight * yRatio)
   const width = Math.ceil(maxWidth * widthRatio)
@@ -364,10 +375,10 @@ const setWindowLayout = (layout: ILayout) => {
   setIsTransition(true)
 
   setTimeout(() => {
-    setPos('left', left + 'px')
-    setPos('top', top + 'px')
-    setPos('width', width + 'px')
-    setPos('height', height + 'px')
+    setPos('left', `${left}px`)
+    setPos('top', `${top}px`)
+    setPos('width', `${width}px`)
+    setPos('height', `${height}px`)
     setIsTransition(false)
   })
 }
@@ -381,9 +392,7 @@ useMouseOver(mButtonRef, {
   },
 })
 
-const layoutPreviewData = ref<ILayout | undefined>(undefined)
-
-const focus = () => {
+function focus() {
   rootRef.value.focus()
 }
 
@@ -406,9 +415,12 @@ defineExpose({
 
 <template>
   <transition :name="transitionName">
-    <div v-show="isInit && mVisible" class="vgo-window" ref="rootRef" :id="wid">
+    <div v-show="isInit && mVisible" :id="wid" ref="rootRef" class="vgo-window">
       <LayoutPreview :preview-data="layoutPreviewData" />
-      <LayoutHelper v-model:visible="isShowLayoutHelper" @setWindowLayout="setWindowLayout" />
+      <LayoutHelper
+        v-model:visible="isShowLayoutHelper"
+        @set-window-layout="setWindowLayout"
+      />
       <div class="vgo-window-content">
         <div
           v-show="!noTitleBar"
@@ -417,12 +429,20 @@ defineExpose({
           @dblclick="toggleMaximized"
         >
           <div class="vgo-window-title-bar-text text-overflow">
-            <slot name="titleBarLeft"></slot>
+            <slot name="titleBarLeft" />
           </div>
-          <div @dblclick.stop ref="titleBarButtonsRef" class="vgo-window-controls">
-            <slot name="titleBarRightControls"> </slot>
+          <div
+            ref="titleBarButtonsRef"
+            class="vgo-window-controls"
+            @dblclick.stop
+          >
+            <slot name="titleBarRightControls" />
             <slot name="titleBarRight">
-              <button v-if="allowMinimum" @click="isMinimized = true" class="is-minimize">
+              <button
+                v-if="allowMinimum"
+                class="is-minimize"
+                @click="isMinimized = true"
+              >
                 <svg
                   width="20"
                   height="20"
@@ -438,7 +458,7 @@ defineExpose({
                       height="1.5"
                       rx=".75"
                       fill="currentColor"
-                    ></rect>
+                    />
                   </g>
                 </svg>
               </button>
@@ -446,8 +466,8 @@ defineExpose({
               <button
                 v-if="allowMaximum"
                 ref="mButtonRef"
-                @click="toggleMaximized"
                 :class="[isMaximized ? 'is-restore' : 'is-maximize']"
+                @click="toggleMaximized"
               >
                 <template v-if="isMaximized">
                   <svg
@@ -461,7 +481,7 @@ defineExpose({
                       <path
                         d="M13.854 2.854a.5.5 0 0 0-.708-.708L10 5.293V3.5a.5.5 0 0 0-1 0v2.9a.6.6 0 0 0 .6.6h2.9a.5.5 0 0 0 0-1h-1.793l3.147-3.146zM6.5 13a.5.5 0 0 1-.5-.5v-1.793l-3.146 3.147a.5.5 0 0 1-.708-.708L5.293 10H3.5a.5.5 0 0 1 0-1h2.9a.6.6 0 0 1 .6.6v2.9a.5.5 0 0 1-.5.5z"
                         fill="currentColor"
-                      ></path>
+                      />
                     </g>
                   </svg>
                 </template>
@@ -477,13 +497,18 @@ defineExpose({
                       <path
                         d="M8.5 2a.5.5 0 0 0 0 1h3.793L3 12.293V8.5a.5.5 0 0 0-1 0v4.9a.6.6 0 0 0 .6.6h4.9a.5.5 0 0 0 0-1H3.707L13 3.707V7.5a.5.5 0 0 0 1 0V2.6a.6.6 0 0 0-.6-.6H8.5z"
                         fill="currentColor"
-                      ></path>
+                      />
                     </g>
                   </svg>
                 </template>
               </button>
 
-              <button v-if="showClose" :title="`Close`" @click="handleClose" class="is-close">
+              <button
+                v-if="showClose"
+                title="Close"
+                class="is-close"
+                @click="handleClose"
+              >
                 <svg
                   width="20"
                   height="20"
@@ -495,7 +520,7 @@ defineExpose({
                     <path
                       d="M4.089 4.216l.057-.07a.5.5 0 0 1 .638-.057l.07.057L10 9.293l5.146-5.147a.5.5 0 0 1 .638-.057l.07.057a.5.5 0 0 1 .057.638l-.057.07L10.707 10l5.147 5.146a.5.5 0 0 1 .057.638l-.057.07a.5.5 0 0 1-.638.057l-.07-.057L10 10.707l-5.146 5.147a.5.5 0 0 1-.638.057l-.07-.057a.5.5 0 0 1-.057-.638l.057-.07L9.293 10L4.146 4.854a.5.5 0 0 1-.057-.638l.057-.07l-.057.07z"
                       fill="currentColor"
-                    ></path>
+                    />
                   </g>
                 </svg>
               </button>
@@ -504,7 +529,7 @@ defineExpose({
         </div>
 
         <div ref="winBodyRef" class="vgo-window-body _bg scrollbar-mini">
-          <slot></slot>
+          <slot />
         </div>
       </div>
     </div>

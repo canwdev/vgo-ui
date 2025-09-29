@@ -4,8 +4,8 @@
 
 ::: raw
 <script lang="ts" setup>
-import OptionUIDemo from '../../../src/components/OptionUI/OptionUIDemo.vue' 
+import DemoOptionUI from '../../../src/components/OptionUI/DemoOptionUI.vue' 
 </script>
 
-<OptionUIDemo />
+<DemoOptionUI />
 :::

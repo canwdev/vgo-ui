@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import OptionUI from './index.vue'
-import {computed, ref, h} from 'vue'
-import {StOptionItem, StOptionType} from './enum.ts'
+import type { StOptionItem } from './enum.ts'
+import { computed, h, ref } from 'vue'
+import { StOptionType } from './enum.ts'
+import OptionUI from './OptionUI.vue'
 
 const options = computed((): StOptionItem[] => {
   return [
@@ -100,7 +101,7 @@ const options = computed((): StOptionItem[] => {
           label: '自定义渲染',
           key: 'custom_render',
           actionRender: () => {
-            return h('div', {style: {color: 'red'}}, '自定义渲染内容')
+            return h('div', { style: { color: 'red' } }, '自定义渲染内容')
           },
         },
       ],

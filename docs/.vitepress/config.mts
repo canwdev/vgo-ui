@@ -1,4 +1,4 @@
-import {defineConfig} from 'vitepress'
+import { defineConfig } from 'vitepress'
 // import {readdirSync, statSync} from 'fs'
 // import {join} from 'path'
 
@@ -42,34 +42,37 @@ export default defineConfig({
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
-      {text: '首页', link: '/'},
-      {text: '文档', link: '/components/install'},
+      { text: '首页', link: '/' },
+      { text: '文档', link: '/components/install' },
     ],
 
     sidebar: {
       '/components/': [
         {
           text: '入门',
-          items: [{text: '安装', link: '/components/install'}],
+          items: [{ text: '安装', link: '/components/install' }],
         },
         {
           text: 'Auto 组件',
           items: [
-            {text: '说明', link: '/components/auto/index'},
-            {text: 'AutoFormElPlus', link: '/components/auto/form'},
-            {text: 'AutoTableElPlus', link: '/components/auto/table'},
-            {text: 'OptionUI', link: '/components/auto/option-ui'},
-            {text: 'QuickOptions', link: '/components/auto/quick-options'},
+            { text: '说明', link: '/components/auto/index' },
+            { text: 'AutoFormElPlus', link: '/components/auto/form' },
+            { text: 'AutoTableElPlus', link: '/components/auto/table' },
+            { text: 'OptionUI', link: '/components/auto/option-ui' },
+            { text: 'QuickOptions', link: '/components/auto/quick-options' },
           ],
         },
         {
           text: '实用组件',
-          items: [{text: '原生 HTML 元素加样式', link: '/components/html'}],
+          items: [
+            { text: '原生 HTML 元素加样式', link: '/components/basic/html' },
+            { text: 'ViewPortWindow', link: '/components/basic/window' },
+          ],
         },
       ],
     },
 
-    socialLinks: [{icon: 'github', link: 'https://github.com/canwdev/vgo-ui'}],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/canwdev/vgo-ui' }],
   },
   vite: {},
 })

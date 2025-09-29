@@ -1,18 +1,17 @@
-import {AutoFormItem, MixedFormItems} from './enum'
+import type { AutoFormItem, MixedFormItems } from './enum'
 
 /**
  * 遍历所有表单item，执行操作
  */
-export const traverseMixedFormItems = (
-  items: MixedFormItems[],
-  cb: (item: AutoFormItem) => void,
-) => {
+export function traverseMixedFormItems(items: MixedFormItems[], cb: (item: AutoFormItem) => void) {
   items.forEach((item) => {
     if ('children' in item && Array.isArray(item.children)) {
       traverseMixedFormItems(item.children, cb)
-    } else if (Array.isArray(item)) {
+    }
+    else if (Array.isArray(item)) {
       traverseMixedFormItems(item, cb)
-    } else {
+    }
+    else {
       cb(item as AutoFormItem)
     }
   })
@@ -21,7 +20,7 @@ export const traverseMixedFormItems = (
 /**
  * 获取平铺的表单items
  */
-export const getFlatFormItems = (formItems: MixedFormItems[]): MixedFormItems[] => {
+export function getFlatFormItems(formItems: MixedFormItems[]): MixedFormItems[] {
   const flatFormItems: MixedFormItems[] = []
 
   traverseMixedFormItems(formItems, (item) => {

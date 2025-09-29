@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import {h, ref} from 'vue'
-import AutoTableElPlus from './index.vue'
-import {AutoTableColumn} from './types'
+import type { AutoTableColumn } from './types'
+import { h, ref } from 'vue'
+import AutoTableElPlus from './AutoTableElPlus.vue'
 
 const tableData = ref([
-  {id: 1, name: 'test 1', name2: 'test 21'},
-  {id: 2, name: 'test 2', name2: 'test 22'},
-  {id: 3, name: 'test 3', name2: 'test 23'},
-  {id: 4, name: 'test 4', name2: 'test 24'},
+  { id: 1, name: 'test 1', name2: 'test 21' },
+  { id: 2, name: 'test 2', name2: 'test 22' },
+  { id: 3, name: 'test 3', name2: 'test 23' },
+  { id: 4, name: 'test 4', name2: 'test 24' },
 ])
 const tableColumns: AutoTableColumn[] = [
   {
@@ -30,7 +30,7 @@ const tableColumns: AutoTableColumn[] = [
     label: 'name',
     width: 300,
     render: (scope) => {
-      return h('div', {style: {color: 'red'}}, scope.row.name)
+      return h('div', { style: { color: 'red' } }, scope.row.name)
     },
   },
   {
@@ -44,10 +44,10 @@ const tableColumns: AutoTableColumn[] = [
 
 const autoTableRef = ref()
 const multipleSelection = ref([])
-const handleSelectionChange = (val) => {
+function handleSelectionChange(val) {
   multipleSelection.value = val
 }
-const clearSelect = () => {
+function clearSelect() {
   // 清空多选
   multipleSelection.value = []
   console.log(autoTableRef.value)
@@ -60,14 +60,16 @@ const clearSelect = () => {
 <template>
   <div class="auto-table-demo">
     <el-space>
-      <el-button @click="clearSelect" :disabled="!multipleSelection.length">清空多选</el-button>
+      <el-button :disabled="!multipleSelection.length" @click="clearSelect">
+        清空多选
+      </el-button>
     </el-space>
     <AutoTableElPlus
       ref="autoTableRef"
       :data="tableData"
       :columns="tableColumns"
-      @selectionChange="handleSelectionChange"
       :row-key="(row) => row.id"
+      @selection-change="handleSelectionChange"
     />
     <pre>{{ multipleSelection }}</pre>
   </div>

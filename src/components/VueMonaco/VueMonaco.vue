@@ -1,11 +1,4 @@
-<script lang="ts">
-export default {
-  name: 'VueMonaco',
-}
-</script>
-
 <script lang="ts" setup>
-import {inject, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch} from 'vue'
 import {
   useDebounceFn,
   useEventListener,
@@ -13,6 +6,15 @@ import {
   useThrottleFn,
   useVModel,
 } from '@vueuse/core'
+import {
+  inject,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  shallowRef,
+  watch,
+} from 'vue'
 import monaco from './monaco-helper'
 
 const props = withDefaults(
@@ -30,21 +32,22 @@ const props = withDefaults(
     watchParentSize: true,
   },
 )
+
 const emit = defineEmits(['update:modelValue'])
 
 const mValue = useVModel(props, 'modelValue', emit)
 const editorContainerRef = ref()
 const editorInstance = shallowRef<monaco.editor.IStandaloneCodeEditor>()
 
-const {isAppDarkMode} = inject('darkMode') || {
+const { isAppDarkMode } = inject('darkMode') || {
   isAppDarkMode: ref(false),
 }
 
-const getThemeName = () => {
+function getThemeName() {
   return isAppDarkMode.value ? 'vs-dark' : 'vs'
 }
 watch(isAppDarkMode, () => {
-  editorInstance.value?.updateOptions({theme: getThemeName()})
+  editorInstance.value?.updateOptions({ theme: getThemeName() })
 })
 
 watch(
@@ -64,6 +67,10 @@ watch(
     }
   },
 )
+
+const handleEditorChangeDebounced = useDebounceFn(() => {
+  mValue.value = editorInstance.value!.getValue()
+}, props.debounceMs)
 
 onMounted(() => {
   const editor = monaco.editor.create(editorContainerRef.value, {
@@ -102,19 +109,16 @@ onMounted(() => {
 onBeforeUnmount(() => {
   editorInstance.value?.dispose()
 })
-const handleEditorChangeDebounced = useDebounceFn(() => {
-  mValue.value = editorInstance.value!.getValue()
-}, props.debounceMs)
 
-const focus = () => {
+function focus() {
   editorInstance.value?.focus()
 }
 
-const resize = () => {
+function resize() {
   editorInstance.value?.layout()
 }
 
-const getInstance = () => {
+function getInstance() {
   return editorInstance.value
 }
 
@@ -131,9 +135,7 @@ useEventListener('resize', handleResizeDebounced)
 
 onMounted(() => {
   if (props.watchParentSize) {
-    useResizeObserver(editorContainerRef.value.parentElement, (entries) => {
-      // const entry = entries[0]
-      // const {width, height} = entry.contentRect
+    useResizeObserver(editorContainerRef.value.parentElement, () => {
       handleResizeDebounced()
     })
   }

@@ -52,7 +52,7 @@ export enum StOptionType {
   BUTTON = 'button',
 }
 
-export type SwitchOption = {
+export interface SwitchOption {
   label: string
   value: any
 }
