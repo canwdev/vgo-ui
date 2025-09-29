@@ -1,7 +1,6 @@
 # ViewPortWindow
 
-菜单选项组件
-
+窗口组件
 
 ::: raw
 <script lang="ts" setup>
