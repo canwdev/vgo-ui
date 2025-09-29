@@ -60,13 +60,7 @@ const handleItemClick = (e: Event, fn) => {
     </div>
 
     <TransitionBodyCollapse>
-      <transition-group
-        tag="div"
-        name="fade-scale"
-        v-if="item.children && item.children.length"
-        v-show="isExpanded"
-        class="panel-body"
-      >
+      <div v-if="item.children && item.children.length" v-show="isExpanded" class="panel-body">
         <div
           v-for="(sItem, index) in item.children"
           :key="sItem.key || index"
@@ -119,7 +113,7 @@ const handleItemClick = (e: Event, fn) => {
             </div>
           </template>
         </div>
-      </transition-group>
+      </div>
     </TransitionBodyCollapse>
   </div>
 </template>
