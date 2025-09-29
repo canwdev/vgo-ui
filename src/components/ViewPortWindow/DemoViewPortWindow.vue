@@ -14,8 +14,8 @@ const visible = ref(true)
       v-model:visible="visible" allow-maximum allow-minimum
       :init-center="false"
       :init-win-options="{
-        top: '100px',
-        left: '100px',
+        top: '300px',
+        left: '300px',
         width: '400px',
         height: '300px',
       }"

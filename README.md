@@ -3,6 +3,10 @@
 - 实用型 Vue 3 组件库
 - ⚠️ 用于个人项目和学习使用，不建议用于生产环境
 
+## 文档
+
+进入 `docs` 目录，运行 `bun run dev:docs` 即可启动文档网站。
+
 ## Link to development
 
 Run the following command to link the package to the local development environment.

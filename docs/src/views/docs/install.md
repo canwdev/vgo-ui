@@ -16,8 +16,8 @@ bun i @canwdev/vgo-ui
 @use "@canwdev/vgo-ui/src/styles/base" as *;
 
 :root {
-  // 主题颜色(R,G,B) 可以根据需要自定义
-  --primary-rgb: 83, 173, 228;
+  // 主题颜色(R,G,B) 覆盖（可选）
+  --vgo-primary-rgb: 83, 173, 228 !important;
 }
 ```
 
@@ -30,11 +30,11 @@ bun i @canwdev/vgo-ui
 <body class="vgo-theme-default">
 </body>
 
-<!--暗色主题-->
-<body class="vgo-theme-default dark">
-</body>
+<!--暗色主题（需要在 html 上添加 class="dark"）-->
+<html class="dark">
+  <body class="vgo-theme-default">
+  </body>
+</html>
 ```
 
-## 在项目中使用组件
-
-在侧边栏的组件列表中，找到需要使用的组件，点击链接即可跳转到组件的文档页面。
+可以参考 `src/styles/theme-default.scss` 编写自定义主题

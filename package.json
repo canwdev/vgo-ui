@@ -6,9 +6,6 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "docs:dev": "vitepress dev docs --port 3034",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs",
     "bun:pack": "bun run lint && bun pm pack",
     "lint": "eslint src/**/*.{ts,tsx,vue} --fix"
   },
@@ -18,20 +15,10 @@
     "lodash-es": "^4.17.21"
   },
   "devDependencies": {
-    "@tsconfig/node22": "^22.0.1",
-    "@types/node": "^22.14.0",
-    "@vitejs/plugin-vue": "^5.2.3",
-    "@vitejs/plugin-vue-jsx": "^4.1.2",
-    "@vue/tsconfig": "^0.7.0",
-    "element-plus": "^2.9.7",
-    "postcss": "^8.5.6",
-    "sass": "^1.86.3",
-    "typescript": "~5.6.3",
-    "vite": "^6.2.5",
-    "vitepress": "^1.6.4",
-    "vue-tsc": "^2.2.8",
     "@antfu/eslint-config": "^5.4.1",
+    "element-plus": "^2.11.4",
     "eslint": "^9.36.0",
-    "eslint-plugin-format": "^1.0.1"
+    "eslint-plugin-format": "^1.0.1",
+    "typescript": "~5.6.3"
   }
 }
