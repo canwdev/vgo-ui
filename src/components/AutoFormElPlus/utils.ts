@@ -13,7 +13,7 @@ export const traverseMixedFormItems = (
     } else if (Array.isArray(item)) {
       traverseMixedFormItems(item, cb)
     } else {
-      cb(item)
+      cb(item as AutoFormItem)
     }
   })
 }
@@ -21,7 +21,7 @@ export const traverseMixedFormItems = (
 /**
  * 获取平铺的表单items
  */
-export const getFlatFormItems = (formItems: MixedFormItems[]): AutoFormItem[] => {
+export const getFlatFormItems = (formItems: MixedFormItems[]): MixedFormItems[] => {
   const flatFormItems: MixedFormItems[] = []
 
   traverseMixedFormItems(formItems, (item) => {

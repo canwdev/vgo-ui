@@ -8,7 +8,7 @@ import MyLayout from './MyLayout.vue'
 export default {
   ...DefaultTheme,
   Layout: MyLayout,
-  enhanceApp({app, router, siteData}) {
+  enhanceApp({app}) {
     app.use(ElementPlus)
   },
 }
