@@ -1,5 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { defineAsyncComponent } from 'vue'
+import docsCss from '../views/docs/css.md?raw'
 import docsForm from '../views/docs/form.md?raw'
 import docsHtml from '../views/docs/html.md?raw'
 import docsInstall from '../views/docs/install.md?raw'
@@ -22,6 +23,13 @@ export const docsRoutes: RouteRecordRaw[] = [
     meta: {
       title: '原生 HTML 元素',
       content: docsHtml,
+    },
+  },
+  {
+    path: 'css',
+    meta: {
+      title: 'CSS 样式',
+      content: docsCss,
     },
   },
   {

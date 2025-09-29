@@ -1,9 +1,9 @@
-# 原生 HTML 元素
+# 原生 HTML 元素样式增强
 
 以下组件使用原生 html 元素，只需要加上 css 类名即可生效。
 打开控制台检查元素，查看源码。
 
-## vgo-button
+## 按钮 `.vgo-button`
 
 ```html
 <button class="vgo-button">Button</button>
@@ -17,7 +17,7 @@
   <button class="vgo-button" disabled>Disabled</button>
 </div>
 
-## vgo-input
+## 输入框 `.vgo-input`
 
 ```html
 <input type="text" class="vgo-input" placeholder="Input">
@@ -39,7 +39,7 @@
   </select>
 </div>
 
-## vgo-panel vgo-bg
+## 面板 `.vgo-panel` `.vgo-bg`
 
 ```html
 <div class="vgo-panel" style="padding: 20px;">Panel</div> 
