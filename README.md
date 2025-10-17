@@ -12,6 +12,9 @@
 Run the following command to link the package to the local development environment.
 
 ```shell
+# install dependencies
+bun i
+
 # in this folder
 bun link
 
