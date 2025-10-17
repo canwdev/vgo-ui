@@ -28,6 +28,6 @@ bun link @canwdev/vgo-ui
 # change package.json version first
 bun run bun:pack
 
-# publish to npm registry
-bun publish --access public .\canwdev-vgo-ui-0.2.0.tgz
+# publish to npm registry (注意修改版本号！)
+bun publish --access public .\canwdev-vgo-ui-0.2.1.tgz
 ```
