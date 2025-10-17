@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { QuickOptionItem } from './enum'
 import { ref } from 'vue'
-import QuickOptions from './index.vue'
+import QuickOptions from './QuickOptions.vue'
 
 interface Props {
   options: QuickOptionItem[]

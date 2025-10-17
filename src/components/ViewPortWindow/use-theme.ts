@@ -49,11 +49,11 @@ const useThemeState = createGlobalState(() => {
     themeOptions,
   }
 })
-export function useThemeOptions() {
+export function useThemeOptions(baseUrl = './resources/themes-dist') {
   const { themeOptions, isInitialized } = useThemeState()
 
   const themes = ref<IOption[]>([])
-  const baseUrl = './resources/themes-dist'
+
   const loadThemes = async () => {
     if (isInitialized.value) {
       return
