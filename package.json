@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "bun:pack": "bun run lint && bun pm pack",
-    "lint": "eslint src/**/*.{ts,tsx,vue} --fix"
+    "lint": "eslint src/**/*.{ts,vue} --fix"
   },
   "peerDependencies": {
     "@vueuse/core": "^12.8.2",
