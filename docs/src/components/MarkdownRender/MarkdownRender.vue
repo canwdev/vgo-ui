@@ -30,7 +30,7 @@ function handleClick(event) {
   const el = event.target
   if (el) {
     if (el.tagName === 'A') {
-      el.target = '_blank'
+      // el.target = '_blank'
       return
     }
 
