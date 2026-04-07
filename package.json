@@ -1,25 +1,74 @@
 {
   "name": "@canwdev/vgo-ui",
-  "version": "0.2.1",
+  "type": "module",
+  "version": "0.3.1",
   "description": "",
   "author": "",
   "license": "MIT",
-  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./styles": "./dist/index.css",
+    "./vue-monaco": {
+      "import": {
+        "types": "./dist/vue-monaco.d.ts",
+        "default": "./dist/vue-monaco.js"
+      },
+      "require": {
+        "types": "./dist/vue-monaco.d.ts",
+        "default": "./dist/vue-monaco.cjs"
+      }
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "CHANGELOG.md",
+    "README.md",
+    "dist",
+    "src"
+  ],
   "scripts": {
-    "bun:pack": "bun run lint && bun pm pack",
-    "lint": "eslint src/**/*.{ts,vue} --fix"
+    "build": "vue-tsc -b && vite build",
+    "typecheck": "vue-tsc --noEmit",
+    "bun:pack": "bun run build && bun pm pack",
+    "lint": "eslint src --fix",
+    "publish-npm": "bun run build && bun publish --access public"
   },
   "peerDependencies": {
-    "@vueuse/core": "^12.8.2",
-    "vue": "^3.5.13",
-    "lodash-es": "^4.17.21"
+    "@vueuse/core": "^14.2.1",
+    "element-plus": "^2.13.6",
+    "lodash-es": "^4.18.1",
+    "vue": "^3.5.32"
+  },
+  "peerDependenciesMeta": {
+    "element-plus": {
+      "optional": true
+    }
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^5.4.1",
-    "element-plus": "^2.11.4",
-    "eslint": "^9.36.0",
-    "eslint-plugin-format": "^1.0.1",
-    "monaco-editor": "^0.54.0",
-    "typescript": "~5.6.3"
+    "@antfu/eslint-config": "^8.0.0",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "@vue/tsconfig": "^0.9.1",
+    "ajv": "^8.18.0",
+    "element-plus": "^2.13.6",
+    "eslint": "^10.2.0",
+    "eslint-plugin-format": "^1.5.0",
+    "monaco-editor": "^0.55.1",
+    "sass-embedded": "^1.99.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.0.5",
+    "vite-plugin-dts": "^4.5.4",
+    "vue-router": "^5.0.4",
+    "vue-tsc": "^3.2.6"
   }
 }

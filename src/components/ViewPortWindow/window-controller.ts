@@ -1,7 +1,7 @@
 import type { PromisifyFn } from '@vueuse/core'
-import type { ILayout } from './enum.ts'
+import type { ILayout } from './enum'
 import { useThrottleFn } from '@vueuse/core'
-import { checkWindowAttach } from './enum.ts'
+import { checkWindowAttach } from './enum'
 
 const ClassNames = {
   RESIZE_HANDLE: 'draggable-window-resize',
@@ -155,12 +155,12 @@ export class WindowController {
   private deltaX: number
   private deltaY: number
   private readonly options: DraggableOptions
-  private readonly handleResizeDebounced: PromisifyFn<() => void>
+  readonly handleResizeDebounced: PromisifyFn<() => void>
   private prevRect: DOMRect
   private currentResizeDirection: string | null
   private alignWhenViewPortResize: 'start' | 'end'
-  private allowMove: boolean
-  private maximized: boolean
+  allowMove: boolean
+  maximized: boolean
   private _prevDocWidth?: number
 
   constructor(options: DraggableOptions) {
@@ -221,7 +221,7 @@ export class WindowController {
     if (this.options.resizeable) {
       ResizeDirectionList.forEach((i) => {
         const resizeHandle = createResizeBar(dragTargetEl, i)
-        ;['mousedown', 'touchstart'].forEach((eventName) => {
+          ;['mousedown', 'touchstart'].forEach((eventName) => {
           resizeHandle.addEventListener(eventName, this.handleResizeStart)
         })
       })
@@ -238,13 +238,13 @@ export class WindowController {
 
   destroy() {
     const { dragTargetEl, dragHandleEl, autoPosOnResize, resizeable } = this.options
-    ;['mousedown', 'touchstart'].forEach((eventName) => {
+      ;['mousedown', 'touchstart'].forEach((eventName) => {
       dragHandleEl.removeEventListener(eventName, this.handleDragStart)
       dragTargetEl.removeEventListener(eventName, this.handleMouseDown)
     })
 
     if (autoPosOnResize) {
-      window.addEventListener('resize', this.handleResizeDebounced)
+      window.removeEventListener('resize', this.handleResizeDebounced)
     }
     if (resizeable) {
       const node = dragTargetEl.querySelector(ClassNames.RESIZE_HANDLE)
@@ -442,7 +442,7 @@ export class WindowController {
 
   handleResizeStop() {
     const { docEl } = this
-    ;['mousemove', 'touchmove'].forEach((eventName) => {
+      ;['mousemove', 'touchmove'].forEach((eventName) => {
       docEl.removeEventListener(eventName, this.handleResizeMove)
     })
     ;['mouseup', 'touchend'].forEach((eventName) => {

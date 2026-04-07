@@ -61,7 +61,6 @@ export const docsRoutes: RouteRecordRaw[] = [
     meta: {
       title: 'QuickOptions',
       content: docsQuickOptions,
-      component: defineAsyncComponent(() => import('../../../src/components/QuickOptions/DemoQuickOptions.vue')),
     },
   },
   {

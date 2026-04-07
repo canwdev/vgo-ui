@@ -1,9 +1,9 @@
-@use "theme-default" as *;
+@use 'theme-default' as *;
 
 :root {
   --vgo-primary-rgb: 37, 130, 146;
   --vgo-primary: rgb(var(--vgo-primary-rgb));
-  --vgo-primary-opacity: rgba(var(--vgo-primary-rgb), .25);
+  --vgo-primary-opacity: rgba(var(--vgo-primary-rgb), 0.25);
 
   --vgo-color-border: rgba(91, 85, 85, 0.3);
   --vgo-color-hover: rgba(91, 85, 85, 0.1);
@@ -24,11 +24,15 @@ body {
 }
 
 .font-code {
-  font-family: 'Maple Mono NF CN', 'Maple Mono NF', 'Victor Mono Regular', 'Cascadia Code', '等距更纱黑体 SC', 'Monaco', 'Fira Code Medium', Consolas, 'Courier New', monospace;
+  font-family:
+    'Maple Mono NF CN', 'Maple Mono NF', 'Victor Mono Regular', 'Cascadia Code', '等距更纱黑体 SC', 'Monaco',
+    'Fira Code Medium', Consolas, 'Courier New', monospace;
 }
 
 .font-emoji {
-  font-family: "Segoe UI Emoji", "SF Pro SC", "SF Pro Text", "SF Pro Icons", "PingFang SC", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  font-family:
+    'Segoe UI Emoji', 'SF Pro SC', 'SF Pro Text', 'SF Pro Icons', 'PingFang SC', 'Helvetica Neue', 'Helvetica', 'Arial',
+    sans-serif;
 }
 
 .btn-no-style {
@@ -52,7 +56,6 @@ body {
 
 .scrollbar-mini *,
 .scrollbar-mini {
-
   &::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -97,7 +100,6 @@ body {
   display: flex;
   flex-direction: column;
 }
-
 
 //@import "theme-default";
 
@@ -145,7 +147,7 @@ body {
 
   &:disabled {
     cursor: not-allowed;
-    opacity: .5;
+    opacity: 0.5;
   }
 
   &.danger {
@@ -173,10 +175,9 @@ body {
 
   &:disabled {
     cursor: not-allowed;
-    opacity: .5;
+    opacity: 0.5;
   }
 }
-
 
 /* Vue transitions */
 .fade-enter-active,
@@ -189,24 +190,28 @@ body {
   opacity: 0;
 }
 
-
 .fade-scale-enter-active,
 .fade-scale-leave-active {
   transform: scale(1);
-  transition: opacity 0.3s, transform 0.3s;
+  transition:
+    opacity 0.3s,
+    transform 0.3s;
 }
 
 .fade-scale-enter-from,
 .fade-scale-leave-to {
   opacity: 0;
   transform: scale(0.92);
-  transition: opacity 0.3s, transform 0.3s;
+  transition:
+    opacity 0.3s,
+    transform 0.3s;
 }
-
 
 .fade-up-enter-active,
 .fade-up-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .fade-up-enter-from,
@@ -217,7 +222,9 @@ body {
 
 .fade-down-enter-active,
 .fade-down-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .fade-down-enter-from,
@@ -228,7 +235,9 @@ body {
 
 .fade-left-enter-active,
 .fade-left-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .fade-left-enter-from,
@@ -239,7 +248,9 @@ body {
 
 .fade-right-enter-active,
 .fade-right-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .fade-right-enter-from,
@@ -247,4 +258,3 @@ body {
   transform: translateX(-20px);
   opacity: 0;
 }
-

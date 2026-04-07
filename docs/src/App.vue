@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-
+const version = __VGO_UI_PKG_VERSION__
 </script>
 
 <template>
@@ -8,12 +8,16 @@
       class="nav-menu flex-row-center-gap"
     >
       <router-link to="/" class="logo">
-        Vgo UI
+        <span class="logo-title">Vgo UI</span>
+        <span class="logo-version" title="当前包版本">{{ version }}</span>
       </router-link>
 
       <div class="flex-row-center-gap nav-right">
         <router-link to="/docs">
           文档
+        </router-link>
+        <router-link to="/changelog">
+          更新日志
         </router-link>
         <a
           href="https://github.com/canwdev/vgo-ui"
@@ -42,6 +46,18 @@
     height: 60px;
     border-bottom: 1px solid var(--vgo-color-border);
     justify-content: space-between;
+    .logo {
+      gap: 10px;
+      .logo-title {
+        font-weight: 600;
+      }
+      .logo-version {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--vgo-color-text-secondary, #909399);
+        letter-spacing: 0.02em;
+      }
+    }
     a {
       height: 100%;
       padding-left: 20px;

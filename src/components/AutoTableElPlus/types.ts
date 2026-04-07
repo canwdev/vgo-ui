@@ -7,11 +7,11 @@ export interface AutoTableColumn {
   width?: number | string
   minWidth?: number | string
   // column 控件的属性
-  props?: unknown
+  props?: Record<string, any>
   // 内容格式化函数
-  formatter?: (scope: unknown) => unknown
+  formatter?: (scope: Record<string, any>) => any
   // 渲染函数 (scope) => h('div', {}, null)
-  render?: (scope: unknown) => VNode
+  render?: (scope: Record<string, any>) => VNode
   headerRender?: () => VNode
   // 传入此参数，会在表头上显示设置按钮，可让用户自定义部分表列的显示和隐藏
   isCustomizeColumn?: boolean

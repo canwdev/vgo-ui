@@ -30,7 +30,7 @@ const { formSchema } = toRefs(props)
 
 const formRef = ref<FormInstance>()
 function submitForm() {
-  formRef.value.validate(async (valid: boolean) => {
+  formRef.value?.validate(async (valid: boolean) => {
     if (!valid) {
       console.log('Invalid form')
       emit('onInvalidForm')

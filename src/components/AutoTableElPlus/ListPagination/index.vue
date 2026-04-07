@@ -38,8 +38,8 @@ export default defineComponent({
         const queryOrigin = route.query
         // 标记当前是否为最后一页
         const isEnd
-          = Number.parseInt(queryOrigin.pageNum)
-            === Math.ceil(paginationData.value.totalItems / queryOrigin.pageSize)
+          = Number.parseInt(String(queryOrigin.pageNum))
+            === Math.ceil(paginationData.value.totalItems / Number(queryOrigin.pageSize))
 
         // 计算最后一页页数
         if (isEnd) {

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { Ref } from 'vue'
 import type { StOptionItem } from './enum'
 import { computed, inject, toRefs } from 'vue'
 import VueRender from '../VueRender.vue'
@@ -12,21 +13,21 @@ const props = defineProps<{
 const emit = defineEmits(['updateValue'])
 const { item } = toRefs(props)
 // 顶层父组件的数据
-const sharedStore = inject('sharedStore')
+const sharedStore = inject<Ref<Record<string, any>>>('sharedStore')
 
 const dynamicValue = computed({
   get() {
-    const store = item.value.store || sharedStore.value
+    const store = item.value.store || sharedStore?.value
     if (store) {
-      return store[item.value.key]
+      return (store as Record<string, any>)[item.value.key]
     }
     return item.value.value
   },
   set(val) {
     emit('updateValue', { item: item.value, value: val })
-    const store = item.value.store || sharedStore.value
+    const store = item.value.store || sharedStore?.value
     if (store) {
-      store[item.value.key] = val
+      (store as Record<string, any>)[item.value.key] = val
       return
     }
     item.value.value = val

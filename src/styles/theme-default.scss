@@ -3,14 +3,16 @@
 
   .vgo-window {
     border: $border;
-    background-color: #F3F3F3;
-    transition: opacity 0.3s, transform 0.3s, background-color 0.5s;
+    background-color: #f3f3f3;
+    transition:
+      opacity 0.3s,
+      transform 0.3s,
+      background-color 0.5s;
     padding: 0;
     border-radius: var(--vgo-radius);
     box-shadow: 0 1px 10px rgba(0, 0, 0, 0.27);
 
     .vgo-window-content {
-
       .vgo-window-title-bar {
         overflow: hidden;
         text-shadow: 0 0 10px white;
@@ -42,7 +44,7 @@
         margin-top: 0;
         min-width: 40px;
         height: 30px;
-        border-radius:0;
+        border-radius: 0;
         & + button {
           border-left: 0 !important;
         }
@@ -80,7 +82,6 @@
     &._active {
       background-color: white;
     }
-
   }
 
   .vgo-panel {
@@ -91,7 +92,7 @@
   }
 
   .vgo-button {
-    background-color: #FDFDFD;
+    background-color: #fdfdfd;
     border: 1px solid var(--vgo-color-border);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     border-radius: var(--vgo-radius);
@@ -103,7 +104,7 @@
         outline-offset: -1px;
       }
       &:active {
-        opacity: .6;
+        opacity: 0.6;
       }
     }
   }
@@ -111,13 +112,12 @@
   .vgo-input {
     border-radius: var(--vgo-radius);
   }
-
 }
 
 .dark {
   .vgo-theme-default {
     .vgo-window {
-      background-color: #4B4B4B;
+      background-color: #4b4b4b;
       color: white;
       border-color: rgba(255, 255, 255, 0.2);
 

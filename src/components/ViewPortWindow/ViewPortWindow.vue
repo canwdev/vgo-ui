@@ -16,8 +16,8 @@ import {
 import { checkWindowAttach } from './enum'
 import LayoutHelper from './LayoutHelper.vue'
 import LayoutPreview from './LayoutPreview.vue'
-import { useDynamicClassName, useMouseOver } from './use-utils.ts'
-import { WindowController } from './window-controller.ts'
+import { useDynamicClassName, useMouseOver } from './use-utils'
+import { WindowController } from './window-controller'
 
 const props = withDefaults(
   defineProps<{
@@ -128,7 +128,10 @@ const defaultWinOptions: WinOptions = {
   maximized: false,
 }
 
-const winOptions = reactive<WinOptions>({ ...defaultWinOptions })
+const winOptions = reactive<WinOptions>({
+  ...defaultWinOptions,
+  maximized: props.maximized ?? false,
+})
 watchDebounced(
   winOptions,
   () => {
@@ -155,13 +158,19 @@ watchDebounced(
 )
 
 watch(allowMove, (val) => {
-  dWindow.value.allowMove = val
-  if (val) {
+  if (!dWindow.value) {
+    return
+  }
+  dWindow.value.allowMove = val && !isMaximized.value
+  if (val && !isMaximized.value) {
     dWindow.value.updateZIndex()
   }
 })
 watch(isMaximized, (val) => {
-  dWindow.value.allowMove = !val
+  if (!dWindow.value) {
+    return
+  }
+  dWindow.value.allowMove = allowMove.value && !val
   dWindow.value.maximized = val
 
   winOptions.maximized = val
@@ -173,7 +182,7 @@ watch(mVisible, (val) => {
     if (!isInit.value) {
       initWindowStyle()
     }
-    dWindow.value.updateZIndex()
+    dWindow.value?.updateZIndex()
   }
 })
 
@@ -203,11 +212,12 @@ onMounted(() => {
     autoPosOnResize: true,
     isDebug: false,
     resizeable: true,
-    maximized: winOptions.maximized || false,
+    maximized: isMaximized.value,
     alignWhenViewPortResize: props.alignWhenViewPortResize,
   })
-  isMaximized.value = winOptions.maximized || false
-  dWindow.value.allowMove = allowMove.value
+  dWindow.value.allowMove = allowMove.value && !isMaximized.value
+  dWindow.value.maximized = isMaximized.value
+  winOptions.maximized = isMaximized.value
 
   new ResizeObserver(() => {
     handleSelfResize()
@@ -263,7 +273,7 @@ function initWindowStyle() {
     }
     else {
       // 初始化后检查窗口是否在视口外，如果在则修复
-      dWindow.value.handleResizeDebounced()
+      dWindow.value?.handleResizeDebounced()
     }
   })
 }
@@ -327,8 +337,10 @@ async function handleMove(data: OnMoveParams) {
     checkSnap({ x: pointerX, y: pointerY })
   }
 
-  winOptions.top = top
-  winOptions.left = left
+  if (top !== undefined)
+    winOptions.top = top
+  if (left !== undefined)
+    winOptions.left = left
 }
 
 onBeforeUnmount(() => {
@@ -338,7 +350,7 @@ onBeforeUnmount(() => {
 })
 
 function setActive() {
-  dWindow.value.updateZIndex({ preventOnActive: true })
+  dWindow.value?.updateZIndex({ preventOnActive: true })
 }
 
 function toggleMaximized() {

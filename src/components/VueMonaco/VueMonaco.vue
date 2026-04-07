@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { Ref } from 'vue'
 import {
   useDebounceFn,
   useEventListener,
@@ -39,7 +40,7 @@ const mValue = useVModel(props, 'modelValue', emit)
 const editorContainerRef = ref()
 const editorInstance = shallowRef<monaco.editor.IStandaloneCodeEditor>()
 
-const { isAppDarkMode } = inject('darkMode') || {
+const { isAppDarkMode } = inject<{ isAppDarkMode: Ref<boolean> }>('darkMode') ?? {
   isAppDarkMode: ref(false),
 }
 
@@ -63,7 +64,10 @@ watch(
   () => props.language,
   (newValue) => {
     if (editorInstance.value) {
-      monaco.editor.setModelLanguage(editorInstance.value.getModel(), newValue)
+      const model = editorInstance.value.getModel()
+      if (model) {
+        monaco.editor.setModelLanguage(model, newValue)
+      }
     }
   },
 )

@@ -1,3 +1,11 @@
+import type { VNode } from 'vue'
+
+export interface SwitchOption {
+  label: string
+  value: any
+  disabled?: boolean
+}
+
 // 选项Item
 export interface StOptionItem {
   // 选项标题
@@ -10,14 +18,14 @@ export interface StOptionItem {
   value?: boolean | string | number
   type?: StOptionType
   // 传递给组件的自定义属性
-  props?: unknown
-  itemProps?: unknown
+  props?: Record<string, any>
+  itemProps?: Record<string, any>
   // 当type为 SELECT | MULTIPLE_SWITCH 时，选项的下拉数据
-  options?: unknown[]
+  options?: SwitchOption[]
   // 是否已禁用
   disabled?: boolean
   hidden?: boolean
-  children?: StOptionItem[] | unknown
+  children?: StOptionItem[]
   // 图标
   icon?: string
   iconRender?: () => VNode
@@ -28,7 +36,7 @@ export interface StOptionItem {
   tips?: string
   placeholder?: string
   // 自定义类名
-  cls?: unknown
+  cls?: string | string[] | Record<string, boolean>
   // action渲染函数
   actionRender?: () => VNode
   // 整体渲染函数
@@ -50,11 +58,6 @@ export enum StOptionType {
   DYNAMIC_TAGS = 'dynamic_tags',
   DATE_PICKER = 'date_picker',
   BUTTON = 'button',
-}
-
-export interface SwitchOption {
-  label: string
-  value: any
 }
 
 export const swatches = [

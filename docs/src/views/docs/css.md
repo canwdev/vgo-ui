@@ -1,23 +1,25 @@
 # CSS 样式
 
+以下变量与工具类在入口中执行 `import '@canwdev/vgo-ui/styles'` 后即全局可用（与安装文档一致）。
+
 ## 全局 CSS 变量
 
 全局 CSS 变量定义了 VGO 组件的颜色和样式，你可以根据需要使用这些变量。
 
-```css
+```scss
 :root {
-  // 主色 RGB 值
+  /* 主色 RGB 值 */
   --vgo-primary-rgb: 37, 130, 146;
-  // 主色
+  /* 主色 */
   --vgo-primary: rgb(var(--vgo-primary-rgb));
-  // 主色透明度
+  /* 主色透明度 */
   --vgo-primary-opacity: rgba(var(--vgo-primary-rgb), .25);
 
-  // 边框颜色
+  /* 边框颜色 */
   --vgo-color-border: rgba(91, 85, 85, 0.3);
-  // 悬停颜色
+  /* 悬停颜色 */
   --vgo-color-hover: rgba(91, 85, 85, 0.1);
-  // 圆角
+  /* 圆角 */
   --vgo-radius: 4px;
 }
 ```

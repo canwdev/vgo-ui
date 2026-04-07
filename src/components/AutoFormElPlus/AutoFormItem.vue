@@ -143,7 +143,7 @@ export default defineComponent({
       v-bind="item.props"
     >
       <el-checkbox
-        v-for="(option, index) in item.options || item.props.options"
+        v-for="(option, index) in item.options || item.props?.options"
         :key="index"
         :value="option.value"
       >
@@ -164,7 +164,7 @@ export default defineComponent({
       :disabled="item.disabled"
     >
       <el-radio
-        v-for="(option, index) in item.options || item.props.options"
+        v-for="(option, index) in item.options || item.props?.options"
         :key="index"
         :value="option.value"
       >
