@@ -28,6 +28,10 @@ jobs:
         with:
           bun-version: latest
 
+      # 文档里的 Demo 会编译 ../src 下的 .vue；Vite 会解析根目录 tsconfig.json 的 extends，需要根目录 node_modules（@vue/tsconfig、element-plus 等）
+      - name: Install root dependencies
+        run: bun install --frozen-lockfile
+
       - name: Install and build docs
         working-directory: docs
         env:
