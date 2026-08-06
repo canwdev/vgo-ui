@@ -8,6 +8,16 @@
 bun add @canwdev/vgo-ui
 ```
 
+### 从 GitHub 安装
+
+不走 npm 仓库时，装 Release 附件里的 tgz（`v*` tag 推送后由 CI 自动构建上传）：
+
+```shell
+bun add https://github.com/canwdev/vgo-ui/releases/download/v0.4.0/canwdev-vgo-ui-0.4.0.tgz
+```
+
+与 npm 上的是同一份产物，子路径导入照常可用；URL 会写进 lockfile，升级改 URL 即可。不建议 `bun add github:canwdev/vgo-ui`——仓库不提交 `dist`，装到的是未构建的源码。
+
 ### Peer dependencies
 
 与组件功能对应的依赖需自行安装（版本需满足 `package.json` 中 `peerDependencies` 要求）：
