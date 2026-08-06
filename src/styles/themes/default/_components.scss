@@ -1,0 +1,322 @@
+body.vgo-theme-default {
+  color: var(--vgo-text);
+
+  .vgo-u-surface {
+    color: var(--vgo-text);
+    background-color: var(--vgo-surface);
+  }
+
+  // 面板的外观是"默认值"，所以整组包进 :where()：特异度降到只剩
+  // body.vgo-theme-default 的 (0,1,1)，使用方一个 scoped 类就是 (0,2,0)，
+  // 直接盖得掉圆角 / 边框 / 阴影，不用多嵌父选择器也不用 !important。
+  // 代价是修饰之间改由源码顺序决胜，所以基础必须写在修饰前面。
+  // 按钮不这么做——那边的变体本来就靠特异度分胜负，见下方。
+  :where(.vgo-panel) {
+    color: var(--vgo-text);
+    background-color: var(--vgo-surface-raised);
+    border: 1px solid var(--vgo-border);
+    border-radius: var(--vgo-radius);
+    box-shadow: var(--vgo-shadow);
+  }
+
+  // 工具栏 / 头部 / 底栏：贴边。分隔线方向由使用处用 --vgo-border 指定
+  :where(.vgo-panel--flat) {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  // 浮在图片 / 视频之上的半透明层。模糊在这里集中管理，
+  // 业务代码不要再自己写 backdrop-filter。两个修饰只差令牌不差规则：
+  // --overlay 深色底浅字，--overlay-light 浅色底深字，见 _tokens.scss
+  :where(.vgo-panel--overlay, .vgo-panel--overlay-light) {
+    // 浮层内部把语义色重指向浮层配色。嵌进来的 vgo-empty / vgo-list-item
+    // 读的还是 --vgo-text 这套，不重指向的话它们会用主题正文色——亮色主题下
+    // 就是深色字压在半透明深色底上，看不清。
+    --vgo-text: var(--vgo-overlay-text);
+    --vgo-text-secondary: var(--vgo-overlay-text-secondary);
+    --vgo-border: var(--vgo-overlay-border);
+    --vgo-hover: var(--vgo-overlay-control);
+
+    color: var(--vgo-overlay-text);
+    background-color: var(--vgo-overlay-surface);
+    border-color: var(--vgo-overlay-border);
+    box-shadow: none;
+    backdrop-filter: blur(var(--vgo-overlay-blur));
+  }
+
+  .vgo-button {
+    background-color: var(--vgo-surface-raised);
+    border: 1px solid var(--vgo-border);
+    border-radius: var(--vgo-radius);
+    box-shadow: var(--vgo-shadow);
+
+    &:not(:disabled):hover {
+      border-color: var(--vgo-primary);
+      outline: 1px solid var(--vgo-primary);
+      outline-offset: -1px;
+    }
+
+    &:not(:disabled):active {
+      opacity: 0.6;
+    }
+
+    // 运行时选中态（导航当前项、开关按下），与配色变体正交。
+    // 比 &--variant 多一个类，所以无论源码顺序如何都压得住它们的底色
+    &.is-active {
+      color: var(--vgo-primary);
+      background-color: var(--vgo-primary-opacity);
+    }
+
+    &--danger {
+      color: var(--vgo-danger);
+    }
+
+    &--primary {
+      color: var(--vgo-on-primary);
+      background-color: var(--vgo-primary);
+    }
+
+    &--text {
+      color: var(--vgo-text);
+      background-color: transparent;
+      border-color: transparent;
+      box-shadow: none;
+
+      &:not(:disabled):hover,
+      &:not(:disabled):focus-visible {
+        background-color: var(--vgo-primary-opacity);
+        border-color: transparent;
+        outline: none;
+      }
+    }
+
+    // 浮在图片 / 视频之上的控件。两套配色都不随主题翻转，按底下媒体的明暗选
+    &--overlay,
+    &--overlay-light {
+      color: var(--vgo-overlay-text);
+      background-color: var(--vgo-overlay-control);
+      border-color: var(--vgo-overlay-border);
+      box-shadow: none;
+      backdrop-filter: blur(var(--vgo-overlay-blur));
+
+      &:not(:disabled):hover {
+        background-color: var(--vgo-overlay-control-hover);
+        border-color: var(--vgo-overlay-control-hover);
+        outline: none;
+      }
+
+      &:not(:disabled):active {
+        background-color: var(--vgo-overlay-control-active);
+        opacity: 1;
+      }
+
+      &.vgo-button--text {
+        color: var(--vgo-overlay-text-secondary);
+        background-color: transparent;
+        border-color: transparent;
+        backdrop-filter: none;
+
+        &:not(:disabled):hover {
+          color: var(--vgo-overlay-text);
+          background-color: var(--vgo-overlay-control);
+        }
+      }
+    }
+
+    &--round {
+      border-radius: var(--vgo-radius-pill);
+    }
+  }
+
+  .vgo-input {
+    color: var(--vgo-text);
+    background-color: var(--vgo-surface);
+    border: 1px solid var(--vgo-border);
+    border-radius: var(--vgo-radius);
+
+    &:focus:not(:disabled) {
+      border-color: var(--vgo-primary);
+    }
+  }
+
+  // 列表行的唯一一份 hover 实现，option-item 的可点击子项共用
+  .vgo-list-item:hover,
+  .vgo-option-item__child.is-clickable:hover {
+    background-color: var(--vgo-hover);
+  }
+
+  .vgo-list-item {
+    &.is-active {
+      background-color: var(--vgo-primary-opacity);
+      outline: 1px solid var(--vgo-primary);
+      outline-offset: -1px;
+    }
+  }
+
+  .vgo-option-item {
+    &__header {
+      border-bottom: 1px solid var(--vgo-border);
+      border-radius: var(--vgo-radius) var(--vgo-radius) 0 0;
+    }
+
+    &__child.is-drag-over {
+      background-color: var(--vgo-primary-opacity);
+    }
+
+    &__icon {
+      color: var(--vgo-primary);
+      border-radius: var(--vgo-radius);
+    }
+
+    &__subtitle {
+      color: var(--vgo-text-secondary);
+    }
+  }
+
+  .vgo-empty {
+    color: var(--vgo-text-secondary);
+
+    &__title {
+      color: var(--vgo-text);
+    }
+  }
+
+  .vgo-progress {
+    display: flex;
+    background-color: var(--vgo-border);
+
+    &__value {
+      background-color: var(--vgo-primary);
+    }
+
+    &--success .vgo-progress__value {
+      background-color: var(--vgo-success);
+    }
+
+    &--danger .vgo-progress__value {
+      background-color: var(--vgo-danger);
+    }
+  }
+
+  .vgo-badge {
+    color: var(--vgo-on-primary);
+    background-color: var(--vgo-text-secondary);
+    border-radius: var(--vgo-radius);
+
+    &--pill {
+      border-radius: var(--vgo-radius-pill);
+    }
+
+    &--primary {
+      background-color: var(--vgo-primary);
+    }
+
+    &--danger {
+      background-color: var(--vgo-danger);
+    }
+  }
+
+  .vgo-rect-switch {
+    border: 1px solid var(--vgo-border);
+    border-radius: var(--vgo-radius);
+
+    &__item {
+      border-radius: var(--vgo-radius);
+
+      &.is-active {
+        color: var(--vgo-on-primary);
+        background-color: var(--vgo-primary);
+      }
+    }
+  }
+
+  .vgo-window {
+    padding: 0;
+    background-color: var(--vgo-window);
+    border: 1px solid var(--vgo-window-border);
+    border-radius: var(--vgo-radius);
+    box-shadow: var(--vgo-window-shadow);
+    transition:
+      opacity var(--vgo-duration-base),
+      transform var(--vgo-duration-base),
+      background-color var(--vgo-duration-base);
+
+    &.is-active {
+      background-color: var(--vgo-window-active);
+    }
+
+    &.is-maximized {
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    &__title-bar {
+      height: 30px;
+      padding-right: 0;
+      overflow: hidden;
+      text-shadow: var(--vgo-window-title-shadow);
+    }
+
+    &__title {
+      padding-left: 6px;
+
+      .mdi {
+        color: var(--vgo-primary);
+      }
+    }
+
+    &__body {
+      height: calc(100% - 30px);
+      background-color: var(--vgo-surface);
+      border: 0;
+      border-radius: 0 0 var(--vgo-radius) var(--vgo-radius);
+    }
+
+    &__controls {
+      padding-right: 0;
+
+      button {
+        min-width: 40px;
+        height: 30px;
+        margin-top: 0;
+        border: 0;
+        border-radius: 0;
+
+        &.is-close {
+          border-top-right-radius: var(--vgo-radius);
+        }
+
+        &:hover {
+          background-color: var(--vgo-control-hover);
+        }
+
+        &:active {
+          background-color: var(--vgo-control-active);
+        }
+
+        &.is-close:hover {
+          background-color: var(--vgo-control-close-hover);
+        }
+
+        &.is-close:active {
+          background-color: var(--vgo-control-close-active);
+        }
+      }
+    }
+  }
+
+  .vgo-layout-helper__item,
+  .vgo-layout-preview {
+    background-color: var(--vgo-primary-opacity);
+  }
+
+  .vgo-layout-helper__preview {
+    background-color: var(--vgo-primary);
+  }
+
+  .vgo-layout-preview {
+    border: 2px solid var(--vgo-primary);
+  }
+}

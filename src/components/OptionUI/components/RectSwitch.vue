@@ -36,12 +36,12 @@ watch(mValue, (value) => {
 </script>
 
 <template>
-  <div class="rect-switch" :class="{ disabled }">
+  <div class="vgo-rect-switch" :class="{ 'is-disabled': disabled }">
     <div
       v-for="item in options"
       :key="item.value"
-      class="r-item"
-      :class="{ active: item.value === mValue }"
+      class="vgo-rect-switch__item"
+      :class="{ 'is-active': item.value === mValue }"
       @click="mValue = item.value"
     >
       <div v-if="isLabelHtml" v-html="item.label" />
@@ -51,38 +51,3 @@ watch(mValue, (value) => {
     </div>
   </div>
 </template>
-
-<style lang="scss">
-.rect-switch {
-  width: fit-content;
-  display: flex;
-  align-items: center;
-  border-radius: 4px;
-  padding: 2px;
-  border: 1px solid var(--vgo-color-border);
-  flex-wrap: wrap;
-
-  &.disabled {
-    opacity: 0.6;
-    cursor: not-allowed !important;
-    .r-item {
-      pointer-events: none;
-    }
-  }
-
-  .r-item {
-    border-radius: 4px;
-    padding: 4px 10px;
-    font-size: 14px;
-    transition: all 0.3s;
-    cursor: pointer;
-    line-height: 1.3;
-    text-align: center;
-
-    &.active {
-      background-color: var(--vgo-primary);
-      color: white;
-    }
-  }
-}
-</style>

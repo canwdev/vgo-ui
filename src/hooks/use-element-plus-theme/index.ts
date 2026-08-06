@@ -2,9 +2,6 @@ import { useStyleTag } from '@vueuse/core'
 import { onBeforeMount } from 'vue'
 import { BLACK, PRE, PRE_DARK, PRE_LIGHT, WHITE } from './token'
 
-/**
- * 混合颜色
- */
 function mix(color1: string, color2: string, weight: number) {
   weight = Math.max(Math.min(Number(weight), 1), 0)
   const r1 = Number.parseInt(color1.substring(1, 3), 16)
@@ -20,6 +17,32 @@ function mix(color1: string, color2: string, weight: number) {
   const _g = (`0${(g || 0).toString(16)}`).slice(-2)
   const _b = (`0${(b || 0).toString(16)}`).slice(-2)
   return `#${_r}${_g}${_b}`
+}
+
+export function rgbToHex(rgb: string) {
+  const [r, g, b] = rgb
+    .split(',')
+    .map(v => Number.parseInt(v.trim(), 10))
+  if ([r, g, b].some(v => Number.isNaN(v) || v < 0 || v > 255)) {
+    return ''
+  }
+  return `#${[r, g, b]
+    .map(v => v.toString(16).padStart(2, '0'))
+    .join('')}`
+}
+
+export function syncPrimaryColor(rgb: string, changeTheme: (hex: string) => void) {
+  if (!rgb) {
+    document.documentElement.style.removeProperty('--vgo-primary-rgb')
+    const current = getComputedStyle(document.documentElement).getPropertyValue('--vgo-primary-rgb')
+    changeTheme(rgbToHex(current))
+    return
+  }
+  const hex = rgbToHex(rgb)
+  if (!hex)
+    return
+  document.documentElement.style.setProperty('--vgo-primary-rgb', rgb)
+  changeTheme(hex)
 }
 
 export function useElementPlusTheme(color?: string) {

@@ -1,0 +1,137 @@
+.vgo-window {
+  z-index: var(--vgo-z-window);
+  box-sizing: border-box;
+  min-width: 50px;
+  min-height: 50px;
+
+  &.is-movable {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: var(--vgo-z-window);
+  }
+
+  &.is-maximized {
+    position: fixed;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+
+    .vgo-window__body {
+      border-inline: 0;
+    }
+
+    .vgo-window__resize-handle {
+      pointer-events: none;
+    }
+  }
+
+  &.is-transitioning {
+    transition: all var(--vgo-duration-base) !important;
+  }
+
+  &.is-dragging .vgo-window__body {
+    pointer-events: none;
+  }
+
+  &.is-titleless .vgo-window__body {
+    height: 100%;
+    pointer-events: auto;
+    border: 0;
+    box-shadow: none;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  &__title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+  }
+
+  &__title {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    line-height: 1.4;
+
+    img {
+      pointer-events: none;
+    }
+  }
+
+  &__body {
+    height: calc(100% - 30px);
+  }
+
+  &__controls {
+    display: flex;
+    align-items: flex-start;
+    border-radius: 0;
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: var(--vgo-control-sm);
+      color: inherit;
+      background-color: transparent;
+      transition: background-color var(--vgo-duration-fast);
+    }
+
+    .mdi {
+      font-size: var(--vgo-icon-sm);
+    }
+  }
+}
+
+.vgo-layout-helper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: calc(var(--vgo-z-window) * 2);
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 4px;
+
+  &__item {
+    position: relative;
+    width: 40px;
+    height: 25px;
+    cursor: pointer;
+    filter: grayscale(1);
+    opacity: 0.4;
+    transition:
+      filter var(--vgo-duration-fast),
+      opacity var(--vgo-duration-fast);
+
+    &:hover {
+      filter: grayscale(0);
+      opacity: 1;
+    }
+  }
+
+  &__preview {
+    position: absolute;
+    pointer-events: none;
+  }
+}
+
+.vgo-layout-preview {
+  position: fixed;
+  z-index: var(--vgo-z-preview);
+  box-sizing: border-box;
+  pointer-events: none;
+  transition: all var(--vgo-duration-base);
+}

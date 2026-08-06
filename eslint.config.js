@@ -2,7 +2,7 @@ import antfu from '@antfu/eslint-config'
 
 /**
  * @see https://github.com/antfu/eslint-config
- * ESLint 9+ flat config；规则前缀见 README（如 ts/*、vue/*）
+ * 根项目和 docs 共用此 ESLint flat config。
  */
 export default antfu(
   {
@@ -14,9 +14,8 @@ export default antfu(
     },
     typescript: {
       overrides: {
-        'ts/no-use-before-define': 'off',
-        // 与 tsconfig（noImplicitAny: false）一致，避免一次性补全大量显式返回类型
         'ts/explicit-function-return-type': 'off',
+        'ts/no-use-before-define': 'off',
       },
     },
     formatters: true,

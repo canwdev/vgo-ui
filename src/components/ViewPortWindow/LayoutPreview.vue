@@ -22,15 +22,3 @@ withDefaults(defineProps<Props>(), {})
     />
   </transition>
 </template>
-
-<style lang="scss" scoped>
-.vgo-layout-preview {
-  position: fixed;
-  z-index: 1000;
-  background-color: var(--vgo-primary-opacity);
-  border: 2px solid var(--vgo-primary);
-  pointer-events: none;
-  box-sizing: border-box;
-  transition: all 0.3s;
-}
-</style>

@@ -14,7 +14,7 @@ const defaultThemeOptions = [
   },
 ]
 
-function addCssFile(filename) {
+function addCssFile(filename: string) {
   const head = document.getElementsByTagName('head')[0]
   const links = document.getElementsByTagName('link')
   for (let i = 0; i < links.length; i++) {
@@ -30,7 +30,7 @@ function addCssFile(filename) {
   head.appendChild(link)
 }
 
-function removeCssFile(filename) {
+function removeCssFile(filename: string) {
   const links = document.getElementsByTagName('link')
   for (let i = 0; i < links.length; i++) {
     console.log(links[i].id, filename)
@@ -60,7 +60,7 @@ export function useThemeOptions(baseUrl = './resources/themes-dist') {
     }
 
     const res = await fetch(`${baseUrl}/index.json`)
-    themes.value = await res.json()
+    themes.value = await res.json() as IOption[]
 
     themes.value.forEach((item) => {
       addCssFile(`${baseUrl}/${item.value}.css`)

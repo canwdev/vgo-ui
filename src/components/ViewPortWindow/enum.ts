@@ -48,7 +48,7 @@ export const layoutList: ILayout[] = [
 
 // 贴边快捷调整窗口大小 (Aero Snap)
 // 窗口边缘贴靠检测
-export function checkWindowAttach({ x, y }) {
+export function checkWindowAttach({ x, y }: { x: number, y: number }): ILayout | undefined {
   if (y <= 0) {
     if (x <= 0) {
       return LayoutPreset.TOP_LEFT

@@ -3,7 +3,7 @@ import type { PropType } from 'vue'
 import type { AutoFormItem } from './enum'
 import _get from 'lodash-es/get'
 import _set from 'lodash-es/set'
-import { computed, defineComponent, toRefs } from 'vue'
+import { computed, defineComponent, isRef, toRefs } from 'vue'
 import VueRender from '../VueRender.vue'
 import { AutoFormItemType } from './enum'
 
@@ -16,7 +16,7 @@ export default defineComponent({
       required: true,
     },
     model: {
-      type: Object,
+      type: Object as PropType<Record<string, unknown>>,
       required: true,
     },
   },
@@ -25,16 +25,13 @@ export default defineComponent({
 
     // 判断store是否为 RefImpl 类型，
     // 一般这种情况出现在 computed 返回的内容
-    const getIsRefImpl = (obj) => {
-      return obj.__v_isRef
-    }
     /**
      * 获取正确的store读写路径
      * @param store Proxy 或 RefImpl 类型的对象
      * @param path 读写对象的路径字符串，用 . 隔开
      */
-    const autoGetPath = (store, path: string) => {
-      if (getIsRefImpl(store)) {
+    const autoGetPath = (store: unknown, path: string) => {
+      if (isRef(store)) {
         return `value.${path}`
       }
       return path
@@ -63,7 +60,7 @@ export default defineComponent({
   <el-form-item
     :label="item.label"
     :prop="item.key"
-    class="auto-form-item"
+    class="vgo-auto-form-item"
     :class="[item.cls]"
     :style="item.style || { width: item.width }"
   >
@@ -94,7 +91,7 @@ export default defineComponent({
       v-else-if="item.type === AutoFormItemType.SELECT"
       v-model="dynamicValue"
       :placeholder="item.placeholder"
-      class="full-width"
+      class="vgo-u-full-width"
       :disabled="item.disabled"
       v-bind="item.props"
     >
@@ -181,14 +178,16 @@ export default defineComponent({
 </template>
 
 <style lang="scss">
-.auto-form-item {
+.vgo-auto-form-item {
   .el-input-number,
   .el-date-editor {
     width: 100%;
   }
-  & > .el-form-item__label {
+
+  > .el-form-item__label {
     padding-right: 0;
   }
+
   .el-input-number .el-input__inner {
     text-align: left;
   }

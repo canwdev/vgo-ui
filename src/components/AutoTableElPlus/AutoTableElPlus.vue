@@ -8,11 +8,13 @@ const props = withDefaults(defineProps<IAutoTableProps>(), {
   customizeColumnStorageKey: 'ate_hidden_column_keys',
 })
 
-defineEmits(['selectionChange'])
+const emit = defineEmits<{
+  selectionChange: [rows: unknown[]]
+}>()
 
 interface IAutoTableProps {
   columns: AutoTableColumn[]
-  data: unknown
+  data: unknown[]
   customizeColumnStorageKey?: string
 }
 // 自定义表列
@@ -25,6 +27,9 @@ const {
 } = useCustomColumns(props)
 
 const tableRef = ref()
+function handleSelectionChange(rows: unknown[]) {
+  emit('selectionChange', rows)
+}
 defineExpose({
   tableRef,
 })
@@ -34,9 +39,9 @@ defineExpose({
   <el-table
     ref="tableRef"
     :data="data"
-    class="auto-table-el-plus"
+    class="vgo-auto-table"
     v-bind="$attrs"
-    @selection-change="(rows) => $emit('selectionChange', rows)"
+    @selection-change="handleSelectionChange"
   >
     <el-table-column
       v-for="item in filteredColumns"
@@ -84,7 +89,7 @@ defineExpose({
 </template>
 
 <style lang="scss">
-.auto-table-el-plus {
+.vgo-auto-table {
   width: 100%;
 }
 </style>

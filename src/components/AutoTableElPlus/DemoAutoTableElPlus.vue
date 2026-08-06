@@ -3,7 +3,13 @@ import type { AutoTableColumn } from './types'
 import { h, ref } from 'vue'
 import AutoTableElPlus from './AutoTableElPlus.vue'
 
-const tableData = ref([
+interface TableRow {
+  id: number
+  name: string
+  name2: string
+}
+
+const tableData = ref<TableRow[]>([
   { id: 1, name: 'test 1', name2: 'test 21' },
   { id: 2, name: 'test 2', name2: 'test 22' },
   { id: 3, name: 'test 3', name2: 'test 23' },
@@ -42,10 +48,13 @@ const tableColumns: AutoTableColumn[] = [
   },
 ]
 
-const autoTableRef = ref()
-const multipleSelection = ref([])
-function handleSelectionChange(val) {
-  multipleSelection.value = val
+const autoTableRef = ref<InstanceType<typeof AutoTableElPlus>>()
+const multipleSelection = ref<unknown[]>([])
+function handleSelectionChange(rows: unknown[]) {
+  multipleSelection.value = rows
+}
+function getRowKey(row: TableRow) {
+  return row.id
 }
 function clearSelect() {
   // 清空多选
@@ -58,7 +67,7 @@ function clearSelect() {
 </script>
 
 <template>
-  <div class="auto-table-demo">
+  <div class="vgo-auto-table-demo">
     <el-space>
       <el-button :disabled="!multipleSelection.length" @click="clearSelect">
         清空多选
@@ -68,7 +77,7 @@ function clearSelect() {
       ref="autoTableRef"
       :data="tableData"
       :columns="tableColumns"
-      :row-key="(row) => row.id"
+      :row-key="getRowKey"
       @selection-change="handleSelectionChange"
     />
     <pre>{{ multipleSelection }}</pre>

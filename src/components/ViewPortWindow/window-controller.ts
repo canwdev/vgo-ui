@@ -4,7 +4,10 @@ import { useThrottleFn } from '@vueuse/core'
 import { checkWindowAttach } from './enum'
 
 const ClassNames = {
-  RESIZE_HANDLE: 'draggable-window-resize',
+  RESIZE_HANDLE: 'vgo-window__resize-handle',
+  ACTIVE: 'is-active',
+  DRAGGING: 'is-dragging',
+  VISIBLE: 'is-visible',
 }
 
 enum ResizeDirection {
@@ -21,7 +24,7 @@ enum ResizeDirection {
 const ResizeDirectionList = Object.values(ResizeDirection)
 
 // 兼容触屏和鼠标
-function getPointerXy(e: MouseEvent | TouchEvent) {
+function getPointerXy(e: Event) {
   let x = 0
   let y = 0
   if (e instanceof TouchEvent) {
@@ -69,6 +72,12 @@ interface DraggableOptions {
   alignWhenViewPortResize: 'start' | 'end'
   // 窗口是否最大化
   maximized?: boolean
+}
+
+interface ScreenPosition {
+  x: number
+  y: number
+  isViewPortResize?: boolean
 }
 
 const RESIZE_BAR_WITH = 6
@@ -247,17 +256,16 @@ export class WindowController {
       window.removeEventListener('resize', this.handleResizeDebounced)
     }
     if (resizeable) {
-      const node = dragTargetEl.querySelector(ClassNames.RESIZE_HANDLE)
-      if (node) {
-        dragTargetEl.removeChild(node)
-      }
+      dragTargetEl
+        .querySelectorAll(`.${ClassNames.RESIZE_HANDLE}`)
+        .forEach(node => node.remove())
     }
 
     windowStateSet.delete(this)
     this.debugLog('destroyed')
   }
 
-  handleDragStart(event) {
+  handleDragStart(event: Event) {
     if (!this.allowMove || this.maximized) {
       return
     }
@@ -282,13 +290,13 @@ export class WindowController {
     ;['mouseup', 'touchend'].forEach((eventName) => {
       docEl.addEventListener(eventName, this.handleDragStop)
     })
-    dragTargetEl.classList.add('_dragging')
+    dragTargetEl.classList.add(ClassNames.DRAGGING)
 
     // 防止拖动图片
     return false
   }
 
-  handleDragMove(event) {
+  handleDragMove(event: Event) {
     const { deltaX, deltaY } = this
     const { dragTargetEl, onMove, opacify } = this.options
 
@@ -324,12 +332,12 @@ export class WindowController {
     // return false;
   }
 
-  handleDragStop(event) {
+  handleDragStop(event: Event) {
     // console.log('[handleDragStop]', event)
     const { docEl } = this
     const { dragTargetEl, opacify, onMove } = this.options
 
-    const { x, y } = event
+    const { x, y } = getPointerXy(event)
 
     if (onMove) {
       const obj: OnMoveParams = {
@@ -350,10 +358,10 @@ export class WindowController {
     if (opacify) {
       dragTargetEl.style.opacity = '1'
     }
-    dragTargetEl.classList.remove('_dragging')
+    dragTargetEl.classList.remove(ClassNames.DRAGGING)
   }
 
-  handleResizeStart(event) {
+  handleResizeStart(event: Event) {
     const { docEl } = this
     const { dragTargetEl } = this.options
 
@@ -376,10 +384,10 @@ export class WindowController {
     ;['mouseup', 'touchend'].forEach((eventName) => {
       docEl.addEventListener(eventName, this.handleResizeStop)
     })
-    dragTargetEl.classList.add('_dragging')
+    dragTargetEl.classList.add(ClassNames.DRAGGING)
   }
 
-  handleResizeMove(event) {
+  handleResizeMove(event: Event) {
     const { deltaX, deltaY } = this
     const { dragTargetEl } = this.options
 
@@ -449,12 +457,12 @@ export class WindowController {
       docEl.removeEventListener(eventName, this.handleResizeStop)
     })
     const { dragTargetEl } = this.options
-    dragTargetEl.classList.remove('_dragging')
+    dragTargetEl.classList.remove(ClassNames.DRAGGING)
   }
 
-  handleMouseDown(event) {
+  handleMouseDown(event: Event) {
     // 鼠标中键和右键不触发更新
-    if (event.button === 1 || event.button === 2) {
+    if (event instanceof MouseEvent && (event.button === 1 || event.button === 2)) {
       return
     }
     this.updateZIndex()
@@ -483,7 +491,7 @@ export class WindowController {
     y,
     // 是否视口正在调整大小
     isViewPortResize = false,
-  }) {
+  }: ScreenPosition) {
     const { docEl } = this
     const { dragTargetEl } = this.options
     const rect = dragTargetEl.getBoundingClientRect()
@@ -512,7 +520,7 @@ export class WindowController {
     return { left, top }
   }
 
-  debugLog(message, ...args) {
+  debugLog(message: string, ...args: unknown[]) {
     if (this.options.isDebug) {
       console.log(`[draggableWindow] ${message}`, ...args)
     }
@@ -554,7 +562,7 @@ export class WindowController {
       .filter(Boolean) as HTMLElement[]
 
     els.forEach((el) => {
-      const val = getComputedStyle(el)['z-index']
+      const val = getComputedStyle(el).zIndex
       const idx = Number.parseInt(val) || 0
       if (idx > maxZIndex) {
         maxZIndex = idx
@@ -562,14 +570,14 @@ export class WindowController {
       }
     })
 
-    if (!dragTargetEl.classList.contains('_visible')) {
+    if (!dragTargetEl.classList.contains(ClassNames.VISIBLE)) {
       // 不可见元素不执行更新
       return
     }
 
     // console.log('[updateZIndex]', els, maxZIndex, dragTargetEl)
 
-    dragTargetEl.classList.add('_active')
+    dragTargetEl.classList.add(ClassNames.ACTIVE)
 
     // 是当前窗口不进行操作
     if (dragTargetEl === maxZIndexEl) {
@@ -581,8 +589,8 @@ export class WindowController {
     // 将其它 fixed-element 元素的 z-index 设置为比它小的值
     Array.from(els).forEach((el) => {
       if (el !== dragTargetEl) {
-        el.style.zIndex = String(Number.parseInt(getComputedStyle(el)['z-index']) - 1)
-        el.classList.remove('_active')
+        el.style.zIndex = String(Number.parseInt(getComputedStyle(el).zIndex) - 1)
+        el.classList.remove(ClassNames.ACTIVE)
       }
     })
   }

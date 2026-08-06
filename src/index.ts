@@ -1,5 +1,4 @@
-// Styles
-import './styles/base.scss'
+import './styles/core.scss'
 
 // ---- Components ----
 
@@ -23,10 +22,6 @@ export { default as AutoTableElPlus } from './components/AutoTableElPlus/AutoTab
 export { default as ListPagination } from './components/AutoTableElPlus/ListPagination/index.vue'
 // AutoTableElPlus
 export type { AutoTableColumn } from './components/AutoTableElPlus/types'
-// Layouts
-export { default as FoldableSidebarLayout } from './components/Layouts/FoldableSidebarLayout.vue'
-
-export { default as TabLayout } from './components/Layouts/TabLayout.vue'
 // OptionUI
 export type { StOptionItem, SwitchOption } from './components/OptionUI/enum'
 export { StOptionType, swatches } from './components/OptionUI/enum'
@@ -58,4 +53,4 @@ export type { OnMoveParams } from './components/ViewPortWindow/window-controller
 export { default as VueRender } from './components/VueRender.vue'
 // ---- Hooks ----
 export { useBeforeUnload, useSaveShortcut, useUnSavedChanges } from './hooks/use-beforeunload'
-export { useElementPlusTheme } from './hooks/use-element-plus-theme'
+export { rgbToHex, syncPrimaryColor, useElementPlusTheme } from './hooks/use-element-plus-theme'

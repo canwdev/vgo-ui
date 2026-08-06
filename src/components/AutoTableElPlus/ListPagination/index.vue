@@ -1,12 +1,19 @@
 <script lang="ts">
+import type { PropType } from 'vue'
 import { defineComponent, onBeforeMount, toRefs } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+
+interface PaginationData {
+  currentPage: number
+  pageSize: number
+  totalItems: number
+}
 
 export default defineComponent({
   name: 'ListPagination',
   props: {
     paginationData: {
-      type: Object,
+      type: Object as PropType<PaginationData>,
       required: true,
     },
     hideOnSinglePage: {
@@ -32,7 +39,7 @@ export default defineComponent({
     const route = useRoute()
     const router = useRouter()
 
-    const handlePageSizeChange = (size) => {
+    const handlePageSizeChange = (size: number) => {
       // console.log('[handlePageSizeChange]', size)
       if (updateRouter.value) {
         const queryOrigin = route.query
@@ -55,7 +62,7 @@ export default defineComponent({
       }
       emit('sizeChange', size)
     }
-    const handlePageCurrentChange = (page) => {
+    const handlePageCurrentChange = (page: number) => {
       if (page < 0) {
         page = 1
       }
@@ -98,7 +105,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="common-pagination-wrap">
+  <div class="vgo-list-pagination">
     <el-pagination
       v-model:current-page="paginationData.currentPage"
       v-model:page-size="paginationData.pageSize"

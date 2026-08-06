@@ -63,27 +63,27 @@ defineExpose({
     :model="formSchema.model"
     :rules="formSchema.rules"
     :label-position="formSchema.labelPosition"
-    class="auto-form-el-plus"
+    class="vgo-auto-form"
     v-bind="formSchema.props"
     :disabled="isLoading"
     @submit.prevent="submitForm"
   >
     <transition name="fade">
-      <div v-show="isLoading" class="auto-form-loading-container">
-        <div class="loading-text vgo-panel">
+      <div v-show="isLoading" class="vgo-auto-form__loading">
+        <div class="vgo-auto-form__loading-text vgo-panel">
           Loading...
         </div>
       </div>
     </transition>
 
-    <div class="form-content-wrap">
+    <div class="vgo-auto-form__content">
       <template v-for="(item, index) in formSchema.formItems">
         <!--      自动grid数组 -->
         <div
           v-if="Array.isArray(item)"
           :key="`g_${index}`"
-          class="auto-form-grid"
-          :class="[`count-${item.length}`]"
+          class="vgo-auto-form__grid"
+          :class="[`vgo-auto-form__grid--cols-${item.length}`]"
           :style="{ gridTemplateColumns: `repeat(${item.length}, 1fr)` }"
         >
           <template v-for="vi in item">
@@ -99,8 +99,8 @@ defineExpose({
         <div
           v-else-if="'children' in item && Array.isArray(item.children)"
           :key="`ag_${index}`"
-          class="auto-form-grid"
-          :class="[`count-${item.cols}`]"
+          class="vgo-auto-form__grid"
+          :class="[`vgo-auto-form__grid--cols-${item.cols}`]"
           :style="{ gridTemplateColumns: `repeat(${item.cols}, 1fr)` }"
         >
           <AutoFormItem
@@ -121,7 +121,7 @@ defineExpose({
     </div>
 
     <!--    操作按钮 -->
-    <div v-if="!hideActions" class="auto-form-actions">
+    <div v-if="!hideActions" class="vgo-auto-form__actions">
       <slot name="actions" :submit-form="submitForm">
         <el-button type="primary" @click="submitForm()">
           Submit
@@ -134,47 +134,34 @@ defineExpose({
 </template>
 
 <style lang="scss">
-.auto-form-el-plus {
+.vgo-auto-form {
   position: relative;
 
-  .auto-form-loading-container {
+  &__loading {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
+    z-index: var(--vgo-z-overlay);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 20;
+    width: 100%;
+    height: 100%;
     cursor: wait;
-    &.position-fixed {
-      position: fixed;
-      z-index: 200;
-    }
-
-    .loading-text {
-      padding: 10px;
-    }
   }
-  .auto-form-grid {
+
+  &__loading-text {
+    padding: 10px;
+  }
+
+  &__grid {
     display: grid;
     grid-template-rows: auto;
     gap: 10px;
   }
-  .auto-form-actions {
+
+  &__actions {
     display: flex;
     justify-content: flex-end;
-  }
-  .af-render-gap {
-    .el-form-item__content {
-      display: flex;
-      gap: 16px;
-      .el-input,
-      .el-input-number {
-        flex: 1;
-      }
-    }
   }
 }
 </style>

@@ -13,7 +13,7 @@ import { AutoTableElPlus } from '@canwdev/vgo-ui'
 import type { AutoTableColumn } from '@canwdev/vgo-ui'
 ```
 
-通过 `columns` 传入列配置（`AutoTableColumn[]`），`data` 传入表格数据。支持自定义列显示等能力，详见类型 `AutoTableColumn`。
+通过 `columns` 传入列配置（`AutoTableColumn[]`），`data` 传入表格数据。支持自定义列显示等能力，详见类型 `AutoTableColumn`。组件根类为 `.vgo-auto-table`；core 提供结构，default 提供默认主题外观。
 
 ## ListPagination
 
@@ -24,3 +24,5 @@ import type { AutoTableColumn } from '@canwdev/vgo-ui'
 ```ts
 import { ListPagination } from '@canwdev/vgo-ui'
 ```
+
+默认主题要求 `body.vgo-theme-default`，暗色模式还需 `html.dark`。自定义状态类使用 `.is-*`，工具类使用 `.vgo-u-*`。

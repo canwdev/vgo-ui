@@ -4,7 +4,7 @@
 
 ## Actions
 - [快速上手](docs/install)
-- [组件](docs/html)
+- [样式总览](docs/styles)
 
 ## Features
 - 自用

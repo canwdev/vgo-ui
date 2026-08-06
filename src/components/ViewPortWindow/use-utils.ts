@@ -7,11 +7,11 @@ import { onMounted, watch } from 'vue'
  */
 export function useMouseOver(target: HTMLElement | Ref<HTMLElement>, options: {
   timeout?: number
-  onEnter?: (event) => void
-  onOut?: (event) => void
+  onEnter?: (event: MouseEvent) => void
+  onOut?: (event: MouseEvent) => void
 } = {}) {
   const { timeout = 0, onEnter, onOut } = options
-  let timer
+  let timer: ReturnType<typeof setTimeout> | undefined
   useEventListener(target, 'mouseover', (event) => {
     clearTimeout(timer)
     timer = setTimeout(() => {
@@ -30,13 +30,17 @@ export function useMouseOver(target: HTMLElement | Ref<HTMLElement>, options: {
 /**
  * 使用DOM方法动态设置元素的类名
  */
-export function useDynamicClassName(targetRef, className, enableRef) {
-  const toggle = (val) => {
+export function useDynamicClassName(
+  targetRef: Ref<HTMLElement | null>,
+  className: string,
+  enableRef: Ref<boolean | undefined>,
+) {
+  const toggle = (val: boolean | undefined) => {
     if (val) {
-      targetRef.value.classList.add(className)
+      targetRef.value?.classList.add(className)
     }
     else {
-      targetRef.value.classList.remove(className)
+      targetRef.value?.classList.remove(className)
     }
   }
   watch(enableRef, (val) => {
@@ -50,7 +54,12 @@ export function useDynamicClassName(targetRef, className, enableRef) {
 type ByPosition = 'top' | 'bottom' | 'left' | 'right'
 
 // 检测鼠标或触摸按下后，向上移动距离
-export function useElementMoveUpDetection(elementRef: Ref<HTMLElement | null>, distance: number, position: ByPosition, callback: (event) => void) {
+export function useElementMoveUpDetection(
+  elementRef: Ref<HTMLElement | null>,
+  distance: number,
+  position: ByPosition,
+  callback: (event: TouchEvent | MouseEvent) => void,
+) {
   let startPos = 0 // 记录按下时的 Y 轴坐标
   let isMoving = false // 记录是否处于移动状态
 

@@ -1,13 +1,13 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { defineAsyncComponent } from 'vue'
-import docsCss from '../views/docs/css.md?raw'
 import docsForm from '../views/docs/form.md?raw'
-import docsHtml from '../views/docs/html.md?raw'
 import docsInstall from '../views/docs/install.md?raw'
 import docsOptionUI from '../views/docs/option-ui.md?raw'
 import docsQuickOptions from '../views/docs/quick-options.md?raw'
+import docsStyles from '../views/docs/styles.md?raw'
 import docsTable from '../views/docs/table.md?raw'
 import docsWindow from '../views/docs/window.md?raw'
+import { injectScssBlocks } from './scss-blocks'
 
 export const docsRoutes: RouteRecordRaw[] = [
   {
@@ -19,17 +19,10 @@ export const docsRoutes: RouteRecordRaw[] = [
     },
   },
   {
-    path: 'html',
+    path: 'styles',
     meta: {
-      title: '原生 HTML 元素',
-      content: docsHtml,
-    },
-  },
-  {
-    path: 'css',
-    meta: {
-      title: 'CSS 样式',
-      content: docsCss,
+      title: '样式总览',
+      content: injectScssBlocks(docsStyles),
     },
   },
   {

@@ -4,13 +4,5 @@ import markdownContent from './index.md?raw'
 </script>
 
 <template>
-  <div class="page-home">
-    <PageContent :text="markdownContent" />
-  </div>
+  <PageContent :text="markdownContent" />
 </template>
-
-<style lang="scss" scoped>
-.page-home {
-  padding: 20px 0;
-}
-</style>

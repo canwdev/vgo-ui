@@ -1,0 +1,98 @@
+.vgo-u-font-italic {
+  font-style: italic;
+}
+
+.vgo-u-font-code {
+  font-family:
+    'Maple Mono NF CN', 'Maple Mono NF', 'Victor Mono Regular', 'Cascadia Code', '等距更纱黑体 SC', Monaco,
+    'Fira Code Medium', Consolas, 'Courier New', monospace;
+}
+
+.vgo-u-font-emoji {
+  font-family:
+    'Segoe UI Emoji', 'SF Pro SC', 'SF Pro Text', 'SF Pro Icons', 'PingFang SC', 'Helvetica Neue', Helvetica, Arial,
+    sans-serif;
+}
+
+.vgo-u-button-reset {
+  padding: 0;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  outline: 0;
+
+  &:active {
+    opacity: 0.8;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.vgo-u-scrollbar *,
+.vgo-u-scrollbar {
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    overflow: overlay;
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--vgo-scrollbar);
+    background-clip: content-box;
+    border: 2px solid transparent;
+    border-radius: var(--vgo-radius-lg);
+
+    &:hover {
+      background-color: var(--vgo-scrollbar-hover);
+    }
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: var(--vgo-radius);
+  }
+
+  &::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+}
+
+.vgo-u-flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.vgo-u-flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.vgo-u-flex-wrap-center {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.vgo-u-full-width {
+  width: 100%;
+}
+
+.vgo-u-text-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 图标字号。加在图标元素本身（与 mdi 平级），所以这里不必耦合任何图标库的类名
+@each $size in sm, md, lg {
+  .vgo-u-icon-#{$size} {
+    font-size: var(--vgo-icon-#{$size});
+  }
+}

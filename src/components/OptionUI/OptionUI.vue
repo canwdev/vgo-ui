@@ -47,7 +47,7 @@ function handleToggleExpand(item: StOptionItem) {
 </script>
 
 <template>
-  <div class="option-ui">
+  <div class="vgo-option-ui">
     <OptionItem
       v-for="item in optionList"
       v-show="!item.hidden"

@@ -1,14 +1,14 @@
 import { resolve } from 'node:path'
 import vue from '@vitejs/plugin-vue'
-import dts from 'vite-plugin-dts'
 import { defineConfig } from 'vite'
+import dts from 'vite-plugin-dts'
 
 const entries = {
-  index: resolve(__dirname, 'src/index.ts'),
+  'index': resolve(__dirname, 'src/index.ts'),
   'vue-monaco': resolve(__dirname, 'src/vue-monaco.ts'),
 }
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     vue(),
     dts({
@@ -25,20 +25,17 @@ export default defineConfig({
     lib: {
       entry: entries,
       name: 'VgoUI',
+      cssFileName: 'styles/core',
       fileName: (format, name) => {
         const ext = format === 'es' ? 'js' : 'cjs'
         return `${name}.${ext}`
       },
       formats: ['es', 'cjs'],
     },
+    emptyOutDir: mode !== 'development',
     rollupOptions: {
       external: ['vue', '@vueuse/core', 'lodash-es', 'element-plus', 'monaco-editor'],
       output: {
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.names?.[0]?.endsWith('.css'))
-            return 'index.css'
-          return '[name][extname]'
-        },
         globals: {
           'vue': 'Vue',
           '@vueuse/core': 'VueUse',
@@ -49,6 +46,5 @@ export default defineConfig({
       },
     },
     sourcemap: true,
-    cssCodeSplit: false,
   },
-})
+}))

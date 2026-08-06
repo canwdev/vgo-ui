@@ -111,14 +111,14 @@ function setIsTransition(val: boolean) {
 }
 
 // 请勿使用vue :class="{}" 进行类的绑定，因为vue会覆盖DOM动态添加的class
-useDynamicClassName(rootRef, '_visible', mVisible)
-useDynamicClassName(rootRef, '_maximized', isMaximized)
-useDynamicClassName(rootRef, '_transition', isTransition)
-useDynamicClassName(rootRef, '_no_title_bar', noTitleBar)
+useDynamicClassName(rootRef, 'is-visible', mVisible)
+useDynamicClassName(rootRef, 'is-maximized', isMaximized)
+useDynamicClassName(rootRef, 'is-transitioning', isTransition)
+useDynamicClassName(rootRef, 'is-titleless', noTitleBar)
 const isAllowMove = computed(() => {
   return allowMove.value && !isMaximized.value
 })
-useDynamicClassName(rootRef, '_allow_move', isAllowMove)
+useDynamicClassName(rootRef, 'is-movable', isAllowMove)
 
 const defaultWinOptions: WinOptions = {
   top: '10px',
@@ -226,7 +226,9 @@ onMounted(() => {
   initWindowStyle()
 })
 
-function setPos(dir: string, value: string) {
+type PositionKey = 'top' | 'left' | 'width' | 'height'
+
+function setPos(dir: PositionKey, value: string) {
   rootRef.value.style[dir] = winOptions[dir] = value
 }
 
@@ -245,13 +247,13 @@ function initWindowStyle() {
     }
   }
 
-  let lsState
-  let lsVal
+  let lsState: WinOptions
+  let lsVal: WinOptions | null = null
   if (!props.wid) {
     lsState = defaultOptions
   }
   else {
-    lsVal = JSON.parse(localStorage.getItem(storageKey) || 'null')
+    lsVal = JSON.parse(localStorage.getItem(storageKey) || 'null') as WinOptions | null
     // console.log(`load ${storageKey}`, lsVal)
     lsState = lsVal || defaultOptions
   }
@@ -433,19 +435,19 @@ defineExpose({
         v-model:visible="isShowLayoutHelper"
         @set-window-layout="setWindowLayout"
       />
-      <div class="vgo-window-content">
+      <div class="vgo-window__content">
         <div
           v-show="!noTitleBar"
           ref="titleBarRef"
-          class="vgo-window-title-bar"
+          class="vgo-window__title-bar"
           @dblclick="toggleMaximized"
         >
-          <div class="vgo-window-title-bar-text text-overflow">
+          <div class="vgo-window__title vgo-u-text-overflow">
             <slot name="titleBarLeft" />
           </div>
           <div
             ref="titleBarButtonsRef"
-            class="vgo-window-controls"
+            class="vgo-window__controls"
             @dblclick.stop
           >
             <slot name="titleBarRightControls" />
@@ -540,140 +542,10 @@ defineExpose({
           </div>
         </div>
 
-        <div ref="winBodyRef" class="vgo-window-body _bg scrollbar-mini">
+        <div ref="winBodyRef" class="vgo-window__body vgo-u-scrollbar">
           <slot />
         </div>
       </div>
     </div>
   </transition>
 </template>
-
-<style lang="scss">
-.vgo-window {
-  z-index: 100;
-  min-height: 50px;
-  min-width: 50px;
-  box-sizing: border-box;
-  &._allow_move {
-    position: fixed;
-    z-index: 100;
-    top: 0;
-    left: 0;
-  }
-
-  &._maximized {
-    position: fixed;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    padding: 0;
-    border: none !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    .vgo-window-content {
-      .vgo-window-title-bar {
-        margin-left: unset;
-        margin-right: unset;
-      }
-      .vgo-window-body {
-        border-left: 0;
-        border-right: 0;
-      }
-    }
-    .draggable-window-resize {
-      pointer-events: none;
-    }
-  }
-
-  &._transition {
-    transition: all 0.2s !important;
-  }
-
-  &._dragging {
-    .vgo-window-body {
-      // 拖拽时禁用内部鼠标事件，防止鼠标陷入
-      pointer-events: none;
-    }
-  }
-
-  &._no_title_bar {
-    .vgo-window-content {
-      .vgo-window-body {
-        border: none;
-        box-shadow: none;
-        pointer-events: auto;
-        height: calc(100%) !important;
-      }
-    }
-  }
-
-  .vgo-window-content {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-
-    .vgo-window-title-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      user-select: none;
-
-      .window-icon {
-        width: 16px;
-        height: 16px;
-        pointer-events: none;
-      }
-
-      .vgo-window-title-bar-text {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        line-height: 1.4;
-
-        img {
-          pointer-events: none;
-        }
-        .mdi {
-          color: var(--vgo-primary);
-        }
-      }
-    }
-    .vgo-window-body {
-      //flex: 1;
-      height: calc(100% - 30px);
-
-      border: 1px solid rgba(0, 0, 0, 0.6);
-      &._bg {
-        background-color: rgba(255, 255, 255, 1);
-      }
-    }
-  }
-
-  .vgo-window-controls {
-    border-radius: 0;
-    display: flex;
-    align-items: flex-start;
-
-    button {
-      height: 24px;
-      background-color: transparent;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s;
-      color: inherit;
-
-      .mdi {
-        font-size: 16px;
-      }
-
-      &.active {
-        background-color: var(--vgo-primary) !important;
-      }
-    }
-  }
-}
-</style>

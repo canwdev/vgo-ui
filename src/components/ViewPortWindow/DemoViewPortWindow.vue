@@ -6,8 +6,8 @@ const visible = ref(true)
 </script>
 
 <template>
-  <div class="demo">
-    <button class="vgo-button primary" @click="visible = !visible">
+  <div class="vgo-window-demo">
+    <button class="vgo-button vgo-button--primary" @click="visible = !visible">
       切换窗口1可见性
     </button>
     <ViewPortWindow

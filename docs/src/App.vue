@@ -1,33 +1,40 @@
 <script lang="ts" setup>
+import ThemeControl from './components/ThemeControl.vue'
+
 const version = __VGO_UI_PKG_VERSION__
 </script>
 
 <template>
   <div class="app-root">
     <div
-      class="nav-menu flex-row-center-gap"
+      class="nav-menu vgo-panel vgo-panel--flat vgo-u-flex-wrap-center"
     >
-      <router-link to="/" class="logo">
+      <router-link to="/" class="vgo-button vgo-button--text">
         <span class="logo-title">Vgo UI</span>
-        <span class="logo-version" title="当前包版本">{{ version }}</span>
+        <span class="logo-version vgo-badge vgo-badge--primary">v{{ version }}</span>
       </router-link>
 
-      <div class="flex-row-center-gap nav-right">
-        <router-link to="/docs">
+      <div class="vgo-u-flex-wrap-center">
+        <router-link to="/docs" class="vgo-button vgo-button--text" active-class="is-active">
+          <span class="mdi mdi-book-open-page-variant-outline" />
           文档
         </router-link>
-        <router-link to="/changelog">
+        <router-link to="/changelog" class="vgo-button vgo-button--text" active-class="is-active">
+          <span class="mdi mdi-history" />
           更新日志
         </router-link>
         <a
+          class="vgo-button vgo-button--text vgo-button--icon"
           href="https://github.com/canwdev/vgo-ui"
           target="_blank"
+          title="GitHub"
         >
-          Github
+          <span class="mdi mdi-github" />
         </a>
+        <ThemeControl />
       </div>
     </div>
-    <div class="app-content">
+    <div class="app-content vgo-u-scrollbar">
       <router-view />
     </div>
   </div>
@@ -38,55 +45,28 @@ const version = __VGO_UI_PKG_VERSION__
   display: flex;
   flex-direction: column;
   height: 100%;
+}
 
-  .nav-menu {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    height: 60px;
-    border-bottom: 1px solid var(--vgo-color-border);
-    justify-content: space-between;
-    .logo {
-      gap: 10px;
-      .logo-title {
-        font-weight: 600;
-      }
-      .logo-version {
-        font-size: 12px;
-        font-weight: 500;
-        color: var(--vgo-color-text-secondary, #909399);
-        letter-spacing: 0.02em;
-      }
-    }
-    a {
-      height: 100%;
-      padding-left: 20px;
-      padding-right: 20px;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      color: inherit;
-      position: relative;
-      &.router-link-active {
-        color: var(--vgo-primary);
-        &::after {
-          content: '';
-          position: absolute;
-          bottom: -1px;
-          left: 0;
-          width: 100%;
-          height: 4px;
-          background-color: var(--vgo-primary);
-        }
-      }
-    }
-    .nav-right {
-      height: 100%;
-    }
-  }
-  .app-content {
-    flex: 1;
-    overflow: auto;
-  }
+.nav-menu {
+  position: sticky;
+  top: 0;
+  z-index: var(--vgo-z-sticky);
+  justify-content: space-between;
+  padding: var(--vgo-space-2) var(--vgo-space-4);
+  border-bottom: 1px solid var(--vgo-border);
+}
+
+.logo-title {
+  font-weight: 600;
+}
+
+.logo-version {
+  font-size: var(--vgo-font-sm);
+  color: var(--vgo-text-secondary);
+}
+
+.app-content {
+  flex: 1;
+  overflow: auto;
 }
 </style>

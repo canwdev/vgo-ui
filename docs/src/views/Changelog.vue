@@ -1,16 +1,8 @@
 <script lang="ts" setup>
-import PageContent from '../components/PageContent.vue'
 import changelogMd from '../../../CHANGELOG.md?raw'
+import PageContent from '../components/PageContent.vue'
 </script>
 
 <template>
-  <div class="page-changelog">
-    <PageContent :text="changelogMd" />
-  </div>
+  <PageContent :text="changelogMd" />
 </template>
-
-<style lang="scss" scoped>
-.page-changelog {
-  padding: 20px 0;
-}
-</style>

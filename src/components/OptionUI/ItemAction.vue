@@ -36,7 +36,7 @@ const dynamicValue = computed({
 </script>
 
 <template>
-  <el-space class="option-item-action" size="small" align="center">
+  <el-space class="vgo-option-action" size="small" align="center">
     <el-switch
       v-if="item.type === StOptionType.SWITCH"
       v-model="dynamicValue"
@@ -53,7 +53,7 @@ const dynamicValue = computed({
     <el-input
       v-else-if="item.type === StOptionType.INPUT"
       v-model="dynamicValue"
-      class="option-select option-input"
+      class="vgo-option-action__control vgo-option-action__input"
       clearable
       v-bind="item.props"
     />
@@ -62,7 +62,7 @@ const dynamicValue = computed({
       v-else-if="item.type === StOptionType.SELECT"
       v-model="dynamicValue"
       :placeholder="item.placeholder"
-      class="option-select"
+      class="vgo-option-action__control"
       :teleported="false"
       v-bind="item.props"
     >
@@ -72,7 +72,7 @@ const dynamicValue = computed({
     <DynamicTags
       v-else-if="item.type === StOptionType.DYNAMIC_TAGS"
       v-model="dynamicValue"
-      class="dynamic-tags"
+      class="vgo-option-action__tags"
       v-bind="item.props"
     />
 
@@ -95,7 +95,7 @@ const dynamicValue = computed({
       v-else-if="item.type === StOptionType.DATE_PICKER"
       v-model="dynamicValue"
       :disabled="item.disabled"
-      class="option-select"
+      class="vgo-option-action__control"
       v-bind="item.props"
     />
 
@@ -111,34 +111,3 @@ const dynamicValue = computed({
     <VueRender v-if="item.actionRender" :render-fn="item.actionRender" />
   </el-space>
 </template>
-
-<style lang="scss">
-.option-item-action {
-  .option-slider-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    .option-slider {
-      width: 180px;
-    }
-    .number-input-wrap {
-      width: 74px;
-    }
-  }
-  .option-select {
-    width: 200px;
-    &.el-date-editor {
-      width: 200px;
-    }
-  }
-  .dynamic-tags {
-    width: 250px;
-  }
-  .option-input {
-    font-size: 12px;
-  }
-  .el-select-dropdown__list {
-    text-align: left;
-  }
-}
-</style>

@@ -1,7 +1,7 @@
 {
   "name": "@canwdev/vgo-ui",
   "type": "module",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "",
   "author": "",
   "license": "MIT",
@@ -16,7 +16,8 @@
         "default": "./dist/index.cjs"
       }
     },
-    "./styles": "./dist/index.css",
+    "./styles/core": "./dist/styles/core.css",
+    "./themes/default": "./dist/themes/default.css",
     "./vue-monaco": {
       "import": {
         "types": "./dist/vue-monaco.d.ts",
@@ -38,10 +39,19 @@
     "src"
   ],
   "scripts": {
-    "build": "vue-tsc -b && vite build",
+    "build": "bun run check && bun run build:lib && bun run build:styles",
+    "build:lib": "vite build",
+    "build:styles": "sass src/styles/themes/default/index.scss dist/themes/default.css --style=compressed --no-source-map",
+    "dev": "bun run dev:prime && bun run --parallel dev:lib dev:styles",
+    "dev:lib": "vite build --watch --mode development",
+    "dev:prime": "vite build --mode development && sass src/styles/themes/default/index.scss dist/themes/default.css --no-source-map",
+    "dev:styles": "sass --watch src/styles/themes/default/index.scss:dist/themes/default.css --style=expanded --no-source-map",
+    "check": "bun run lint && bun run typecheck",
     "typecheck": "vue-tsc --noEmit",
     "bun:pack": "bun run build && bun pm pack",
-    "lint": "eslint src --fix",
+    "lint": "eslint src vite.config.ts",
+    "lint:docs": "eslint \"docs/src/**/*.{ts,vue}\" docs/vite.config.ts",
+    "lint:fix": "bun run lint --fix",
     "publish-npm": "bun run build && bun publish --access public"
   },
   "peerDependencies": {
@@ -56,7 +66,8 @@
     }
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^8.3.0",
+    "@antfu/eslint-config": "^9.2.0",
+    "@types/node": "^24.0.0",
     "@vitejs/plugin-vue": "^6.0.8",
     "@vue/tsconfig": "^0.9.1",
     "element-plus": "^2.14.3",
@@ -64,7 +75,7 @@
     "eslint-plugin-format": "^2.0.1",
     "monaco-editor": "^0.56.0",
     "sass-embedded": "^1.100.0",
-    "typescript": "~7.0.2",
+    "typescript": "~6.0.2",
     "vite": "^8.1.5",
     "vite-plugin-dts": "^5.0.3",
     "vue-router": "^5.2.0",

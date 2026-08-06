@@ -39,25 +39,20 @@ bun add vue-router
 
 ## 引入样式
 
-在入口文件（如 `main.ts`）中引入打包后的样式（对应 `package.json` 的 `exports["./styles"]`）：
+同时引入 core 和默认主题：
 
 ```ts
-import '@canwdev/vgo-ui/styles'
+import '@canwdev/vgo-ui/styles/core'
+import '@canwdev/vgo-ui/themes/default'
 ```
 
-如需在 SCSS 中复用变量或按需扩展，可直接引用包内源码样式（发布包中包含 `src` 目录）：
+`styles/core` 提供重置、运行时基础、组件结构和 `vgo-u-*` 工具类；`themes/default` 提供默认主题的设计令牌和外观。
 
-```scss
-@use "@canwdev/vgo-ui/src/styles/base" as *;
-```
+文档工程直接使用源码入口时，对应路径为：
 
-全局覆盖主题变量示例：
-
-```scss
-:root {
-  /* 主题颜色(R,G,B) 覆盖（可选） */
-  --vgo-primary-rgb: 83, 173, 228 !important;
-}
+```ts
+import '../../src/styles/core.scss'
+import '../../src/styles/themes/default/index.scss'
 ```
 
 ## 按需引入组件与类型
@@ -71,7 +66,7 @@ import type { WinOptions, StOptionItem } from '@canwdev/vgo-ui'
 
 ## 主题
 
-修改 `index.html`，在 `body` 上添加主题类：
+默认主题类挂载在 `body`，暗色状态类挂载在 `html`：
 
 ```html
 <!-- 亮色主题 -->
@@ -85,4 +80,12 @@ import type { WinOptions, StOptionItem } from '@canwdev/vgo-ui'
 </html>
 ```
 
-自定义主题可参考包内 `src/styles/theme-default.scss`（路径示例：`node_modules/@canwdev/vgo-ui/src/styles/theme-default.scss`）。
+组件 CSS 类统一使用 `vgo-` 前缀和 BEM 命名（如 `.vgo-window__body`、`.vgo-button--primary`），状态类使用 `.is-*`，工具类使用 `.vgo-u-*`。这些类名在 0.4.0 中属于破坏性变更。
+
+## 减少动态效果
+
+库的过渡时长统一走 `--vgo-duration-fast` / `--vgo-duration-base`。给 `html` 加 `reduce-motion` 类即可压掉全部过渡，系统级 `prefers-reduced-motion: reduce` 也会自动生效：
+
+```ts
+document.documentElement.classList.toggle('reduce-motion', enabled)
+```

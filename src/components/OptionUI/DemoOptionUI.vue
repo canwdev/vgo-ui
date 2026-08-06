@@ -91,7 +91,7 @@ const options = computed((): StOptionItem[] => {
           type: StOptionType.BUTTON,
           value: '点击我',
           props: {
-            class: 'primary',
+            class: 'vgo-button--primary',
             onClick: () => {
               alert('点击按钮')
             },
@@ -121,14 +121,8 @@ const settingsStore = ref({
 </script>
 
 <template>
-  <div class="option-ui-demo">
+  <div class="vgo-option-ui-demo">
     <OptionUI :option-list="options" :store="settingsStore" />
     <pre>{{ settingsStore }}</pre>
   </div>
 </template>
-
-<style scoped lang="scss">
-.option-ui-demo {
-  max-width: 500px;
-}
-</style>

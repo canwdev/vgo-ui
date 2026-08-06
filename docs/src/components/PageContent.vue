@@ -1,5 +1,6 @@
 <script lang="ts" setup="">
 import { toRefs } from 'vue'
+import { isDark } from '../hooks/use-site-theme'
 import MarkdownRender from './MarkdownRender/MarkdownRender.vue'
 
 const props = withDefaults(
@@ -10,7 +11,6 @@ const props = withDefaults(
     text: '',
   },
 )
-const emit = defineEmits([])
 const { text } = toRefs(props)
 </script>
 
@@ -21,6 +21,7 @@ const { text } = toRefs(props)
     <slot name="header" />
     <MarkdownRender
       :text="text"
+      :dark="isDark"
     >
       <slot />
     </MarkdownRender>
@@ -29,9 +30,10 @@ const { text } = toRefs(props)
 </template>
 
 <style lang="scss" scoped>
+// 唯一一处正文留白，首页 / 更新日志 / 文档详情共用
 .page-content {
-  padding: 20px 20px;
   max-width: 1000px;
   margin: 0 auto;
+  padding: calc(var(--vgo-space-4) * 2) var(--vgo-space-4);
 }
 </style>

@@ -6,7 +6,7 @@ import 'highlight.js/styles/github.css'
 // import 'highlight.js/styles/github-dark.css'
 
 // 兼容不能识别的语言
-const langMap = {
+const langMap: Record<string, string> = {
   vue: 'html',
 }
 function getLang(lang: string) {
@@ -31,8 +31,8 @@ const md = new MarkdownIt({
     return `<pre class="hljs-code-container">
 <div class="hljs-code-header vgo-panel">
   <span class="lang-display" data-lang="${langOriginal}">${langDisplay}</span>
-  <button class="_js-action-button btn-no-style mdi mdi-content-copy" data-action="copy" title="Copy">📋</button>
-  <!--<button class="_js-action-button btn-no-style mdi mdi-download" data-action="download" title="Download">Download</button>-->
+  <button class="_js-action-button vgo-u-button-reset mdi mdi-content-copy" data-action="copy" title="Copy"></button>
+  <!--<button class="_js-action-button vgo-u-button-reset mdi mdi-download" data-action="download" title="Download">Download</button>-->
 </div><code class="hljs language-${language}">${content}</code>
 </pre>`
   },

@@ -1,0 +1,88 @@
+// 结构标尺，与主题无关。文档站「样式总览」直接读取本块渲染，改这里文档就跟着变
+:root {
+  // 主题色
+  --vgo-primary-rgb: 83, 173, 228;
+  --vgo-primary: rgb(var(--vgo-primary-rgb));
+  --vgo-primary-opacity: rgba(var(--vgo-primary-rgb), 0.25);
+
+  // 间距
+  --vgo-space-1: 4px;
+  --vgo-space-2: 8px;
+  --vgo-space-3: 12px;
+  --vgo-space-4: 16px;
+
+  // 字号
+  --vgo-font-sm: 12px;
+  --vgo-font-md: 14px;
+  --vgo-font-lg: 16px;
+
+  // 图标字号
+  --vgo-icon-sm: 14px;
+  --vgo-icon-md: 20px;
+  --vgo-icon-lg: 24px;
+
+  // 控件高度
+  --vgo-control-sm: 24px;
+  --vgo-control-md: 30px;
+  --vgo-control-lg: 40px;
+
+  // 层级
+  --vgo-z-sticky: 10;
+  --vgo-z-overlay: 20;
+  --vgo-z-window: 100;
+  --vgo-z-preview: 1000;
+
+  // 过渡时长
+  --vgo-duration-fast: 0.12s;
+  --vgo-duration-base: 0.24s;
+}
+
+// 压时长而非 animation: none，避免打断依赖 animationend 的逻辑。
+// 令牌只管得到库自己的过渡；element-plus / artplayer / 右键菜单这类第三方
+// 把时长硬编码在自己的规则里，所以还需要通用选择器兜底。
+@mixin reduce-motion {
+  --vgo-duration-fast: 0.01ms;
+  --vgo-duration-base: 0.01ms;
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// 去掉文字阴影与背景模糊，降低墨水屏的刷新负担。只在手动开关下生效：
+// 系统的 prefers-reduced-motion 表达的是动效偏好，不该顺带改变外观。
+@mixin flatten-effects {
+  // element-plus 是可选 peer，未安装时这几个变量只是无人读取
+  --el-box-shadow: 0 0 0 1px var(--vgo-border);
+  --el-box-shadow-light: 0 0 0 1px var(--vgo-border);
+  --el-box-shadow-lighter: 0 0 0 1px var(--vgo-border);
+  --el-box-shadow-dark: 0 0 0 1px var(--vgo-border);
+  --el-overlay-color: transparent;
+  --el-overlay-color-light: transparent;
+  --el-overlay-color-lighter: transparent;
+
+  *,
+  *::before,
+  *::after {
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+// 由应用把这个类挂到 html 上（持久化开关），系统偏好则走下面的媒体查询
+html.reduce-motion {
+  @include reduce-motion;
+  @include flatten-effects;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    @include reduce-motion;
+  }
+}

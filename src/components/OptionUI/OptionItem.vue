@@ -20,7 +20,7 @@ const isExpanded = computed(() => {
   return !foldedKeyMap.value[item.value.key]
 })
 
-function handleItemClick(e: Event, fn) {
+function handleItemClick(e: MouseEvent, fn: StOptionItem['clickFn']) {
   if (typeof fn === 'function') {
     fn(e, item.value)
   }
@@ -28,18 +28,18 @@ function handleItemClick(e: Event, fn) {
 </script>
 
 <template>
-  <div :key="item.key" class="c-panel-item" :data-key="item.key" :class="[item.cls]">
-    <div class="panel-header vgo-bg">
-      <div class="p-left" :title="item.label">
-        <div class="item-label">
+  <div :key="item.key" class="vgo-option-item" :data-key="item.key" :class="[item.cls]">
+    <div class="vgo-option-item__header vgo-u-surface">
+      <div class="vgo-option-item__header-left" :title="item.label">
+        <div class="vgo-option-item__label">
           {{ item.label }}
         </div>
       </div>
-      <div class="p-right">
+      <div class="vgo-option-item__header-right">
         <div
           v-if="!item.hideExpandIcon && item.children && item.children.length"
-          class="btn-no-style btn-toggle-expand"
-          :class="{ expanded: isExpanded }"
+          class="vgo-option-item__expand-toggle vgo-u-button-reset"
+          :class="{ 'is-expanded': isExpanded }"
           @click="$emit('onToggleExpand', item)"
         >
           <svg
@@ -61,12 +61,12 @@ function handleItemClick(e: Event, fn) {
     </div>
 
     <TransitionBodyCollapse>
-      <div v-if="item.children && item.children.length" v-show="isExpanded" class="panel-body">
+      <div v-if="item.children && item.children.length" v-show="isExpanded" class="vgo-option-item__body">
         <div
           v-for="(sItem, index) in item.children"
           :key="sItem.key || index"
-          class="sub-item"
-          :class="[{ clickable: sItem.clickFn }, sItem.cls]"
+          class="vgo-option-item__child"
+          :class="[{ 'is-clickable': sItem.clickFn }, sItem.cls]"
           :data-key="sItem.key"
           v-bind="sItem.itemProps"
           @click="handleItemClick($event, sItem.clickFn)"
@@ -74,19 +74,19 @@ function handleItemClick(e: Event, fn) {
           <VueRender v-if="sItem.render" :render-fn="sItem.render" />
 
           <template v-else>
-            <div class="o-left">
-              <div v-if="sItem.iconRender" class="item-icon" :title="sItem.label">
+            <div class="vgo-option-item__child-main">
+              <div v-if="sItem.iconRender" class="vgo-option-item__icon" :title="sItem.label">
                 <VueRender :render-fn="sItem.iconRender" />
               </div>
-              <div v-else-if="sItem.icon" class="item-icon" :title="sItem.label">
+              <div v-else-if="sItem.icon" class="vgo-option-item__icon" :title="sItem.label">
                 <img :src="sItem.icon" alt="icon">
               </div>
-              <div v-else-if="sItem.iconClass" class="item-icon" :title="sItem.label">
+              <div v-else-if="sItem.iconClass" class="vgo-option-item__icon" :title="sItem.label">
                 <i :class="sItem.iconClass" />
               </div>
-              <div class="item-title-wrap">
-                <div class="item-label-wrap">
-                  <span class="item-label">{{ sItem.label }}</span>
+              <div class="vgo-option-item__title">
+                <div class="vgo-option-item__label-wrap">
+                  <span class="vgo-option-item__label">{{ sItem.label }}</span>
                   <el-tooltip v-if="sItem.tips" effect="light">
                     <svg
                       style="width: 16px; height: 16px"
@@ -106,10 +106,10 @@ function handleItemClick(e: Event, fn) {
                     </template>
                   </el-tooltip>
                 </div>
-                <div v-if="sItem.subtitle" class="item-subtitle" v-html="sItem.subtitle" />
+                <div v-if="sItem.subtitle" class="vgo-option-item__subtitle" v-html="sItem.subtitle" />
               </div>
             </div>
-            <div class="o-right">
+            <div class="vgo-option-item__child-actions">
               <ItemAction :item="sItem" @update-value="(v) => emit('updateValue', v)" />
             </div>
           </template>
@@ -118,133 +118,3 @@ function handleItemClick(e: Event, fn) {
     </TransitionBodyCollapse>
   </div>
 </template>
-
-<style lang="scss">
-.c-panel-item {
-  $mq_mobile_width: 567px;
-
-  .panel-header {
-    min-height: 40px;
-    padding: 4px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-weight: bold;
-    border-bottom: 1px solid var(--vgo-color-border);
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    border-radius: 4px 4px 0 0;
-
-    @media screen and (max-width: $mq_mobile_width) {
-      min-height: 36px;
-      padding: 4px 12px;
-    }
-
-    .p-left,
-    .p-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-reset,
-    .btn-toggle-expand {
-      display: inline-flex;
-      transition: all 0.3s;
-      padding: 8px;
-    }
-
-    .btn-toggle-expand {
-      &.expanded {
-        transform: rotateX(180deg);
-      }
-    }
-  }
-
-  .panel-body {
-    padding-top: 8px;
-    padding-bottom: 8px;
-
-    .sub-item {
-      min-height: 40px;
-      padding: 8px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: all 0.3s;
-      gap: 8px;
-
-      @media screen and (max-width: $mq_mobile_width) {
-        padding: 4px 12px;
-        gap: 4px;
-      }
-
-      &._drag-over {
-        background-color: var(--vgo-primary-opacity);
-      }
-
-      &.clickable {
-        cursor: pointer;
-        &:hover {
-          background-color: var(--vgo-color-hover);
-        }
-      }
-
-      .o-left {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-
-        @media screen and (max-width: $mq_mobile_width) {
-          gap: 4px;
-          font-size: 14px;
-        }
-
-        .item-icon {
-          flex-shrink: 0;
-          width: 32px;
-          height: 32px;
-          border-radius: 4px;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 26px;
-          color: var(--vgo-primary);
-          @media screen and (max-width: $mq_mobile_width) {
-            width: 26px;
-            height: 26px;
-            font-size: 20px;
-          }
-          i,
-          span {
-            font-size: inherit;
-          }
-          img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-          }
-        }
-
-        .item-title-wrap {
-          line-height: 1.3;
-        }
-
-        .item-label-wrap {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .item-subtitle {
-          font-size: 12px;
-          font-weight: 400;
-          opacity: 0.6;
-          margin-top: 2px;
-        }
-      }
-    }
-  }
-}
-</style>

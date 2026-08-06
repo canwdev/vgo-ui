@@ -1,0 +1,82 @@
+body.vgo-theme-default {
+  --vgo-border: rgba(0, 0, 0, 0.2);
+  --vgo-hover: rgba(0, 0, 0, 0.08);
+  --vgo-radius: 4px;
+  --vgo-radius-lg: calc(var(--vgo-radius) * 2);
+  --vgo-radius-pill: 999px;
+  --vgo-text: #171717;
+  --vgo-text-secondary: rgba(23, 23, 23, 0.62);
+  --vgo-text-placeholder: #767676;
+  --vgo-on-primary: #fff;
+  --vgo-surface: #fff;
+  --vgo-surface-raised: #fdfdfd;
+  --vgo-danger: #e53935;
+  --vgo-warning: #e6a23c;
+  --vgo-success: #67c23a;
+  --vgo-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  --vgo-window: #f3f3f3;
+  --vgo-window-active: #fff;
+  --vgo-window-border: rgba(0, 0, 0, 0.45);
+  --vgo-window-shadow: 0 1px 10px rgba(0, 0, 0, 0.27);
+  --vgo-window-title-shadow: 0 0 10px #fff;
+  --vgo-control-hover: #dedede;
+  --vgo-control-active: rgba(116, 116, 116, 0.46);
+  --vgo-control-close-hover: #ffa5aa;
+  --vgo-control-close-active: #ff6a72;
+  --vgo-scrollbar: rgba(192, 192, 192, 0.63);
+  --vgo-scrollbar-hover: #bebebe;
+
+  --vgo-overlay-blur: 8px;
+
+  // 深色浮层（`--overlay` 的默认配色）。浮层底下是任意图片 / 视频而不是主题
+  // 背景，所以两套浮层配色都**不随 html.dark 翻转**——选哪套取决于底下媒体的
+  // 明暗，不取决于应用主题。浅色的一套在 --overlay-light 上，见 _components.scss。
+  --vgo-overlay-surface: rgba(0, 0, 0, 0.45);
+  --vgo-overlay-border: rgba(255, 255, 255, 0.16);
+  --vgo-overlay-text: #fff;
+  --vgo-overlay-text-secondary: rgba(255, 255, 255, 0.55);
+  --vgo-overlay-control: rgba(255, 255, 255, 0.14);
+  --vgo-overlay-control-hover: rgba(255, 255, 255, 0.26);
+  --vgo-overlay-control-active: rgba(255, 255, 255, 0.38);
+}
+
+// 浅色浮层。只换令牌不换规则，所以 --overlay-light 挂在容器上时，内部的
+// --overlay 子元素会一起继承过来，整片浮层配色一致。
+body.vgo-theme-default {
+  .vgo-panel--overlay-light,
+  .vgo-button--overlay-light {
+    --vgo-overlay-surface: rgba(255, 255, 255, 0.62);
+    --vgo-overlay-border: rgba(0, 0, 0, 0.12);
+    --vgo-overlay-text: #171717;
+    --vgo-overlay-text-secondary: rgba(23, 23, 23, 0.6);
+    --vgo-overlay-control: rgba(0, 0, 0, 0.06);
+    --vgo-overlay-control-hover: rgba(0, 0, 0, 0.14);
+    --vgo-overlay-control-active: rgba(0, 0, 0, 0.22);
+  }
+}
+
+html.dark body.vgo-theme-default {
+  --vgo-border: rgba(255, 255, 255, 0.2);
+  --vgo-hover: rgba(255, 255, 255, 0.12);
+  --vgo-text: #fff;
+  --vgo-text-secondary: rgba(255, 255, 255, 0.62);
+  --vgo-text-placeholder: rgba(255, 255, 255, 0.48);
+  --vgo-on-primary: #fff;
+  --vgo-surface: #111;
+  --vgo-surface-raised: #2b2b2b;
+  --vgo-danger: #ff6b72;
+  --vgo-warning: #e6a23c;
+  --vgo-success: #67c23a;
+  --vgo-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  --vgo-window: #4b4b4b;
+  --vgo-window-active: #202020;
+  --vgo-window-border: rgba(255, 255, 255, 0.2);
+  --vgo-window-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
+  --vgo-window-title-shadow: 0 0 10px #000;
+  --vgo-control-hover: rgba(255, 255, 255, 0.2);
+  --vgo-control-active: rgba(255, 255, 255, 0.1);
+  --vgo-control-close-hover: rgba(232, 17, 35, 0.7);
+  --vgo-control-close-active: rgba(151, 23, 34, 0.7);
+  --vgo-scrollbar: rgba(192, 192, 192, 0.5);
+  --vgo-scrollbar-hover: #bebebe;
+}

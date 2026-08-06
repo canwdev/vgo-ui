@@ -40,7 +40,7 @@ function setLayout(layout: ILayout) {
       <div
         v-for="(layout, index) in layoutList"
         :key="index"
-        class="layout-item"
+        class="vgo-layout-helper__item"
         @mouseover="setLayout(layout)"
         @mouseleave="previewData = undefined"
         @click="setWindowLayout(layout)"
@@ -52,45 +52,10 @@ function setLayout(layout: ILayout) {
             width: `${layout.widthRatio * 100}%`,
             height: `${layout.heightRatio * 100}%`,
           }"
-          class="layout-inner"
+          class="vgo-layout-helper__preview"
         />
       </div>
     </div>
   </transition>
   <LayoutPreview :preview-data="previewData" />
 </template>
-
-<style lang="scss" scoped>
-.vgo-layout-helper {
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: auto;
-  gap: 4px;
-  padding: 4px;
-  z-index: 200;
-
-  .layout-item {
-    position: relative;
-    width: 40px;
-    height: 25px;
-    background-color: var(--vgo-primary-opacity);
-    cursor: pointer;
-    filter: grayscale(1);
-    opacity: 0.4;
-    transition: all 0.3s;
-
-    &:hover {
-      filter: grayscale(0);
-      opacity: 1;
-    }
-    .layout-inner {
-      position: absolute;
-      background-color: var(--vgo-primary);
-      pointer-events: none;
-    }
-  }
-}
-</style>

@@ -5,8 +5,8 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
  * 防止页面关闭
  * @param checkIsChanged 回调函数
  */
-export function useBeforeUnload(checkIsChanged) {
-  const handleBeforeUnload = (e) => {
+export function useBeforeUnload(checkIsChanged: () => boolean) {
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
     if (checkIsChanged()) {
       e.preventDefault()
       e.returnValue = 'There is unsaved data.'
@@ -31,14 +31,12 @@ export function useUnSavedChanges() {
 }
 
 // replace ctrl+s save action
-export function useSaveShortcut(saveFn) {
+export function useSaveShortcut(saveFn: () => void) {
   useEventListener(document, 'keydown', (event) => {
     if (event.ctrlKey && event.key === 's') {
       event.preventDefault() // 阻止默认的保存操作
 
-      if (typeof saveFn === 'function') {
-        saveFn()
-      }
+      saveFn()
     }
   })
 }

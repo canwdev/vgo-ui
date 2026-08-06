@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { watchThrottled } from '@vueuse/core'
+import { ElMessage } from 'element-plus'
 import { ref, toRefs } from 'vue'
 import markdown from './markdown'
 
@@ -20,15 +21,15 @@ function renderMd() {
 }
 watchThrottled(
   text,
-  (val) => {
+  () => {
     renderMd()
   },
   { throttle: 100, trailing: true, immediate: true },
 )
 
-function handleClick(event) {
+function handleClick(event: MouseEvent) {
   const el = event.target
-  if (el) {
+  if (el instanceof HTMLElement) {
     if (el.tagName === 'A') {
       // el.target = '_blank'
       return
@@ -37,9 +38,7 @@ function handleClick(event) {
     // 处理代码块复制
     const isActionButton = el.classList.contains('_js-action-button')
     if (isActionButton) {
-      const code = el.parentElement.nextSibling.textContent
-      const lang
-        = el.parentElement.querySelector('.lang-display')?.getAttribute('data-lang') || 'txt'
+      const code = el.parentElement?.nextElementSibling?.textContent ?? ''
 
       // console.log(el.parentElement.nextSibling)
       switch (el.getAttribute('data-action')) {

@@ -38,7 +38,7 @@ function handleInputConfirm() {
 </script>
 
 <template>
-  <div class="dynamic-tags">
+  <div class="vgo-dynamic-tags">
     <el-tag
       v-for="tag in dynamicTags"
       :key="tag"
@@ -52,21 +52,13 @@ function handleInputConfirm() {
       v-if="inputVisible"
       ref="InputRef"
       v-model="inputValue"
-      class="w-20"
+      class="vgo-dynamic-tags__input"
       size="small"
       @keyup.enter="handleInputConfirm"
       @blur="handleInputConfirm"
     />
-    <el-button v-else class="button-new-tag" size="small" @click="showInput">
+    <el-button v-else class="vgo-dynamic-tags__add" size="small" @click="showInput">
       + New Tag
     </el-button>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.dynamic-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-</style>

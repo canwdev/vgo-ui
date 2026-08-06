@@ -1,5 +1,4 @@
 // 自定义表列
-import type { Ref } from 'vue'
 import type { AutoTableColumn } from './types'
 import { useStorage } from '@vueuse/core'
 import { onBeforeMount, ref, toRefs, watch } from 'vue'
@@ -9,10 +8,13 @@ interface IOption {
   value: string
 }
 
-export function useCustomColumns(props) {
-  const { columns } = toRefs(props) as {
-    columns: Ref<AutoTableColumn[]>
-  }
+interface CustomColumnsProps {
+  columns: AutoTableColumn[]
+  customizeColumnStorageKey: string
+}
+
+export function useCustomColumns(props: CustomColumnsProps) {
+  const { columns } = toRefs(props)
   const isShowColumnEdit = ref(false)
 
   const columnsOptions = ref<IOption[]>([])
@@ -48,13 +50,13 @@ export function useCustomColumns(props) {
     }
   })
 
-  const hiddenColumnKeyMap = useStorage(props.customizeColumnStorageKey, {})
-  const handleUpdateCheck = (key) => {
+  const hiddenColumnKeyMap = useStorage<Record<string, boolean>>(props.customizeColumnStorageKey, {})
+  const handleUpdateCheck = (key: string) => {
     if (hiddenColumnKeyMap.value[key]) {
       delete hiddenColumnKeyMap.value[key]
     }
     else {
-      hiddenColumnKeyMap.value[key] = 1
+      hiddenColumnKeyMap.value[key] = true
     }
   }
 

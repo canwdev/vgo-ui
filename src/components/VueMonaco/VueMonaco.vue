@@ -153,11 +153,11 @@ defineExpose({
 </script>
 
 <template>
-  <div ref="editorContainerRef" class="vue-monaco-placeholder" />
+  <div ref="editorContainerRef" class="vgo-vue-monaco" />
 </template>
 
-<style lang="scss" scoped>
-.vue-monaco-placeholder {
+<style lang="scss">
+.vgo-vue-monaco {
   width: 100%;
   height: 100%;
   min-height: 300px;
