@@ -14,12 +14,14 @@ const props = withDefaults(defineProps<Props>(), {
   dark: false,
   text: '',
 })
+const emit = defineEmits<{ rendered: [] }>()
 const { text } = toRefs(props)
 const router = useRouter()
 
 const renderedContent = ref('')
 function renderMd() {
   renderedContent.value = markdown.render(text.value)
+  emit('rendered')
 }
 watchThrottled(
   text,
@@ -44,7 +46,8 @@ function handleClick(event: MouseEvent) {
     if (href && isInternalHref(href) && link.target !== '_blank') {
       event.preventDefault()
       router.push(href)
-    } else if (href) {
+    }
+    else if (href) {
       event.preventDefault()
       window.open(href)
     }

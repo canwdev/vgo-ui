@@ -257,7 +257,7 @@
 
 .markdown-body-dark strong {
   font-weight: bold;
-  color: #ff6d00;
+  color: var(--vgo-primary);
 }
 
 .markdown-body-dark hr {

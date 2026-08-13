@@ -23,6 +23,7 @@ const version = __VGO_UI_PKG_VERSION__
           <span class="mdi mdi-history" />
           更新日志
         </router-link>
+        <ThemeControl />
         <a
           class="vgo-button vgo-button--text vgo-button--icon"
           href="https://github.com/canwdev/vgo-ui"
@@ -31,7 +32,14 @@ const version = __VGO_UI_PKG_VERSION__
         >
           <span class="mdi mdi-github" />
         </a>
-        <ThemeControl />
+        <a
+          class="vgo-button vgo-button--text vgo-button--icon"
+          href="https://www.npmjs.com/package/@canwdev/vgo-ui"
+          target="_blank"
+          title="npm"
+        >
+          <span class="mdi mdi-npm vgo-u-icon-lg" />
+        </a>
       </div>
     </div>
     <div class="app-content vgo-u-scrollbar">
