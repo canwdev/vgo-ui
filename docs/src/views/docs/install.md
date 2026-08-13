@@ -1,4 +1,4 @@
-# 安装
+# 快速上手
 
 ## 安装 VgoUI 组件库
 
@@ -26,10 +26,10 @@ bun add https://github.com/canwdev/vgo-ui/releases/download/v0.4.0/canwdev-vgo-u
 bun add vue @vueuse/core lodash-es
 ```
 
-| 场景 | 额外依赖 |
-|------|----------|
-| AutoFormElPlus、AutoTableElPlus、OptionUI 等基于 Element Plus 的组件 | `element-plus` |
-| ListPagination 与路由同步分页参数 | `vue-router`（需在应用中使用 `vue-router`） |
+| 场景                                                                 | 额外依赖                                    |
+| -------------------------------------------------------------------- | ------------------------------------------- |
+| AutoFormElPlus、AutoTableElPlus、OptionUI 等基于 Element Plus 的组件 | `element-plus`                              |
+| ListPagination 与路由同步分页参数                                    | `vue-router`（需在应用中使用 `vue-router`） |
 
 **VueMonaco** 已从主包拆出：仅在使用编辑器时安装 `monaco-editor`，并从子路径导入（主入口 `@canwdev/vgo-ui` **不会**再依赖 Monaco）：
 
@@ -68,8 +68,8 @@ import '../../src/styles/themes/default/index.scss'
 ## 按需引入组件与类型
 
 ```ts
-import { ViewPortWindow, OptionUI } from '@canwdev/vgo-ui'
-import type { WinOptions, StOptionItem } from '@canwdev/vgo-ui'
+import type { StOptionItem, WinOptions } from '@canwdev/vgo-ui'
+import { OptionUI, ViewPortWindow } from '@canwdev/vgo-ui'
 ```
 
 使用 Element Plus 组件时，请在应用中按 [Element Plus 文档](https://element-plus.org/) 完成安装与全局/按需注册。
@@ -80,22 +80,44 @@ import type { WinOptions, StOptionItem } from '@canwdev/vgo-ui'
 
 ```html
 <!-- 亮色主题 -->
-<body class="vgo-theme-default">
-</body>
+<body class="vgo-theme-default"></body>
 
 <!-- 暗色主题（需在 html 上添加 class="dark"） -->
 <html class="dark">
-  <body class="vgo-theme-default">
-  </body>
+  <body class="vgo-theme-default"></body>
 </html>
 ```
 
 组件 CSS 类统一使用 `vgo-` 前缀和 BEM 命名（如 `.vgo-window__body`、`.vgo-button--primary`），状态类使用 `.is-*`，工具类使用 `.vgo-u-*`。这些类名在 0.4.0 中属于破坏性变更。
 
-## 减少动态效果
+## 开发
 
-库的过渡时长统一走 `--vgo-duration-fast` / `--vgo-duration-base`。给 `html` 加 `reduce-motion` 类即可压掉全部过渡，系统级 `prefers-reduced-motion: reduce` 也会自动生效：
+### 本地开发（Link）
 
-```ts
-document.documentElement.classList.toggle('reduce-motion', enabled)
+```shell
+# 安装依赖
+bun i
+
+# 构建开发组件库
+bun run dev
+
+# 在本包目录下执行 link
+bun link
+
+# 在使用该包的项目目录下执行
+# rm -rf node_modules/@canwdev/vgo-ui node_modules/.vite node_modules/.vite-temp
+bun link @canwdev/vgo-ui
+```
+
+### 打包发布
+
+```shell
+# 先修改 package.json 中的版本号
+bun run build
+
+# 可选：本地打包（不推荐）
+# bun run bun:pack
+
+# 发布到 npm
+bun publish --access public
 ```

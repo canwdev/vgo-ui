@@ -28,18 +28,22 @@
 
 主题选择器是 `body.vgo-theme-default .vgo-x`，特异度 (0,2,1)，比一个 Vue scoped 类（`.x[data-v-xxx]`，(0,2,0)）高一档，所以不是所有东西都能直接覆盖：
 
-| 想改 | 怎么做 |
-| --- | --- |
+| 想改                               | 怎么做                                                     |
+| ---------------------------------- | ---------------------------------------------------------- |
 | 面板外观（圆角、边框、阴影、底色） | 直接写 scoped 类，能盖住——面板的主题规则包在 `:where()` 里 |
-| 按钮、列表项等其余基元 | 优先用现成的变体 / 修饰；确实要改就多嵌一层父选择器 |
-| 任何吃CSS变量的属性 | 在元素上重新声明那个CSS变量，绕开特异度 |
+| 按钮、列表项等其余基元             | 优先用现成的变体 / 修饰；确实要改就多嵌一层父选择器        |
+| 任何吃CSS变量的属性                | 在元素上重新声明那个CSS变量，绕开特异度                    |
 
 最后一条往往最省事，CSS变量是按元素解析的，不用比特异度也不用 `!important`：
 
 ```scss
 // 让这个面板用胶囊圆角，两种写法都可以
-.zoom-toolbar { border-radius: var(--vgo-radius-pill); }  // 面板可以直接写
-.zoom-toolbar { --vgo-radius: var(--vgo-radius-pill); }   // 换CSS变量，连带子元素一起
+.zoom-toolbar {
+  border-radius: var(--vgo-radius-pill);
+} // 面板可以直接写
+.zoom-toolbar {
+  --vgo-radius: var(--vgo-radius-pill);
+} // 换CSS变量，连带子元素一起
 ```
 
 ## 按钮
@@ -68,7 +72,6 @@
 <button class="vgo-button vgo-button--primary">Primary</button>
 <button class="vgo-button vgo-button--danger">Danger</button>
 <button class="vgo-button vgo-button--text">Text</button>
-
 ```
 
 <div class="vgo-u-flex-wrap-center">
@@ -90,7 +93,6 @@
 <button class="vgo-button vgo-button--sm">Small</button>
 <button class="vgo-button">Medium</button>
 <button class="vgo-button vgo-button--lg">Large</button>
-
 ```
 
 <div class="vgo-u-flex-wrap-center">
@@ -110,7 +112,6 @@
 <button class="vgo-button vgo-button--icon"><span class="mdi mdi-cog"></span></button>
 <button class="vgo-button vgo-button--text vgo-button--icon"><span class="mdi mdi-cog"></span></button>
 <button class="vgo-button vgo-button--primary vgo-button--round"><span class="mdi mdi-plus"></span></button>
-
 ```
 
 <div class="vgo-u-flex-wrap-center">
@@ -133,7 +134,6 @@
 ```html
 <button class="vgo-button vgo-button--text is-active">文档</button>
 <a class="vgo-button vgo-button--text is-active" href="#">当前页</a>
-
 ```
 
 <div class="vgo-u-flex-wrap-center">
@@ -161,7 +161,6 @@
   <button class="vgo-button">Current</button>
   <button class="vgo-button">Next</button>
 </div>
-
 ```
 
 <div class="vgo-button-group">
@@ -182,7 +181,6 @@
   <option value="1">Option 1</option>
   <option value="2">Option 2</option>
 </select>
-
 ```
 
 <div class="vgo-u-flex-wrap-center">
@@ -202,7 +200,6 @@
 ```html
 <div class="vgo-panel">卡片：边框 + 圆角 + 阴影</div>
 <div class="vgo-panel vgo-panel--flat" style="border-bottom: 1px solid var(--vgo-border)">工具栏</div>
-
 ```
 
 <div class="vgo-u-flex-column" style="gap: 10px;">
@@ -236,7 +233,6 @@
   </button>
   <button class="vgo-button vgo-button--overlay vgo-button--text">Dismiss</button>
 </div>
-
 ```
 
 <div style="background: linear-gradient(120deg, #35506b, #7a5c8e 50%, #b06b52); padding: 24px; border-radius: var(--vgo-radius); display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
@@ -277,7 +273,6 @@
   <div class="vgo-empty__title">没有更多了</div>
   <div class="vgo-empty__desc">已经到底部</div>
 </div>
-
 ```
 
 <div style="background: linear-gradient(120deg, #35506b, #7a5c8e 50%, #b06b52); padding: 24px; border-radius: var(--vgo-radius);">
@@ -296,7 +291,6 @@
 <div class="vgo-list-item">默认</div>
 <div class="vgo-list-item is-active">选中</div>
 <div class="vgo-list-item is-disabled">禁用</div>
-
 ```
 
 <div class="vgo-panel" style="overflow: hidden;">
@@ -314,7 +308,6 @@
   <div class="vgo-empty__title">这里什么都没有</div>
   <div class="vgo-empty__desc">拖拽文件到此处上传</div>
 </div>
-
 ```
 
 <div class="vgo-panel">
@@ -335,7 +328,6 @@
 </div>
 <div class="vgo-progress vgo-progress--success">…</div>
 <div class="vgo-progress vgo-progress--danger">…</div>
-
 ```
 
 <div class="vgo-u-flex-column" style="gap: 14px;">
@@ -350,7 +342,6 @@
 <span class="vgo-badge">12</span>
 <span class="vgo-badge vgo-badge--primary vgo-badge--pill">New</span>
 <span class="vgo-badge vgo-badge--danger vgo-badge--pill">3</span>
-
 ```
 
 <div class="vgo-u-flex-wrap-center">
@@ -383,7 +374,6 @@
   <div class="vgo-u-flex-row">…</div>
   <div class="vgo-u-surface">主题表面颜色填充</div>
 </div>
-
 ```
 
 <div class="vgo-u-flex-column" style="gap: 10px;">
@@ -413,6 +403,8 @@
 
 ### 图标字号
 
+> 文档使用的是 `@mdi/font` 图标字体，在项目中需要手动安装。
+
 `.vgo-u-icon-sm` / `-md` / `-lg` 就是三条 `font-size`，**加在图标元素本身**，和 `mdi` 平级，所以换别的图标字体或 `<svg>` 一样能用。
 
 按钮里的图标默认是 `--vgo-icon-md`（`--lg` 按钮为 `--vgo-icon-lg`），**尺寸修饰只改盒子不改图标**。这条默认值特异度为 0，直接加工具类即可覆盖：
@@ -422,7 +414,6 @@
   <span class="mdi mdi-reload vgo-u-icon-sm"></span>
 </button>
 <span class="mdi mdi-star vgo-u-icon-lg"></span>
-
 ```
 
 <div class="vgo-u-flex-wrap-center">
@@ -442,17 +433,23 @@
 
 `html.reduce-motion` 是留给应用挂的持久化开关，做上述全部，外加去掉文字阴影与背景模糊（降低墨水屏刷新负担）。
 
+库的过渡时长统一走 `--vgo-duration-fast` / `--vgo-duration-base`。给 `html` 加 `reduce-motion` 类即可压掉全部过渡，系统级 `prefers-reduced-motion: reduce` 也会自动生效：
+
+```ts
+document.documentElement.classList.toggle('reduce-motion', enabled)
+```
+
 ## 禁止清单
 
 应用代码里不允许出现下列写法：
 
 | 禁止                         | 替代                                                                      |
 | ---------------------------- | ------------------------------------------------------------------------- |
-| 字面量 hex / rgb 颜色        | `--vgo-*` 颜色CSS变量                                                        |
+| 字面量 hex / rgb 颜色        | `--vgo-*` 颜色CSS变量                                                     |
 | 字面量 `border-radius` 数值  | `--vgo-radius` / `--vgo-radius-lg` / `--vgo-radius-pill`                  |
 | 自定义 `box-shadow`          | `var(--vgo-shadow)`，或不要阴影                                           |
 | `backdrop-filter` / 玻璃拟态 | 实心 `--vgo-surface` / `--vgo-surface-raised`，浮在媒体上时用 `--overlay` |
-| 渐变背景                     | 纯色CSS变量                                                                  |
+| 渐变背景                     | 纯色CSS变量                                                               |
 | 硬编码间距、字号、控件高度   | `--vgo-space-*` / `--vgo-font-*` / `--vgo-control-*`                      |
 | 自己拼半透明浮层配色         | `.vgo-panel--overlay` / `--overlay-light` 及对应按钮修饰                  |
 | 自己写两三像素高的进度条     | `.vgo-progress`                                                           |

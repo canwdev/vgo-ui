@@ -13,7 +13,7 @@ export const docsRoutes: RouteRecordRaw[] = [
     path: 'install',
     component: () => import('../views/DocsDetail.vue'),
     meta: {
-      title: '安装',
+      title: '快速上手',
       content: docsInstall,
     },
   },
