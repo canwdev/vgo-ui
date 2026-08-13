@@ -11,7 +11,7 @@ const content = computed(() => {
 </script>
 
 <template>
-  <PageContent :text="content">
+  <PageContent :text="content" :toc="false">
     <template #footer>
       <div v-if="route.meta?.component" class="demo-component">
         <!--  加载异步组件 -->

@@ -6,23 +6,10 @@ const props = defineProps<{
   text: string
 }>()
 
-const root = ref<HTMLElement | null>(null)
 const activeId = ref('')
 const headings = computed(() => getHeadings(props.text))
 
-let scrollContainer: HTMLElement | null = null
 let ticking = false
-
-function findScrollContainer(el: HTMLElement | null): HTMLElement | null {
-  let current = el?.parentElement ?? null
-  while (current) {
-    const { overflowY } = getComputedStyle(current)
-    if (overflowY === 'auto' || overflowY === 'scroll')
-      return current
-    current = current.parentElement
-  }
-  return null
-}
 
 function headingElements(): HTMLElement[] {
   return headings.value
@@ -30,17 +17,19 @@ function headingElements(): HTMLElement[] {
     .filter((el): el is HTMLElement => el !== null)
 }
 
-function updateActive() {
-  if (!scrollContainer)
-    return
+function headerOffset(): number {
+  const header = document.querySelector<HTMLElement>('[data-docs-header]')
+  return (header?.offsetHeight ?? 0) + 12
+}
 
-  const containerTop = scrollContainer.getBoundingClientRect().top
-  const threshold = 16
+function updateActive() {
+  const offset = headerOffset()
+  const scrollY = window.scrollY
   let current = headings.value[0]?.id ?? ''
 
   for (const el of headingElements()) {
-    const top = el.getBoundingClientRect().top - containerTop + scrollContainer.scrollTop
-    if (top <= scrollContainer.scrollTop + threshold)
+    const top = el.getBoundingClientRect().top + scrollY
+    if (top <= scrollY + offset)
       current = el.id
     else
       break
@@ -59,26 +48,17 @@ function onScroll() {
   })
 }
 
-function bindScrollContainer(container: HTMLElement | null) {
-  if (scrollContainer === container)
-    return
-  scrollContainer?.removeEventListener('scroll', onScroll)
-  scrollContainer = container
-  scrollContainer?.addEventListener('scroll', onScroll, { passive: true })
-}
-
 function refresh() {
-  bindScrollContainer(findScrollContainer(root.value))
   nextTick(updateActive)
 }
 
 onMounted(() => {
-  bindScrollContainer(findScrollContainer(root.value))
+  window.addEventListener('scroll', onScroll, { passive: true })
   updateActive()
 })
 
 onBeforeUnmount(() => {
-  scrollContainer?.removeEventListener('scroll', onScroll)
+  window.removeEventListener('scroll', onScroll)
 })
 
 defineExpose({ refresh })
@@ -87,7 +67,6 @@ defineExpose({ refresh })
 <template>
   <nav
     v-if="headings.length"
-    ref="root"
     class="markdown-toc vgo-u-scrollbar"
     aria-label="本页目录"
   >

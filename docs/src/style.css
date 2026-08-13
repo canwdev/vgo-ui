@@ -1,7 +1,9 @@
 :root {
   /*--vgo-primary-rgb: 83, 173, 228 !important;*/
+  --docs-header-height: calc(var(--vgo-control-md) + var(--vgo-space-2) * 2 + 1px);
+  --docs-sticky-top: calc(var(--docs-header-height) + var(--vgo-space-3));
 }
 
 #app {
-  height: 100%;
+  min-height: 100vh;
 }

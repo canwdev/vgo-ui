@@ -7,6 +7,7 @@ const version = __VGO_UI_PKG_VERSION__
 <template>
   <div class="app-root">
     <div
+      data-docs-header
       class="nav-menu vgo-panel vgo-panel--flat vgo-u-flex-wrap-center"
     >
       <router-link to="/" class="vgo-button vgo-button--text">
@@ -42,7 +43,7 @@ const version = __VGO_UI_PKG_VERSION__
         </a>
       </div>
     </div>
-    <div class="app-content vgo-u-scrollbar">
+    <div class="app-content">
       <router-view />
     </div>
   </div>
@@ -52,7 +53,7 @@ const version = __VGO_UI_PKG_VERSION__
 .app-root {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: 100vh;
 }
 
 .nav-menu {
@@ -75,6 +76,5 @@ const version = __VGO_UI_PKG_VERSION__
 
 .app-content {
   flex: 1;
-  overflow: auto;
 }
 </style>

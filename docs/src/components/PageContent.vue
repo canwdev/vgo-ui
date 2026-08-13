@@ -8,12 +8,14 @@ import MarkdownToc from './MarkdownRender/MarkdownToc.vue'
 const props = withDefaults(
   defineProps<{
     text?: string
+    toc?: boolean
   }>(),
   {
     text: '',
+    toc: true,
   },
 )
-const { text } = toRefs(props)
+const { text, toc } = toRefs(props)
 
 const tocRef = ref<InstanceType<typeof MarkdownToc> | null>(null)
 const tocItems = computed(() => getHeadings(text.value))
@@ -33,7 +35,7 @@ const tocItems = computed(() => getHeadings(text.value))
       <slot name="footer" />
     </div>
     <MarkdownToc
-      v-if="tocItems.length"
+      v-if="toc && tocItems.length"
       ref="tocRef"
       :text="text"
       class="page-toc"
@@ -49,7 +51,7 @@ const tocItems = computed(() => getHeadings(text.value))
   align-items: start;
   max-width: 1280px;
   margin: 0 auto;
-  padding: calc(var(--vgo-space-4) * 2) var(--vgo-space-4);
+  padding: var(--vgo-space-4);
 }
 
 .page-main {
@@ -61,9 +63,9 @@ const tocItems = computed(() => getHeadings(text.value))
 
 .page-toc {
   position: sticky;
-  top: var(--vgo-space-4);
+  top: var(--docs-sticky-top);
   width: 220px;
-  max-height: calc(100vh - var(--vgo-space-4) * 2);
+  max-height: calc(100vh - var(--docs-sticky-top) - var(--vgo-space-3));
   padding-left: var(--vgo-space-3);
   overflow: auto;
   border-left: 1px solid var(--vgo-border);
