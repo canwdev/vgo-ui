@@ -206,7 +206,7 @@
 ```
 
 <div class="vgo-u-flex-column" style="gap: 10px;">
-  <div class="vgo-panel" style="padding: 16px;">卡片：边框 + 圆角 + 阴影</div>
+  <div class="vgo-panel" style="padding: var(--vgo-space-4);">卡片：边框 + 圆角 + 阴影</div>
   <div class="vgo-panel vgo-panel--flat" style="padding: 8px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid var(--vgo-border);">
     <button class="vgo-button vgo-button--text vgo-button--icon vgo-button--sm"><span class="mdi mdi-arrow-left"></span></button>
     <button class="vgo-button vgo-button--text vgo-button--icon vgo-button--sm"><span class="mdi mdi-arrow-right"></span></button>

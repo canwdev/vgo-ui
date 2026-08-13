@@ -61,15 +61,17 @@ const props = withDefaults(
   },
 )
 
-const emit = defineEmits([
-  'update:visible',
-  'resize',
-  'onActive',
-  'onClose',
-  'onRestored',
-  'update:minimized',
-  'update:maximized',
-])
+const emit = defineEmits<{
+  (e: 'update:visible', value: boolean): void
+  (e: 'update:minimized', value: boolean): void
+  (e: 'update:maximized', value: boolean): void
+  (e: 'resize', value: WinOptions): void
+  (e: 'onActive'): void
+  (e: 'onClose'): void
+  (e: 'onRestored'): void
+  (e: 'onMinimized'): void
+  (e: 'onMaximized'): void
+}>()
 
 const LS_KEY_VP_WINDOW_OPTION = 'vp_window'
 
@@ -87,7 +89,10 @@ const isMaximized = useVModel(props, 'maximized', emit, { passive: true })
 const isMinimized = useVModel(props, 'minimized', emit, { passive: true })
 
 watch(isMinimized, (val) => {
-  if (!val && mVisible.value) {
+  if (val) {
+    emit('onMinimized')
+  }
+  else if (mVisible.value) {
     emit('onRestored')
   }
 })
@@ -167,6 +172,10 @@ watch(allowMove, (val) => {
   }
 })
 watch(isMaximized, (val) => {
+  if (val) {
+    emit('onMaximized')
+  }
+
   if (!dWindow.value) {
     return
   }
@@ -431,65 +440,34 @@ defineExpose({
   <transition :name="transitionName">
     <div v-show="isInit && mVisible" :id="wid" ref="rootRef" class="vgo-window">
       <LayoutPreview :preview-data="layoutPreviewData" />
-      <LayoutHelper
-        v-model:visible="isShowLayoutHelper"
-        @set-window-layout="setWindowLayout"
-      />
+      <LayoutHelper v-model:visible="isShowLayoutHelper" @set-window-layout="setWindowLayout" />
       <div class="vgo-window__content">
-        <div
-          v-show="!noTitleBar"
-          ref="titleBarRef"
-          class="vgo-window__title-bar"
-          @dblclick="toggleMaximized"
-        >
+        <div v-show="!noTitleBar" ref="titleBarRef" class="vgo-window__title-bar" @dblclick="toggleMaximized">
           <div class="vgo-window__title vgo-u-text-overflow">
             <slot name="titleBarLeft" />
           </div>
-          <div
-            ref="titleBarButtonsRef"
-            class="vgo-window__controls"
-            @dblclick.stop
-          >
+          <div ref="titleBarButtonsRef" class="vgo-window__controls" @dblclick.stop>
             <slot name="titleBarRightControls" />
             <slot name="titleBarRight">
-              <button
-                v-if="allowMinimum"
-                class="is-minimize"
-                @click="isMinimized = true"
-              >
+              <button v-if="allowMinimum && !isMinimized" class="is-minimize" @click="isMinimized = true">
                 <svg
-                  width="20"
-                  height="20"
-                  xmlns="http://www.w3.org/2000/svg"
-                  xmlns:xlink="http://www.w3.org/1999/xlink"
-                  viewBox="0 0 20 20"
+                  width="20" height="20" xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 20 20"
                 >
                   <g fill="none">
-                    <rect
-                      x="3"
-                      y="9.25"
-                      width="14"
-                      height="1.5"
-                      rx=".75"
-                      fill="currentColor"
-                    />
+                    <rect x="3" y="9.25" width="14" height="1.5" rx=".75" fill="currentColor" />
                   </g>
                 </svg>
               </button>
 
               <button
-                v-if="allowMaximum"
-                ref="mButtonRef"
-                :class="[isMaximized ? 'is-restore' : 'is-maximize']"
+                v-if="allowMaximum" ref="mButtonRef" :class="[isMaximized ? 'is-restore' : 'is-maximize']"
                 @click="toggleMaximized"
               >
                 <template v-if="isMaximized">
                   <svg
-                    width="20"
-                    height="20"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                    viewBox="0 0 16 16"
+                    width="20" height="20" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16"
                   >
                     <g fill="none">
                       <path
@@ -501,11 +479,8 @@ defineExpose({
                 </template>
                 <template v-else>
                   <svg
-                    width="16"
-                    height="16"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                    viewBox="0 0 16 16"
+                    width="16" height="16" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16"
                   >
                     <g fill="none">
                       <path
@@ -517,18 +492,10 @@ defineExpose({
                 </template>
               </button>
 
-              <button
-                v-if="showClose"
-                title="Close"
-                class="is-close"
-                @click="handleClose"
-              >
+              <button v-if="showClose" title="Close" class="is-close" @click="handleClose">
                 <svg
-                  width="20"
-                  height="20"
-                  xmlns="http://www.w3.org/2000/svg"
-                  xmlns:xlink="http://www.w3.org/1999/xlink"
-                  viewBox="0 0 20 20"
+                  width="20" height="20" xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 20 20"
                 >
                   <g fill="none">
                     <path
