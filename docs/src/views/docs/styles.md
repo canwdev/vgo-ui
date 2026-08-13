@@ -1,14 +1,14 @@
 # 样式总览
 
-库的样式契约：令牌、原生元素增强、基元、工具类，一份封闭的词汇表。业务代码里的颜色、间距、按钮、面板、列表都从这里取，不要新建自定义类；页尾是禁止清单。
+库的样式契约：CSS变量、原生元素增强、基元、工具类，一份封闭的词汇表。业务代码里的颜色、间距、按钮、面板、列表都从这里取，不要新建自定义类；页尾是禁止清单。
 
 只需要加类名即可生效。样式加载与主题挂载方式见安装文档。
 
-## 令牌
+## CSS变量
 
-### 结构标尺
+### 根变量
 
-`:root` 上的结构标尺与主题无关，任何主题下取值都相同。间距、字号、图标尺寸、控件高度、层级和过渡时长都从这里取，不要写字面量。
+`:root` 上的变量与主题无关，任何主题下取值都相同。间距、字号、图标尺寸、控件高度、层级和过渡时长都从这里取，不要写字面量。
 
 <!-- @scss:core-tokens -->
 
@@ -32,14 +32,14 @@
 | --- | --- |
 | 面板外观（圆角、边框、阴影、底色） | 直接写 scoped 类，能盖住——面板的主题规则包在 `:where()` 里 |
 | 按钮、列表项等其余基元 | 优先用现成的变体 / 修饰；确实要改就多嵌一层父选择器 |
-| 任何吃令牌的属性 | 在元素上重新声明那个令牌，绕开特异度 |
+| 任何吃CSS变量的属性 | 在元素上重新声明那个CSS变量，绕开特异度 |
 
-最后一条往往最省事，令牌是按元素解析的，不用比特异度也不用 `!important`：
+最后一条往往最省事，CSS变量是按元素解析的，不用比特异度也不用 `!important`：
 
 ```scss
 // 让这个面板用胶囊圆角，两种写法都可以
 .zoom-toolbar { border-radius: var(--vgo-radius-pill); }  // 面板可以直接写
-.zoom-toolbar { --vgo-radius: var(--vgo-radius-pill); }   // 换令牌，连带子元素一起
+.zoom-toolbar { --vgo-radius: var(--vgo-radius-pill); }   // 换CSS变量，连带子元素一起
 ```
 
 ## 按钮
@@ -84,7 +84,7 @@
 
 ### 尺寸
 
-三档高度对应 `--vgo-control-sm` / `-md` / `-lg`，数值见上面的令牌表。默认的 `--vgo-control-md` 适合独立按钮，**密集工具栏显式用 `--sm`**。
+三档高度对应 `--vgo-control-sm` / `-md` / `-lg`，数值见上面的CSS变量表。默认的 `--vgo-control-md` 适合独立按钮，**密集工具栏显式用 `--sm`**。
 
 ```html
 <button class="vgo-button vgo-button--sm">Small</button>
@@ -265,11 +265,11 @@
   <button class="vgo-button vgo-button--overlay-light" disabled>禁用</button>
 </div>
 
-上面这组里，缩放条只在**容器**上写了 `--overlay-light`，内部三个控件仍是 `--overlay`，靠继承拿到浅色令牌。
+上面这组里，缩放条只在**容器**上写了 `--overlay-light`，内部三个控件仍是 `--overlay`，靠继承拿到浅色CSS变量。
 
-可用令牌：`--vgo-overlay-surface`、`--vgo-overlay-border`、`--vgo-overlay-blur`、`--vgo-overlay-text`、`--vgo-overlay-text-secondary`、`--vgo-overlay-control`（及 `-hover` / `-active`）。
+可用CSS变量：`--vgo-overlay-surface`、`--vgo-overlay-border`、`--vgo-overlay-blur`、`--vgo-overlay-text`、`--vgo-overlay-text-secondary`、`--vgo-overlay-control`（及 `-hover` / `-active`）。
 
-浮层面板内部把 `--vgo-text`、`--vgo-text-secondary`、`--vgo-border`、`--vgo-hover` 重指向浮层令牌，所以嵌进去的 `.vgo-empty`、`.vgo-list-item` 自动就是浮层配色，不用各写一份覆盖：
+浮层面板内部把 `--vgo-text`、`--vgo-text-secondary`、`--vgo-border`、`--vgo-hover` 重指向浮层CSS变量，所以嵌进去的 `.vgo-empty`、`.vgo-list-item` 自动就是浮层配色，不用各写一份覆盖：
 
 ```html
 <div class="vgo-panel vgo-panel--overlay vgo-empty">
@@ -438,7 +438,7 @@
 
 ## 减少动态效果
 
-系统的 `prefers-reduced-motion: reduce` 会把两个时长令牌压到 `0.01ms`，并对 `*` 兜底压住 `animation-duration` / `transition-duration`，一并覆盖 element-plus、播放器这类硬编码时长的第三方。
+系统的 `prefers-reduced-motion: reduce` 会把两个时长CSS变量压到 `0.01ms`，并对 `*` 兜底压住 `animation-duration` / `transition-duration`，一并覆盖 element-plus、播放器这类硬编码时长的第三方。
 
 `html.reduce-motion` 是留给应用挂的持久化开关，做上述全部，外加去掉文字阴影与背景模糊（降低墨水屏刷新负担）。
 
@@ -448,11 +448,11 @@
 
 | 禁止                         | 替代                                                                      |
 | ---------------------------- | ------------------------------------------------------------------------- |
-| 字面量 hex / rgb 颜色        | `--vgo-*` 颜色令牌                                                        |
+| 字面量 hex / rgb 颜色        | `--vgo-*` 颜色CSS变量                                                        |
 | 字面量 `border-radius` 数值  | `--vgo-radius` / `--vgo-radius-lg` / `--vgo-radius-pill`                  |
 | 自定义 `box-shadow`          | `var(--vgo-shadow)`，或不要阴影                                           |
 | `backdrop-filter` / 玻璃拟态 | 实心 `--vgo-surface` / `--vgo-surface-raised`，浮在媒体上时用 `--overlay` |
-| 渐变背景                     | 纯色令牌                                                                  |
+| 渐变背景                     | 纯色CSS变量                                                                  |
 | 硬编码间距、字号、控件高度   | `--vgo-space-*` / `--vgo-font-*` / `--vgo-control-*`                      |
 | 自己拼半透明浮层配色         | `.vgo-panel--overlay` / `--overlay-light` 及对应按钮修饰                  |
 | 自己写两三像素高的进度条     | `.vgo-progress`                                                           |

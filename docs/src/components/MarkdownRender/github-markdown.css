@@ -568,6 +568,10 @@
   margin-top: 24px;
 }
 
+.markdown-body h1:first-child {
+  margin-top: 0;
+}
+
 .markdown-body h1 {
   font-size: 2em;
 }

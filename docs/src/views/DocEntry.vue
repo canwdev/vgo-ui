@@ -81,7 +81,7 @@ function toggleRight() {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   gap: var(--vgo-space-4);
-  max-width: 1800px;
+  max-width: var(--docs-max-width);
   margin: 0 auto;
   padding: var(--vgo-space-3) var(--vgo-space-4);
 }

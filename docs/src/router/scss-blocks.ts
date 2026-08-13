@@ -1,4 +1,4 @@
-// 把库里的令牌定义直接注入文档，避免文档和源码各写一份、改一处漏一处。
+// 把库里的CSS变量定义直接注入文档，避免文档和源码各写一份、改一处漏一处。
 // 在 markdown 里写 `<!-- @scss:core-tokens -->`，构建时会替换成对应的 SCSS 代码块。
 import coreScss from '../../../src/styles/core/_runtime.scss?raw'
 import themeScss from '../../../src/styles/themes/default/_tokens.scss?raw'

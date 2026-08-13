@@ -56,7 +56,7 @@ import '@canwdev/vgo-ui/styles/core'
 import '@canwdev/vgo-ui/themes/default'
 ```
 
-`styles/core` 提供重置、运行时基础、组件结构和 `vgo-u-*` 工具类；`themes/default` 提供默认主题的设计令牌和外观。
+`styles/core` 提供重置、运行时基础、组件结构和 `vgo-u-*` 工具类；`themes/default` 提供默认主题的设计CSS变量和外观。
 
 文档工程直接使用源码入口时，对应路径为：
 

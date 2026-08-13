@@ -95,6 +95,10 @@ function handleClick(event: MouseEvent) {
 </template>
 
 <style lang="scss">
+.markdown-body :where(h1, h2, h3)[id] {
+  scroll-margin-top: var(--docs-sticky-top);
+}
+
 .hljs-code-container {
   //background-color: #212121 !important;
   padding: 0 !important;
