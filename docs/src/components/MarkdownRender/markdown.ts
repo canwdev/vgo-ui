@@ -1,9 +1,9 @@
 import hljs from 'highlight.js'
+import githubDarkCss from 'highlight.js/styles/github-dark.css?raw'
+import githubCss from 'highlight.js/styles/github.css?raw'
 import MarkdownIt from 'markdown-it'
 import './github-markdown.css'
 import './github-markdown-dark.css'
-import 'highlight.js/styles/github.css'
-import 'highlight.js/styles/github-dark.css'
 
 // 兼容不能识别的语言
 const langMap: Record<string, string> = {
@@ -42,6 +42,10 @@ export interface Heading {
   level: number
   text: string
   id: string
+}
+
+export function getHighlightThemeCss(dark: boolean): string {
+  return dark ? githubDarkCss : githubCss
 }
 
 function inlineText(content: string): string {

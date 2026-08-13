@@ -3,7 +3,6 @@ import { defineAsyncComponent } from 'vue'
 import docsForm from '../views/docs/form.md?raw'
 import docsInstall from '../views/docs/install.md?raw'
 import docsOptionUI from '../views/docs/option-ui.md?raw'
-import docsQuickOptions from '../views/docs/quick-options.md?raw'
 import docsStyles from '../views/docs/styles.md?raw'
 import docsTable from '../views/docs/table.md?raw'
 import docsWindow from '../views/docs/window.md?raw'
@@ -49,13 +48,7 @@ export const docsRoutes: RouteRecordRaw[] = [
       component: defineAsyncComponent(() => import('../../../src/components/OptionUI/DemoOptionUI.vue')),
     },
   },
-  {
-    path: 'quick-options',
-    meta: {
-      title: 'QuickOptions',
-      content: docsQuickOptions,
-    },
-  },
+
   {
     path: 'window',
     meta: {

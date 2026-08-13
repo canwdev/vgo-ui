@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { watchThrottled } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
-import { ref, toRefs } from 'vue'
+import { onBeforeUnmount, ref, toRefs, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import markdown from './markdown'
+import markdown, { getHighlightThemeCss } from './markdown'
 
 interface Props {
   dark?: boolean
@@ -15,10 +15,24 @@ const props = withDefaults(defineProps<Props>(), {
   text: '',
 })
 const emit = defineEmits<{ rendered: [] }>()
-const { text } = toRefs(props)
+const { text, dark } = toRefs(props)
 const router = useRouter()
 
 const renderedContent = ref('')
+let highlightStyle: HTMLStyleElement | null = null
+
+function applyHighlightTheme(darkValue: boolean) {
+  highlightStyle?.remove()
+  const style = document.createElement('style')
+  style.dataset.highlightTheme = ''
+  style.textContent = getHighlightThemeCss(darkValue)
+  document.head.appendChild(style)
+  highlightStyle = style
+}
+
+watch(dark, applyHighlightTheme, { immediate: true })
+onBeforeUnmount(() => highlightStyle?.remove())
+
 function renderMd() {
   renderedContent.value = markdown.render(text.value)
   emit('rendered')
