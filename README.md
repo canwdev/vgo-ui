@@ -46,8 +46,7 @@ bun run build
 bun link
 
 # 在使用该包的项目目录下执行
-# rm -rf node_modules/@canwdev/vgo-ui
-# rm -rf node_modules/.vite
+# rm -rf node_modules/@canwdev/vgo-ui node_modules/.vite node_modules/.vite-temp
 bun link @canwdev/vgo-ui
 ```
 

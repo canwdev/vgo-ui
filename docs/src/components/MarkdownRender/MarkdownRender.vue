@@ -2,6 +2,7 @@
 import { watchThrottled } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
 import { ref, toRefs } from 'vue'
+import { useRouter } from 'vue-router'
 import markdown from './markdown'
 
 interface Props {
@@ -14,6 +15,7 @@ const props = withDefaults(defineProps<Props>(), {
   text: '',
 })
 const { text } = toRefs(props)
+const router = useRouter()
 
 const renderedContent = ref('')
 function renderMd() {
@@ -27,26 +29,38 @@ watchThrottled(
   { throttle: 100, trailing: true, immediate: true },
 )
 
+function isInternalHref(href: string): boolean {
+  return !/^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(href)
+}
+
 function handleClick(event: MouseEvent) {
-  const el = event.target
-  if (el instanceof HTMLElement) {
-    if (el.tagName === 'A') {
-      // el.target = '_blank'
-      return
+  const target = event.target
+  if (!(target instanceof Element))
+    return
+
+  const link = target.closest('a')
+  if (link) {
+    const href = link.getAttribute('href')
+    if (href && isInternalHref(href) && link.target !== '_blank') {
+      event.preventDefault()
+      router.push(href)
+    } else if (href) {
+      event.preventDefault()
+      window.open(href)
     }
+    return
+  }
 
-    // 处理代码块复制
-    const isActionButton = el.classList.contains('_js-action-button')
-    if (isActionButton) {
-      const code = el.parentElement?.nextElementSibling?.textContent ?? ''
+  // 处理代码块复制
+  const actionButton = target.closest('._js-action-button')
+  if (actionButton) {
+    const code = actionButton.parentElement?.nextElementSibling?.textContent ?? ''
 
-      // console.log(el.parentElement.nextSibling)
-      switch (el.getAttribute('data-action')) {
-        case 'copy':
-          navigator.clipboard.writeText(code)
-          ElMessage.success('Code copied to clipboard')
-          break
-      }
+    switch (actionButton.getAttribute('data-action')) {
+      case 'copy':
+        navigator.clipboard.writeText(code)
+        ElMessage.success('Code copied to clipboard')
+        break
     }
   }
 }
