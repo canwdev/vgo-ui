@@ -78,9 +78,9 @@ The main consumer, `file-lite`, enforces the same contract in CI via `frontend/s
 
 Update `CHANGELOG.md` in the same change that alters public API, class names, tokens, style entrypoints, or exports. Skip it for internal refactors, docs-only edits and tooling.
 
-- Newest version first. Write in Chinese.
-- Subsections in this order, omitting any that would be empty: `### 破坏性变更（Breaking）` / `### 新增` / `### 变更` / `### 修复`.
-- **Never open an "未发布" section for work that will ship in the current unreleased version** — fold it into that version's entry instead. `package.json` holds the version that is being written to.
+- Newest version first. Write in English.
+- Subsections in this order, omitting any that would be empty: `### Breaking` / `### Added` / `### Changed` / `### Fixed`.
+- **Never open an "Unreleased" section for work that will ship in the current unreleased version** — fold it into that version's entry instead. `package.json` holds the version that is being written to.
 - Every breaking bullet must state the migration inline, not just what changed. Say what a reader has to *do*.
 - Explain why a change matters where it isn't obvious; a bullet that only restates a diff is noise. One bullet per user-visible change, not per commit.
 - Long rename lists go in a table, not nested bullets.
