@@ -3,7 +3,8 @@
 ## 0.4.1
 
 - Polish docs styles
-- Optimize ViewPortWindow emit
+- Optimize ViewPortWindow event emits
+- Minor style refine
 
 ## 0.4.0 (Breaking style refactor)
 

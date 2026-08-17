@@ -252,6 +252,12 @@ body.vgo-theme-default {
       box-shadow: none;
     }
 
+    &:not(.is-maximized) {
+      .vgo-window__controls button.is-close {
+        border-top-right-radius: var(--vgo-radius);
+      }
+    }
+
     &__title-bar {
       height: 30px;
       padding-right: 0;
@@ -283,10 +289,6 @@ body.vgo-theme-default {
         margin-top: 0;
         border: 0;
         border-radius: 0;
-
-        &.is-close {
-          border-top-right-radius: var(--vgo-radius);
-        }
 
         &:hover {
           background-color: var(--vgo-control-hover);
