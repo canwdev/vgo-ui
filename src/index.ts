@@ -38,9 +38,7 @@ export { default as TransitionBodyCollapse } from './components/Transitions/Tran
 
 // ViewPortWindow
 export type { ILayout, WinOptions } from './components/ViewPortWindow/enum'
-export { layoutList, LayoutPreset } from './components/ViewPortWindow/enum'
-
-export { default as LayoutHelper } from './components/ViewPortWindow/LayoutHelper.vue'
+export { LayoutPreset } from './components/ViewPortWindow/enum'
 
 export { default as LayoutPreview } from './components/ViewPortWindow/LayoutPreview.vue'
 // ViewPortWindow

@@ -14,9 +14,8 @@ import {
   watch,
 } from 'vue'
 import { checkWindowAttach } from './enum'
-import LayoutHelper from './LayoutHelper.vue'
 import LayoutPreview from './LayoutPreview.vue'
-import { useDynamicClassName, useMouseOver } from './use-utils'
+import { useDynamicClassName } from './use-utils'
 import { WindowController } from './window-controller'
 
 const props = withDefaults(
@@ -377,8 +376,6 @@ function handleClose() {
   emit('onClose')
 }
 
-const isShowLayoutHelper = ref(false)
-
 function setWindowLayout(layout: ILayout) {
   const { xRatio, yRatio, widthRatio, heightRatio, maximize } = layout
   if (maximize) {
@@ -406,15 +403,6 @@ function setWindowLayout(layout: ILayout) {
   })
 }
 
-// 鼠标悬浮一定时间后，显示
-const mButtonRef = ref()
-useMouseOver(mButtonRef, {
-  timeout: 800,
-  onEnter: () => {
-    isShowLayoutHelper.value = true
-  },
-})
-
 function focus() {
   rootRef.value.focus()
 }
@@ -428,7 +416,6 @@ defineExpose({
   isMinimized,
   toggleMaximized,
   isTransition,
-  isShowLayoutHelper,
   setWindowLayout,
   setPos,
   layoutPreviewData,
@@ -440,7 +427,6 @@ defineExpose({
   <transition :name="transitionName">
     <div v-show="isInit && mVisible" :id="wid" ref="rootRef" class="vgo-window">
       <LayoutPreview :preview-data="layoutPreviewData" />
-      <LayoutHelper v-model:visible="isShowLayoutHelper" @set-window-layout="setWindowLayout" />
       <div class="vgo-window__content">
         <div v-show="!noTitleBar" ref="titleBarRef" class="vgo-window__title-bar" @dblclick="toggleMaximized">
           <div class="vgo-window__title vgo-u-text-overflow">
@@ -449,62 +435,14 @@ defineExpose({
           <div ref="titleBarButtonsRef" class="vgo-window__controls" @dblclick.stop>
             <slot name="titleBarRightControls" />
             <slot name="titleBarRight">
-              <button v-if="allowMinimum && !isMinimized" class="is-minimize" @click="isMinimized = true">
-                <svg
-                  width="20" height="20" xmlns="http://www.w3.org/2000/svg"
-                  xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 20 20"
-                >
-                  <g fill="none">
-                    <rect x="3" y="9.25" width="14" height="1.5" rx=".75" fill="currentColor" />
-                  </g>
-                </svg>
-              </button>
+              <button v-if="allowMinimum && !isMinimized" class="is-minimize" @click="isMinimized = true" />
 
               <button
-                v-if="allowMaximum" ref="mButtonRef" :class="[isMaximized ? 'is-restore' : 'is-maximize']"
+                v-if="allowMaximum" :class="[isMaximized ? 'is-restore' : 'is-maximize']"
                 @click="toggleMaximized"
-              >
-                <template v-if="isMaximized">
-                  <svg
-                    width="20" height="20" xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16"
-                  >
-                    <g fill="none">
-                      <path
-                        d="M13.854 2.854a.5.5 0 0 0-.708-.708L10 5.293V3.5a.5.5 0 0 0-1 0v2.9a.6.6 0 0 0 .6.6h2.9a.5.5 0 0 0 0-1h-1.793l3.147-3.146zM6.5 13a.5.5 0 0 1-.5-.5v-1.793l-3.146 3.147a.5.5 0 0 1-.708-.708L5.293 10H3.5a.5.5 0 0 1 0-1h2.9a.6.6 0 0 1 .6.6v2.9a.5.5 0 0 1-.5.5z"
-                        fill="currentColor"
-                      />
-                    </g>
-                  </svg>
-                </template>
-                <template v-else>
-                  <svg
-                    width="16" height="16" xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16"
-                  >
-                    <g fill="none">
-                      <path
-                        d="M8.5 2a.5.5 0 0 0 0 1h3.793L3 12.293V8.5a.5.5 0 0 0-1 0v4.9a.6.6 0 0 0 .6.6h4.9a.5.5 0 0 0 0-1H3.707L13 3.707V7.5a.5.5 0 0 0 1 0V2.6a.6.6 0 0 0-.6-.6H8.5z"
-                        fill="currentColor"
-                      />
-                    </g>
-                  </svg>
-                </template>
-              </button>
+              />
 
-              <button v-if="showClose" title="Close" class="is-close" @click="handleClose">
-                <svg
-                  width="20" height="20" xmlns="http://www.w3.org/2000/svg"
-                  xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 20 20"
-                >
-                  <g fill="none">
-                    <path
-                      d="M4.089 4.216l.057-.07a.5.5 0 0 1 .638-.057l.07.057L10 9.293l5.146-5.147a.5.5 0 0 1 .638-.057l.07.057a.5.5 0 0 1 .057.638l-.057.07L10.707 10l5.147 5.146a.5.5 0 0 1 .057.638l-.057.07a.5.5 0 0 1-.638.057l-.07-.057L10 10.707l-5.146 5.147a.5.5 0 0 1-.638.057l-.07-.057a.5.5 0 0 1-.057-.638l.057-.07L9.293 10L4.146 4.854a.5.5 0 0 1-.057-.638l.057-.07l-.057.07z"
-                      fill="currentColor"
-                    />
-                  </g>
-                </svg>
-              </button>
+              <button v-if="showClose" title="Close" class="is-close" @click="handleClose" />
             </slot>
           </div>
         </div>

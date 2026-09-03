@@ -27,25 +27,6 @@ export const LayoutPreset: { [key: string]: ILayout } = Object.freeze({
   MAXIMIZE: { xRatio: 0, yRatio: 0, widthRatio: 1, heightRatio: 1, maximize: true },
 })
 
-export const layoutList: ILayout[] = [
-  // 3个一组
-  LayoutPreset.LEFT,
-  LayoutPreset.MAXIMIZE,
-  LayoutPreset.RIGHT,
-  //
-  LayoutPreset.TOP_LEFT,
-  { xRatio: 0, yRatio: 0, widthRatio: 1, heightRatio: 0.5 },
-  LayoutPreset.TOP_RIGHT,
-  //
-  { xRatio: 0.1, yRatio: 0.1, widthRatio: 0.8, heightRatio: 0.8 },
-  { xRatio: 0.2, yRatio: 0.2, widthRatio: 0.6, heightRatio: 0.6 },
-  { xRatio: 0.3, yRatio: 0.3, widthRatio: 0.4, heightRatio: 0.4 },
-  //
-  LayoutPreset.BOTTOM_LEFT,
-  { xRatio: 0, yRatio: 0.5, widthRatio: 1, heightRatio: 0.5 },
-  LayoutPreset.BOTTOM_RIGHT,
-]
-
 // 贴边快捷调整窗口大小 (Aero Snap)
 // 窗口边缘贴靠检测
 export function checkWindowAttach({ x, y }: { x: number, y: number }): ILayout | undefined {

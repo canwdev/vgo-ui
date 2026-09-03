@@ -9,7 +9,7 @@
 ## 使用
 
 ```ts
-import { ViewPortWindow, LayoutPreview, LayoutHelper } from '@canwdev/vgo-ui'
+import { ViewPortWindow, LayoutPreview } from '@canwdev/vgo-ui'
 import type { WinOptions, ILayout } from '@canwdev/vgo-ui'
 ```
 

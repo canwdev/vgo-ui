@@ -75,8 +75,8 @@
   }
 }
 
-// 由应用把这个类挂到 html 上（持久化开关），系统偏好则走下面的媒体查询
-html.reduce-motion {
+// 由应用把这个类挂到 body 上
+body.reduce-motion {
   @include reduce-motion;
   @include flatten-effects;
 }

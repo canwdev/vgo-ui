@@ -5,6 +5,8 @@
 - Polish docs styles
 - Optimize ViewPortWindow event emits
 - Minor style refine
+- ViewPortWindow title-bar button icons are now theme tokens (`--vgo-window-icon-minimize` / `-restore` / `-maximize` / `-close`) drawn with a `currentColor` CSS mask, instead of inline SVGs in the component template. A custom theme swaps its own button icons by re-declaring these variables; visual output is unchanged.
+- **Removed the `LayoutHelper` component and its styles** (`export { LayoutHelper }`, `.vgo-layout-helper*`). It only fed ViewPortWindow's maximize-button layout menu, which is no longer part of the window. Importers that rendered a layout menu must build their own from the exported `LayoutPreset`; the removed `layoutList` array only fed the deleted menu. Window-edge snapping and the `.vgo-layout-preview` overlay are unaffected.
 
 ## 0.4.0 (Breaking style refactor)
 
