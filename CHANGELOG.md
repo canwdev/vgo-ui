@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.4.2
+
+Icons are no longer coupled to the `.mdi` font classes anywhere in the library or its docs. Consumers and the docs site render mdi icons as inline SVG from `@iconify-json/mdi` (with `unplugin-icons` in Vue, i.e. `<i-mdi-* />`), the same setup file-lite already uses. The style contract page (`styles.md`) is still the single reference for tokens / primitives / utilities.
+
+### Breaking
+
+- **The button icon default sizing rules are gone.** `:where(.vgo-button) :where(.mdi)` / `:where(.vgo-button--lg) :where(.mdi)` (icon `--vgo-icon-md` / `-lg` defaults inside buttons) were removed from `src/styles/core/_primitives.scss`. The library no longer sizes icon elements by class name or element type, so buttons do not enlarge icons anymore: an icon (inline SVG at `1em`, or a font glyph) renders at the surrounding text size. **Migration**: put `.vgo-u-icon-md` / `.vgo-u-icon-lg` on the icon element itself when a fixed icon size is wanted — the utility is a plain `font-size`, works with any icon mechanism, and its specificity overrides whatever the component sets. Consumers that previously relied on `.mdi` classes inside vgo buttons must switch to their own icon system anyway (vgo-ui never shipped the glyph font); sizing is now explicit instead of implicit.
+- The docs site no longer loads `@mdi/font`; if you copied demo markup that used `class="mdi mdi-*"`, replace it with your own icon element (inline SVG from `@iconify-json/mdi`, e.g. `<i-mdi-cog />` with unplugin-icons).
+
+### Changed
+
+- **docs workspace now consumes `@iconify-json/mdi` + `unplugin-icons`** (devDependencies, vite plugin `Icons({ compiler: 'vue3', scale: 1 })` + `IconsResolver({ enabledCollections: ['mdi'] })`), mirroring file-lite's setup. All docs chrome icons (nav, theme control, code-block copy button) moved from the `.mdi` font to inline-SVG mdi icons.
+- Library demo SFCs (`DemoViewPortWindow.vue`, `DemoOptionUI.vue`) no longer reference `.mdi` classes; window title-bar icons are inline mdi SVGs.
+- `styles.md` examples that embed icons now use inline mdi SVG glyphs via a page-local symbol sprite referenced with `<svg><use>`, keeping samples readable; the "icon font size" section explains that `.vgo-u-icon-*` applies to any icon element and buttons no longer auto-size icons.
+
 ## 0.4.1
 
 - Polish docs styles

@@ -13,7 +13,7 @@ const options = computed((): StOptionItem[] => {
         {
           label: '切换开关',
           key: 'switch',
-          // iconClass: 'mdi mdi-dock-window',
+          // 可选：iconRender（Vue 组件/图标）> iconClass（自定义类）> icon（图片）
           type: StOptionType.SWITCH,
         },
         {

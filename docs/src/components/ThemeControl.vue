@@ -1,12 +1,19 @@
 <script lang="ts" setup>
+import type { Component } from 'vue'
 import type { ThemeMode } from '../hooks/use-site-theme'
 import { computed } from 'vue'
+import MdiMotionPauseOutline from '~icons/mdi/motion-pause-outline'
+import MdiMotionPlayOutline from '~icons/mdi/motion-play-outline'
+import MdiPalette from '~icons/mdi/palette'
+import MdiThemeLightDark from '~icons/mdi/theme-light-dark'
+import MdiWeatherNight from '~icons/mdi/weather-night'
+import MdiWeatherSunny from '~icons/mdi/weather-sunny'
 import { primaryColor, reduceMotion, themeMode } from '../hooks/use-site-theme'
 
-const themeModes: { value: ThemeMode, label: string, icon: string }[] = [
-  { value: 'auto', label: '跟随系统', icon: 'mdi-theme-light-dark' },
-  { value: 'light', label: '亮色', icon: 'mdi-weather-sunny' },
-  { value: 'dark', label: '暗色', icon: 'mdi-weather-night' },
+const themeModes: { value: ThemeMode, label: string, icon: Component }[] = [
+  { value: 'auto', label: '跟随系统', icon: MdiThemeLightDark },
+  { value: 'light', label: '亮色', icon: MdiWeatherSunny },
+  { value: 'dark', label: '暗色', icon: MdiWeatherNight },
 ]
 
 const currentMode = computed(
@@ -68,7 +75,7 @@ function selectCustomColor(value: string | null) {
       :title="`外观：${currentMode.label}（点击切换）`"
       @click="cycleThemeMode"
     >
-      <span class="mdi" :class="currentMode.icon" />
+      <component :is="currentMode.icon" class="vgo-u-icon-md" />
     </button>
 
     <button
@@ -77,7 +84,10 @@ function selectCustomColor(value: string | null) {
       :title="reduceMotion ? '动效：已减弱（点击恢复）' : '动效：正常（点击减弱）'"
       @click="toggleReduceMotion"
     >
-      <span class="mdi" :class="reduceMotion ? 'mdi-motion-pause-outline' : 'mdi-motion-play-outline'" />
+      <component
+        :is="reduceMotion ? MdiMotionPauseOutline : MdiMotionPlayOutline"
+        class="vgo-u-icon-md"
+      />
     </button>
 
     <ElPopover trigger="click" :width="240" placement="bottom-end">
@@ -103,7 +113,7 @@ function selectCustomColor(value: string | null) {
       </div>
       <template #reference>
         <button class="vgo-button vgo-button--text vgo-button--icon" title="主题色">
-          <span class="mdi mdi-palette" :style="{ color: dotColor }" />
+          <MdiPalette class="vgo-u-icon-md" :style="{ color: dotColor }" />
         </button>
       </template>
     </ElPopover>

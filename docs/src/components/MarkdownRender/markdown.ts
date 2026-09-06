@@ -31,8 +31,8 @@ const md = new MarkdownIt({
     return `<pre class="hljs-code-container">
 <div class="hljs-code-header vgo-panel">
   <span class="lang-display" data-lang="${langOriginal}">${langDisplay}</span>
-  <button class="_js-action-button vgo-u-button-reset mdi mdi-content-copy" data-action="copy" title="Copy"></button>
-  <!--<button class="_js-action-button vgo-u-button-reset mdi mdi-download" data-action="download" title="Download">Download</button>-->
+  <button class="_js-action-button vgo-u-button-reset" data-action="copy" title="Copy" aria-label="Copy"><svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><path fill="currentColor" d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12z"/></svg></button>
+  <!--<button class="_js-action-button vgo-u-button-reset" data-action="download" title="Download" aria-label="Download"><svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><path fill="currentColor" d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z"/></svg></button>-->
 </div><code class="hljs language-${language}">${content}</code>
 </pre>`
   },

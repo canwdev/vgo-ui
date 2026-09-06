@@ -75,17 +75,8 @@
   }
 }
 
-// 按钮内图标的默认字号。两层 :where() 把特异度压成 0，使用方在图标元素上加
-// .vgo-u-icon-* 或自己的类就能直接盖掉，不必比拼特异度。--sm 不缩图标：
-// 图标按钮缩到 16px 后辨识度不够，要小的地方显式标 .vgo-u-icon-sm
-:where(.vgo-button) :where(.mdi) {
-  font-size: var(--vgo-icon-md);
-}
-
-:where(.vgo-button--lg) :where(.mdi) {
-  font-size: var(--vgo-icon-lg);
-}
-
+// 按钮不再给图标设默认字号：图标随按钮文字字号（1em 内联 svg），
+// 需要固定大小时在图标元素上加 .vgo-u-icon-sm / -md / -lg
 .vgo-input {
   padding: 6px 8px;
   scrollbar-width: thin;

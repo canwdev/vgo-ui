@@ -63,14 +63,14 @@ function toggleRight() {
         title="打开文档导航"
         @click="toggleLeft"
       >
-        <span class="mdi mdi-menu" />
+        <i-mdi-menu class="vgo-u-icon-md" />
       </button>
       <button
         class="vgo-button vgo-button--icon vgo-button--round"
         title="打开本页目录"
         @click="toggleRight"
       >
-        <span class="mdi mdi-format-list-bulleted" />
+        <i-mdi-format-list-bulleted class="vgo-u-icon-md" />
       </button>
     </div>
   </div>

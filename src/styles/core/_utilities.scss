@@ -90,7 +90,7 @@
   white-space: nowrap;
 }
 
-// 图标字号。加在图标元素本身（与 mdi 平级），所以这里不必耦合任何图标库的类名
+// 图标字号。加在图标元素本身，与图标实现无关（字体图标的 span、内联 svg 都适用）
 @each $size in sm, md, lg {
   .vgo-u-icon-#{$size} {
     font-size: var(--vgo-icon-#{$size});

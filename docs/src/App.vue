@@ -18,11 +18,11 @@ const navOpen = ref(false)
 
         <div class="nav-menus vgo-u-flex-wrap-center">
           <router-link to="/docs" class="vgo-button vgo-button--text" active-class="is-active">
-            <span class="mdi mdi-book-open-page-variant-outline" />
+            <i-mdi-book-open-page-variant-outline class="vgo-u-icon-md" />
             文档
           </router-link>
           <router-link to="/changelog" class="vgo-button vgo-button--text" active-class="is-active">
-            <span class="mdi mdi-history" />
+            <i-mdi-history class="vgo-u-icon-md" />
             更新日志
           </router-link>
           <ThemeControl />
@@ -32,7 +32,7 @@ const navOpen = ref(false)
             target="_blank"
             title="GitHub"
           >
-            <span class="mdi mdi-github" />
+            <i-mdi-github class="vgo-u-icon-md" />
           </a>
           <a
             class="vgo-button vgo-button--text vgo-button--icon"
@@ -40,7 +40,7 @@ const navOpen = ref(false)
             target="_blank"
             title="npm"
           >
-            <span class="mdi mdi-npm vgo-u-icon-lg" />
+            <i-mdi-npm class="vgo-u-icon-lg" />
           </a>
         </div>
 
@@ -49,7 +49,7 @@ const navOpen = ref(false)
           title="打开导航"
           @click="navOpen = !navOpen"
         >
-          <span class="mdi mdi-menu" />
+          <i-mdi-menu class="vgo-u-icon-md" />
         </button>
       </div>
     </div>
@@ -57,11 +57,11 @@ const navOpen = ref(false)
     <DocSidePanel class="nav-drawer" side="right" :open="navOpen" @close="navOpen = false">
       <div class="nav-drawer__list">
         <router-link to="/docs" class="vgo-list-item" @click="navOpen = false">
-          <span class="mdi mdi-book-open-page-variant-outline vgo-u-icon-lg" />
+          <i-mdi-book-open-page-variant-outline class="vgo-u-icon-lg" />
           文档
         </router-link>
         <router-link to="/changelog" class="vgo-list-item" @click="navOpen = false">
-          <span class="mdi mdi-history vgo-u-icon-lg" />
+          <i-mdi-history class="vgo-u-icon-lg" />
           更新日志
         </router-link>
         <div class="nav-drawer__theme">
@@ -73,7 +73,7 @@ const navOpen = ref(false)
           target="_blank"
           @click="navOpen = false"
         >
-          <span class="mdi mdi-github vgo-u-icon-lg" />
+          <i-mdi-github class="vgo-u-icon-lg" />
           GitHub
         </a>
         <a
@@ -82,7 +82,7 @@ const navOpen = ref(false)
           target="_blank"
           @click="navOpen = false"
         >
-          <span class="mdi mdi-npm vgo-u-icon-lg" />
+          <i-mdi-npm class="vgo-u-icon-lg" />
           npm
         </a>
       </div>

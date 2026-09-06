@@ -1,5 +1,26 @@
 # 样式总览
 
+<div class="vgo-doc-icon-sprite" aria-hidden="true" style="display:none"><svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="vgo-i-cog" viewBox="0 0 24 24"><path fill="currentColor" d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5a3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></symbol>
+  <symbol id="vgo-i-plus" viewBox="0 0 24 24"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"/></symbol>
+  <symbol id="vgo-i-palette" viewBox="0 0 24 24"><path fill="currentColor" d="M17.5 12a1.5 1.5 0 0 1-1.5-1.5A1.5 1.5 0 0 1 17.5 9a1.5 1.5 0 0 1 1.5 1.5a1.5 1.5 0 0 1-1.5 1.5m-3-4A1.5 1.5 0 0 1 13 6.5A1.5 1.5 0 0 1 14.5 5A1.5 1.5 0 0 1 16 6.5A1.5 1.5 0 0 1 14.5 8m-5 0A1.5 1.5 0 0 1 8 6.5A1.5 1.5 0 0 1 9.5 5A1.5 1.5 0 0 1 11 6.5A1.5 1.5 0 0 1 9.5 8m-3 4A1.5 1.5 0 0 1 5 10.5A1.5 1.5 0 0 1 6.5 9A1.5 1.5 0 0 1 8 10.5A1.5 1.5 0 0 1 6.5 12M12 3a9 9 0 0 0-9 9a9 9 0 0 0 9 9a1.5 1.5 0 0 0 1.5-1.5c0-.39-.15-.74-.39-1c-.23-.27-.38-.62-.38-1a1.5 1.5 0 0 1 1.5-1.5H16a5 5 0 0 0 5-5c0-4.42-4.03-8-9-8"/></symbol>
+  <symbol id="vgo-i-weather-night" viewBox="0 0 24 24"><path fill="currentColor" d="m17.75 4.09l-2.53 1.94l.91 3.06l-2.63-1.81l-2.63 1.81l.91-3.06l-2.53-1.94L12.44 4l1.06-3l1.06 3zm3.5 6.91l-1.64 1.25l.59 1.98l-1.7-1.17l-1.7 1.17l.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85c-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14c.4-.4.82-.76 1.27-1.08c.75-.53 1.93.36 1.85 1.19c-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82c-2.81 3.14-2.7 7.96.31 10.98c3.02 3.01 7.84 3.12 10.98.31"/></symbol>
+  <symbol id="vgo-i-delete" viewBox="0 0 24 24"><path fill="currentColor" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"/></symbol>
+  <symbol id="vgo-i-chevron-left" viewBox="0 0 24 24"><path fill="currentColor" d="M15.41 16.58L10.83 12l4.58-4.59L14 6l-6 6l6 6z"/></symbol>
+  <symbol id="vgo-i-star" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.62L12 2L9.19 8.62L2 9.24l5.45 4.73L5.82 21z"/></symbol>
+  <symbol id="vgo-i-arrow-left" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11v2H8l5.5 5.5l-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5L8 11z"/></symbol>
+  <symbol id="vgo-i-arrow-right" viewBox="0 0 24 24"><path fill="currentColor" d="M4 11v2h12l-5.5 5.5l1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5L16 11z"/></symbol>
+  <symbol id="vgo-i-refresh" viewBox="0 0 24 24"><path fill="currentColor" d="M17.65 6.35A7.96 7.96 0 0 0 12 4a8 8 0 0 0-8 8a8 8 0 0 0 8 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18a6 6 0 0 1-6-6a6 6 0 0 1 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4z"/></symbol>
+  <symbol id="vgo-i-minus" viewBox="0 0 24 24"><path fill="currentColor" d="M19 13H5v-2h14z"/></symbol>
+  <symbol id="vgo-i-chevron-up" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></symbol>
+  <symbol id="vgo-i-image-off-outline" viewBox="0 0 24 24"><path fill="currentColor" d="M22 20.7L3.3 2L2 3.3l1 1V19c0 1.1.9 2 2 2h14.7l1 1zM5 19V6.3l7.6 7.6l-1.5 1.9L9 13.1L6 17h9.7l2 2zM8.8 5l-2-2H19c1.1 0 2 .9 2 2v12.2l-2-2V5z"/></symbol>
+  <symbol id="vgo-i-folder" viewBox="0 0 24 24"><path fill="currentColor" d="M10 4H4c-1.11 0-2 .89-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8z"/></symbol>
+  <symbol id="vgo-i-file" viewBox="0 0 24 24"><path fill="currentColor" d="M13 9V3.5L18.5 9M6 2c-1.11 0-2 .89-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/></symbol>
+  <symbol id="vgo-i-file-lock" viewBox="0 0 24 24"><path fill="currentColor" d="M18 13c-1.4 0-2.8 1.1-2.8 2.5V17c-.6 0-1.2.6-1.2 1.2v3.5c0 .7.6 1.3 1.2 1.3h5.5c.7 0 1.3-.6 1.3-1.2v-3.5c0-.7-.6-1.3-1.2-1.3v-1.5c0-1.4-1.4-2.5-2.8-2.5m0 1.2c.8 0 1.5.5 1.5 1.3V17h-3v-1.5c0-.8.7-1.3 1.5-1.3M6 2c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h6v-3.8c0-1 .4-1.7 1-2.2c.1-.1.2-.1.2-.2v-.3c0-2.7 2.4-4.5 4.8-4.5c.7 0 1.4.2 2 .4V8l-6-6zm7 1.5L18.5 9H13z"/></symbol>
+  <symbol id="vgo-i-folder-open-outline" viewBox="0 0 24 24"><path fill="currentColor" d="M6.1 10L4 18V8h17a2 2 0 0 0-2-2h-7l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h15c.9 0 1.7-.6 1.9-1.5l2.3-8.5zM19 18H6l1.6-6h13z"/></symbol>
+  <symbol id="vgo-i-reload" viewBox="0 0 24 24"><path fill="currentColor" d="M2 12a9 9 0 0 0 9 9c2.39 0 4.68-.94 6.4-2.6l-1.5-1.5A6.7 6.7 0 0 1 11 19c-6.24 0-9.36-7.54-4.95-11.95S18 5.77 18 12h-3l4 4h.1l3.9-4h-3a9 9 0 0 0-18 0"/></symbol>
+</svg></div>
+
 库的样式契约：CSS变量、原生元素增强、基元、工具类，一份封闭的词汇表。业务代码里的颜色、间距、按钮、面板、列表都从这里取，不要新建自定义类；页尾是禁止清单。
 
 只需要加类名即可生效。样式加载与主题挂载方式见安装文档。
@@ -106,23 +127,23 @@
 
 ### 图标按钮与圆形按钮
 
-`--icon` 是正方形，`--round` 是圆形，两者都跟随尺寸修饰。
+`--icon` 是正方形，`--round` 是圆形，两者都跟随尺寸修饰。示例里的 `<svg>` 只是占位图标，换你实际用的图标即可（详见文末「图标字号」）。
 
 ```html
-<button class="vgo-button vgo-button--icon"><span class="mdi mdi-cog"></span></button>
-<button class="vgo-button vgo-button--text vgo-button--icon"><span class="mdi mdi-cog"></span></button>
-<button class="vgo-button vgo-button--primary vgo-button--round"><span class="mdi mdi-plus"></span></button>
+<button class="vgo-button vgo-button--icon"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-cog"/></svg></button>
+<button class="vgo-button vgo-button--text vgo-button--icon"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-cog"/></svg></button>
+<button class="vgo-button vgo-button--primary vgo-button--round"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-plus"/></svg></button>
 ```
 
 <div class="vgo-u-flex-wrap-center">
-  <button class="vgo-button vgo-button--icon vgo-button--sm" title="sm"><span class="mdi mdi-cog"></span></button>
-  <button class="vgo-button vgo-button--icon" title="md"><span class="mdi mdi-cog"></span></button>
-  <button class="vgo-button vgo-button--icon vgo-button--lg" title="lg"><span class="mdi mdi-cog"></span></button>
-  <button class="vgo-button vgo-button--text vgo-button--icon" title="text icon"><span class="mdi mdi-palette"></span></button>
-  <button class="vgo-button vgo-button--text vgo-button--icon" title="text icon"><span class="mdi mdi-weather-night"></span></button>
-  <button class="vgo-button vgo-button--danger vgo-button--icon" title="danger icon"><span class="mdi mdi-delete"></span></button>
-  <button class="vgo-button vgo-button--round" title="round"><span class="mdi mdi-chevron-left"></span></button>
-  <button class="vgo-button vgo-button--primary vgo-button--round vgo-button--lg" title="fab"><span class="mdi mdi-plus"></span></button>
+  <button class="vgo-button vgo-button--icon vgo-button--sm" title="sm"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-cog"/></svg></button>
+  <button class="vgo-button vgo-button--icon" title="md"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-cog"/></svg></button>
+  <button class="vgo-button vgo-button--icon vgo-button--lg" title="lg"><svg class="vgo-u-icon-lg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-cog"/></svg></button>
+  <button class="vgo-button vgo-button--text vgo-button--icon" title="text icon"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-palette"/></svg></button>
+  <button class="vgo-button vgo-button--text vgo-button--icon" title="text icon"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-weather-night"/></svg></button>
+  <button class="vgo-button vgo-button--danger vgo-button--icon" title="danger icon"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-delete"/></svg></button>
+  <button class="vgo-button vgo-button--round" title="round"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-chevron-left"/></svg></button>
+  <button class="vgo-button vgo-button--primary vgo-button--round vgo-button--lg" title="fab"><svg class="vgo-u-icon-lg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-plus"/></svg></button>
 </div>
 
 工具栏里的小图标按钮用 `.vgo-button--text .vgo-button--icon .vgo-button--sm`；浮动操作按钮用 `.vgo-button--primary .vgo-button--round .vgo-button--lg`。
@@ -140,7 +161,7 @@
   <button class="vgo-button is-active">Default</button>
   <button class="vgo-button vgo-button--text">未选中</button>
   <button class="vgo-button vgo-button--text is-active">已选中</button>
-  <button class="vgo-button vgo-button--text vgo-button--icon is-active"><span class="mdi mdi-star"></span></button>
+  <button class="vgo-button vgo-button--text vgo-button--icon is-active"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-star"/></svg></button>
   <button class="vgo-button vgo-button--text vgo-button--sm is-active">.*</button>
   <button class="vgo-button vgo-button--text is-active" disabled>禁用 + 选中</button>
 </div>
@@ -205,9 +226,9 @@
 <div class="vgo-u-flex-column" style="gap: 10px;">
   <div class="vgo-panel" style="padding: var(--vgo-space-4);">卡片：边框 + 圆角 + 阴影</div>
   <div class="vgo-panel vgo-panel--flat" style="padding: 8px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid var(--vgo-border);">
-    <button class="vgo-button vgo-button--text vgo-button--icon vgo-button--sm"><span class="mdi mdi-arrow-left"></span></button>
-    <button class="vgo-button vgo-button--text vgo-button--icon vgo-button--sm"><span class="mdi mdi-arrow-right"></span></button>
-    <button class="vgo-button vgo-button--text vgo-button--icon vgo-button--sm"><span class="mdi mdi-refresh"></span></button>
+    <button class="vgo-button vgo-button--text vgo-button--icon vgo-button--sm"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-arrow-left"/></svg></button>
+    <button class="vgo-button vgo-button--text vgo-button--icon vgo-button--sm"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-arrow-right"/></svg></button>
+    <button class="vgo-button vgo-button--text vgo-button--icon vgo-button--sm"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-refresh"/></svg></button>
     <span style="flex: 1"></span>
     <button class="vgo-button vgo-button--sm">工具栏</button>
   </div>
@@ -229,7 +250,7 @@
 ```html
 <div class="vgo-panel vgo-panel--overlay">
   <button class="vgo-button vgo-button--overlay vgo-button--icon vgo-button--round">
-    <span class="mdi mdi-minus"></span>
+    <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-minus"/></svg>
   </button>
   <button class="vgo-button vgo-button--overlay vgo-button--text">Dismiss</button>
 </div>
@@ -237,11 +258,11 @@
 
 <div style="background: linear-gradient(120deg, #35506b, #7a5c8e 50%, #b06b52); padding: 24px; border-radius: var(--vgo-radius); display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
   <div class="vgo-panel vgo-panel--overlay" style="padding: var(--vgo-space-1); display: flex; gap: 4px; align-items: center; border-radius: var(--vgo-radius-pill);">
-    <button class="vgo-button vgo-button--overlay vgo-button--icon vgo-button--round vgo-button--sm"><span class="mdi mdi-minus"></span></button>
+    <button class="vgo-button vgo-button--overlay vgo-button--icon vgo-button--round vgo-button--sm"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-minus"/></svg></button>
     <span style="min-width: 42px; text-align: center; font-size: var(--vgo-font-sm);">100%</span>
-    <button class="vgo-button vgo-button--overlay vgo-button--icon vgo-button--round vgo-button--sm"><span class="mdi mdi-plus"></span></button>
+    <button class="vgo-button vgo-button--overlay vgo-button--icon vgo-button--round vgo-button--sm"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-plus"/></svg></button>
   </div>
-  <button class="vgo-button vgo-button--overlay vgo-button--icon vgo-button--round vgo-button--lg"><span class="mdi mdi-chevron-up"></span></button>
+  <button class="vgo-button vgo-button--overlay vgo-button--icon vgo-button--round vgo-button--lg"><svg class="vgo-u-icon-lg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-chevron-up"/></svg></button>
   <button class="vgo-button vgo-button--overlay">普通</button>
   <button class="vgo-button vgo-button--overlay vgo-button--text">次要</button>
   <button class="vgo-button vgo-button--overlay" disabled>禁用</button>
@@ -251,11 +272,11 @@
 
 <div style="background: linear-gradient(120deg, #101018, #2a1f33 50%, #3a2118); padding: 24px; margin-top: 10px; border-radius: var(--vgo-radius); display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
   <div class="vgo-panel vgo-panel--overlay-light" style="padding: var(--vgo-space-1); display: flex; gap: 4px; align-items: center; border-radius: var(--vgo-radius-pill);">
-    <button class="vgo-button vgo-button--overlay vgo-button--icon vgo-button--round vgo-button--sm"><span class="mdi mdi-minus"></span></button>
+    <button class="vgo-button vgo-button--overlay vgo-button--icon vgo-button--round vgo-button--sm"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-minus"/></svg></button>
     <span style="min-width: 42px; text-align: center; font-size: var(--vgo-font-sm);">100%</span>
-    <button class="vgo-button vgo-button--overlay vgo-button--icon vgo-button--round vgo-button--sm"><span class="mdi mdi-plus"></span></button>
+    <button class="vgo-button vgo-button--overlay vgo-button--icon vgo-button--round vgo-button--sm"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-plus"/></svg></button>
   </div>
-  <button class="vgo-button vgo-button--overlay-light vgo-button--icon vgo-button--round vgo-button--lg"><span class="mdi mdi-chevron-up"></span></button>
+  <button class="vgo-button vgo-button--overlay-light vgo-button--icon vgo-button--round vgo-button--lg"><svg class="vgo-u-icon-lg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-chevron-up"/></svg></button>
   <button class="vgo-button vgo-button--overlay-light">普通</button>
   <button class="vgo-button vgo-button--overlay-light vgo-button--text">次要</button>
   <button class="vgo-button vgo-button--overlay-light" disabled>禁用</button>
@@ -269,7 +290,7 @@
 
 ```html
 <div class="vgo-panel vgo-panel--overlay vgo-empty">
-  <div class="vgo-empty__icon mdi mdi-image-off-outline"></div>
+  <div class="vgo-empty__icon"><svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-image-off-outline"/></svg></div>
   <div class="vgo-empty__title">没有更多了</div>
   <div class="vgo-empty__desc">已经到底部</div>
 </div>
@@ -277,7 +298,7 @@
 
 <div style="background: linear-gradient(120deg, #35506b, #7a5c8e 50%, #b06b52); padding: 24px; border-radius: var(--vgo-radius);">
   <div class="vgo-panel vgo-panel--overlay vgo-empty">
-    <div class="vgo-empty__icon mdi mdi-image-off-outline"></div>
+    <div class="vgo-empty__icon"><svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-image-off-outline"/></svg></div>
     <div class="vgo-empty__title">没有更多了</div>
     <div class="vgo-empty__desc">已经到底部</div>
   </div>
@@ -294,17 +315,17 @@
 ```
 
 <div class="vgo-panel" style="overflow: hidden;">
-  <div class="vgo-list-item"><span class="mdi mdi-folder"></span> Documents</div>
-  <div class="vgo-list-item is-active"><span class="mdi mdi-folder"></span> Pictures（选中）</div>
-  <div class="vgo-list-item"><span class="mdi mdi-file"></span> readme.md</div>
-  <div class="vgo-list-item is-disabled"><span class="mdi mdi-file-lock"></span> secret.key（禁用）</div>
+  <div class="vgo-list-item"><svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-folder"/></svg> Documents</div>
+  <div class="vgo-list-item is-active"><svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-folder"/></svg> Pictures（选中）</div>
+  <div class="vgo-list-item"><svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-file"/></svg> readme.md</div>
+  <div class="vgo-list-item is-disabled"><svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-file-lock"/></svg> secret.key（禁用）</div>
 </div>
 
 ## 空态
 
 ```html
 <div class="vgo-empty">
-  <div class="vgo-empty__icon mdi mdi-folder-open-outline"></div>
+  <div class="vgo-empty__icon"><svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-folder-open-outline"/></svg></div>
   <div class="vgo-empty__title">这里什么都没有</div>
   <div class="vgo-empty__desc">拖拽文件到此处上传</div>
 </div>
@@ -312,7 +333,7 @@
 
 <div class="vgo-panel">
   <div class="vgo-empty">
-    <div class="vgo-empty__icon mdi mdi-folder-open-outline"></div>
+    <div class="vgo-empty__icon"><svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-folder-open-outline"/></svg></div>
     <div class="vgo-empty__title">这里什么都没有</div>
     <div class="vgo-empty__desc">拖拽文件到此处上传</div>
   </div>
@@ -403,28 +424,28 @@
 
 ### 图标字号
 
-> 文档使用的是 `@mdi/font` 图标字体，在项目中需要手动安装。
+> 图标库与 vgo-ui 无关。本页实时示例用 `@iconify-json/mdi` 的内联 svg 演示字形：页面顶部隐藏了一份符号表，示例里 `<svg><use href="#vgo-i-*"/></svg>` 只是**引用它来显示字形**，这份符号表只在文档页内存在。实际项目请用你选的图标方案——Vue + unplugin-icons 的等价写法是 `<i-mdi-reload />` 这类组件，或者直接把 mdi 的 svg 字形内联；下面的尺寸类与符号表无关，加在图标元素上即可。
 
-`.vgo-u-icon-sm` / `-md` / `-lg` 就是三条 `font-size`，**加在图标元素本身**，和 `mdi` 平级，所以换别的图标字体或 `<svg>` 一样能用。
+`.vgo-u-icon-sm` / `-md` / `-lg` 就是三条 `font-size`，**加在图标元素本身**（字体图标的 span、内联 svg、`<i-mdi-* />` 组件都适用），所以和具体用什么图标库无关。
 
-按钮里的图标默认是 `--vgo-icon-md`（`--lg` 按钮为 `--vgo-icon-lg`），**尺寸修饰只改盒子不改图标**。这条默认值特异度为 0，直接加工具类即可覆盖：
+按钮**不会**自动放大图标：图标默认随所在按钮的字号（内联 svg 为 1em）渲染，尺寸修饰只改盒子不改图标字号。要图标固定按某个刻度，就在图标元素上显式加工具类，特异度足够直接覆盖：
 
 ```html
 <button class="vgo-button vgo-button--icon vgo-button--sm">
-  <span class="mdi mdi-reload vgo-u-icon-sm"></span>
+  <svg class="vgo-u-icon-sm" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-reload"/></svg>
 </button>
-<span class="mdi mdi-star vgo-u-icon-lg"></span>
+<svg class="vgo-u-icon-lg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-star"/></svg>
 ```
 
 <div class="vgo-u-flex-wrap-center">
-  <button class="vgo-button vgo-button--icon vgo-button--sm"><span class="mdi mdi-reload vgo-u-icon-sm"></span></button>
-  <button class="vgo-button vgo-button--icon vgo-button--sm"><span class="mdi mdi-reload"></span></button>
-  <button class="vgo-button vgo-button--icon"><span class="mdi mdi-reload"></span></button>
-  <button class="vgo-button vgo-button--icon"><span class="mdi mdi-reload vgo-u-icon-lg"></span></button>
-  <button class="vgo-button vgo-button--icon vgo-button--lg"><span class="mdi mdi-reload"></span></button>
-  <span class="mdi mdi-star vgo-u-icon-sm"></span>
-  <span class="mdi mdi-star vgo-u-icon-md"></span>
-  <span class="mdi mdi-star vgo-u-icon-lg"></span>
+  <button class="vgo-button vgo-button--icon vgo-button--sm"><svg class="vgo-u-icon-sm" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-reload"/></svg></button>
+  <button class="vgo-button vgo-button--icon vgo-button--sm"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-reload"/></svg></button>
+  <button class="vgo-button vgo-button--icon"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-reload"/></svg></button>
+  <button class="vgo-button vgo-button--icon"><svg class="vgo-u-icon-lg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-reload"/></svg></button>
+  <button class="vgo-button vgo-button--icon vgo-button--lg"><svg class="vgo-u-icon-lg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-reload"/></svg></button>
+  <svg class="vgo-u-icon-sm" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-star"/></svg>
+  <svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-star"/></svg>
+  <svg class="vgo-u-icon-lg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-star"/></svg>
 </div>
 
 ## 减少动态效果
