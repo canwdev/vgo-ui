@@ -21,11 +21,13 @@
     border-radius: 0;
     box-shadow: none;
 
-    .vgo-window__body {
+    // 只作用于自己的内容与手柄：嵌套窗口是后代，若用后代选择器会把
+    // 被嵌套窗口的 resize handle 一并禁用（内部窗口无法调整大小）。
+    > .vgo-window__content > .vgo-window__body {
       border-inline: 0;
     }
 
-    .vgo-window__resize-handle {
+    > .vgo-window__resize-handle {
       pointer-events: none;
     }
   }
@@ -34,11 +36,11 @@
     transition: all var(--vgo-duration-base) !important;
   }
 
-  &.is-dragging .vgo-window__body {
+  &.is-dragging > .vgo-window__content > .vgo-window__body {
     pointer-events: none;
   }
 
-  &.is-titleless .vgo-window__body {
+  &.is-titleless > .vgo-window__content > .vgo-window__body {
     height: 100%;
     pointer-events: auto;
     border: 0;

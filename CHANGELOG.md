@@ -15,6 +15,10 @@ Icons are no longer coupled to the `.mdi` font classes anywhere in the library o
 - Library demo SFCs (`DemoViewPortWindow.vue`, `DemoOptionUI.vue`) no longer reference `.mdi` classes; window title-bar icons are inline mdi SVGs.
 - `styles.md` examples that embed icons now use inline mdi SVG glyphs via a page-local symbol sprite referenced with `<svg><use>`, keeping samples readable; the "icon font size" section explains that `.vgo-u-icon-*` applies to any icon element and buttons no longer auto-size icons.
 
+### Fixed
+
+- **A `ViewPortWindow` nested inside another window can be resized again.** The maximized-window rule `.vgo-window.is-maximized .vgo-window__resize-handle { pointer-events: none }` matched every resize handle in the subtree, so a nested window's handles were dead while its ancestor was maximized. The `is-maximized`, `is-dragging` and `is-titleless` body/handle rules (core) plus the close-button corner rule (default theme) are now scoped to the window's own content (`> .vgo-window__content > .vgo-window__body`, `> .vgo-window__resize-handle`), so nested windows keep their own behaviour and styling.
+
 ## 0.4.1
 
 - Polish docs styles

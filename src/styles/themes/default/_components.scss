@@ -261,7 +261,8 @@ body.vgo-theme-default {
     }
 
     &:not(.is-maximized) {
-      .vgo-window__controls button.is-close {
+      // 同样只作用于自己的控制按钮，避免嵌套窗口被外层窗口的样式影响
+      > .vgo-window__content > .vgo-window__title-bar > .vgo-window__controls button.is-close {
         border-top-right-radius: var(--vgo-radius);
       }
     }
