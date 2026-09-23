@@ -145,8 +145,10 @@ const menuBarOptions = computed((): MenuBarOptions => ({
       <button class="vgo-button" @click="showMenu($event as MouseEvent)">
         在按钮处弹出
       </button>
-      <button :ref="setDropdownTriggerRef" class="vgo-button" :class="dropdownOpen ? 'is-active' : ''"
-        @click="toggleDropdownMenu">
+      <button
+        :ref="setDropdownTriggerRef" class="vgo-button" :class="dropdownOpen ? 'is-active' : ''"
+        @click="toggleDropdownMenu"
+      >
         按钮菜单{{ dropdownOpen ? '（点击关闭）' : '' }}
       </button>
       <button class="vgo-button" @click="showMenu($event as MouseEvent, 'dark')">
