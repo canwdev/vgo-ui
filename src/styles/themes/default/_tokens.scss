@@ -1,3 +1,31 @@
+// 暗色令牌。抽成 mixin 有两个使用点：全局暗色（html.dark）和菜单的显式暗色
+// （`theme: '... dark'`），后者把同一套值钉在菜单根上，不依赖 html.dark。
+@mixin dark-tokens {
+  --vgo-border: rgba(255, 255, 255, 0.2);
+  --vgo-hover: rgba(255, 255, 255, 0.12);
+  --vgo-text: #fff;
+  --vgo-text-secondary: rgba(255, 255, 255, 0.62);
+  --vgo-text-placeholder: rgba(255, 255, 255, 0.48);
+  --vgo-on-primary: #fff;
+  --vgo-surface: #111;
+  --vgo-surface-raised: #2b2b2b;
+  --vgo-danger: #ff6b72;
+  --vgo-warning: #e6a23c;
+  --vgo-success: #67c23a;
+  --vgo-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  --vgo-window: #4b4b4b;
+  --vgo-window-active: #202020;
+  --vgo-window-border: rgba(255, 255, 255, 0.2);
+  --vgo-window-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
+  --vgo-window-title-shadow: 0 0 10px #000;
+  --vgo-control-hover: rgba(255, 255, 255, 0.2);
+  --vgo-control-active: rgba(255, 255, 255, 0.1);
+  --vgo-control-close-hover: rgba(232, 17, 35, 0.7);
+  --vgo-control-close-active: rgba(151, 23, 34, 0.7);
+  --vgo-scrollbar: rgba(192, 192, 192, 0.5);
+  --vgo-scrollbar-hover: #bebebe;
+}
+
 body.vgo-theme-default {
   --vgo-border: rgba(0, 0, 0, 0.2);
   --vgo-hover: rgba(0, 0, 0, 0.08);
@@ -56,27 +84,14 @@ body.vgo-theme-default {
 }
 
 html.dark body.vgo-theme-default {
-  --vgo-border: rgba(255, 255, 255, 0.2);
-  --vgo-hover: rgba(255, 255, 255, 0.12);
-  --vgo-text: #fff;
-  --vgo-text-secondary: rgba(255, 255, 255, 0.62);
-  --vgo-text-placeholder: rgba(255, 255, 255, 0.48);
-  --vgo-on-primary: #fff;
-  --vgo-surface: #111;
-  --vgo-surface-raised: #2b2b2b;
-  --vgo-danger: #ff6b72;
-  --vgo-warning: #e6a23c;
-  --vgo-success: #67c23a;
-  --vgo-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  --vgo-window: #4b4b4b;
-  --vgo-window-active: #202020;
-  --vgo-window-border: rgba(255, 255, 255, 0.2);
-  --vgo-window-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
-  --vgo-window-title-shadow: 0 0 10px #000;
-  --vgo-control-hover: rgba(255, 255, 255, 0.2);
-  --vgo-control-active: rgba(255, 255, 255, 0.1);
-  --vgo-control-close-hover: rgba(232, 17, 35, 0.7);
-  --vgo-control-close-active: rgba(151, 23, 34, 0.7);
-  --vgo-scrollbar: rgba(192, 192, 192, 0.5);
-  --vgo-scrollbar-hover: #bebebe;
+  @include dark-tokens;
+}
+
+// 右键菜单的显式暗色：兼容旧 API 的 `theme: 'flat dark'` 这类写法。
+// 令牌钉在菜单根上，所以即使页面没挂 html.dark 也能显示暗色菜单。
+body.vgo-theme-default {
+  .vgo-context-menu.is-dark,
+  .vgo-context-menu-bar.is-dark {
+    @include dark-tokens;
+  }
 }

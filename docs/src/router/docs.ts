@@ -1,5 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { defineAsyncComponent } from 'vue'
+import docsContextMenu from '../views/docs/context-menu.md?raw'
 import docsForm from '../views/docs/form.md?raw'
 import docsInstall from '../views/docs/install.md?raw'
 import docsOptionUI from '../views/docs/option-ui.md?raw'
@@ -49,6 +50,14 @@ export const docsRoutes: RouteRecordRaw[] = [
     },
   },
 
+  {
+    path: 'context-menu',
+    meta: {
+      title: 'ContextMenu',
+      content: docsContextMenu,
+      component: defineAsyncComponent(() => import('../../../src/components/ContextMenu/DemoContextMenu.vue')),
+    },
+  },
   {
     path: 'window',
     meta: {

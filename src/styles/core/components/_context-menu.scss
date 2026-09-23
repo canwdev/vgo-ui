@@ -1,0 +1,141 @@
+// 右键菜单结构层：定位、布局、滚动。颜色 / 圆角 / 阴影一律在主题层。
+// 明暗两套只差令牌，见 themes/default/_context-menu.scss。
+
+// 菜单挂载宿主：铺满视口且不拦截事件，菜单本体再打开 pointer-events。
+.vgo-context-menu-host {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.vgo-context-menu {
+  position: absolute;
+  display: inline-block;
+  padding: var(--vgo-space-1) 0;
+  overflow: visible;
+  pointer-events: auto;
+  user-select: none;
+
+  // position: relative 是定位计算的前提：getOffsetTop/Left 依赖它成为
+  // offsetParent，才能把滚动位移减掉。
+  &__scroll {
+    position: relative;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  &__items {
+    position: relative;
+    overflow: visible;
+    outline: none;
+  }
+
+  // 子菜单从本层 Teleport 到宿主，这里保留 relative 不参与子菜单定位，
+  // 只作为菜单项自身的定位上下文。
+  &__item-wrapper {
+    position: relative;
+  }
+
+  // 复用 .vgo-list-item 的 hover / is-disabled / is-active，这里只压扁行高
+  &__item {
+    justify-content: space-between;
+    min-height: 0;
+    padding-block: var(--vgo-space-1);
+    white-space: nowrap;
+  }
+
+  &__row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    max-width: 100%;
+  }
+
+  &__icon {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: auto;
+    overflow: hidden;
+
+    // 图标列宽度借用控件高度刻度，保证无图标项与有图标项左对齐
+    &--preserve {
+      width: var(--vgo-control-sm);
+    }
+  }
+
+  &__icon-font {
+    display: inline-block;
+    font-size: var(--vgo-icon-sm);
+  }
+
+  &__svg-icon {
+    width: var(--vgo-icon-sm);
+    height: var(--vgo-icon-sm);
+  }
+
+  &__check {
+    font-size: var(--vgo-icon-md);
+  }
+
+  &__arrow {
+    font-size: var(--vgo-icon-sm);
+  }
+
+  &__label {
+    overflow: hidden;
+    font-size: var(--vgo-font-md);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-inline-end: var(--vgo-space-3);
+  }
+
+  &__shortcut {
+    white-space: nowrap;
+  }
+
+  &__separator {
+    display: block;
+    padding: var(--vgo-space-1) 0;
+
+    &::after {
+      display: block;
+      height: 1px;
+      content: '';
+    }
+  }
+}
+
+// 菜单栏：嵌在页面里的横向工具条
+.vgo-context-menu-bar {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  user-select: none;
+
+  &.is-mini {
+    flex-grow: 0;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    padding: var(--vgo-space-1) var(--vgo-space-2);
+    font-size: var(--vgo-font-md);
+    cursor: default;
+    transition: background-color var(--vgo-duration-fast);
+  }
+
+  &__icon {
+    font-size: var(--vgo-icon-sm);
+  }
+}

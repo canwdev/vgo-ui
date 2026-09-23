@@ -1,0 +1,36 @@
+body.vgo-theme-default {
+  .vgo-context-menu {
+    color: var(--vgo-text);
+    background-color: var(--vgo-surface-raised);
+    border: 1px solid var(--vgo-border);
+    border-radius: var(--vgo-radius);
+    box-shadow: var(--vgo-shadow);
+  }
+
+  .vgo-context-menu__separator::after {
+    background-color: var(--vgo-border);
+  }
+
+  // .vgo-badge 已经给出盒模型，这里只把它压成菜单里的弱提示
+  .vgo-context-menu__shortcut {
+    color: var(--vgo-text-secondary);
+    background-color: var(--vgo-hover);
+  }
+
+  .vgo-context-menu-bar {
+    background-color: var(--vgo-surface-raised);
+  }
+
+  .vgo-context-menu-bar__item {
+    border-radius: var(--vgo-radius);
+
+    &:hover {
+      background-color: var(--vgo-hover);
+    }
+
+    &.is-active {
+      color: var(--vgo-primary);
+      background-color: var(--vgo-primary-opacity);
+    }
+  }
+}
