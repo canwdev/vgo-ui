@@ -90,6 +90,22 @@ function blurCurrentMenu() {
     currentItem.blur()
 }
 
+/** 取消挂起的「延迟收起子菜单」。 */
+function clearLeaveTimeout() {
+  if (leaveTimeout) {
+    clearTimeout(leaveTimeout)
+    leaveTimeout = 0
+  }
+}
+
+/** 取消挂起的「延迟打开子菜单」。 */
+function clearPendingOpenTimeout() {
+  if (pendingOpenTimeout) {
+    clearTimeout(pendingOpenTimeout)
+    pendingOpenTimeout = 0
+  }
+}
+
 function setAndFocusNotDisableItem(isDown: boolean, startIndex?: number) {
   if (isDown) {
     for (let i = startIndex !== undefined ? startIndex : 0; i < menuItems.length; i++) {
@@ -185,34 +201,43 @@ const thisMenuContext: SubMenuParentContext = {
     openedSubMenuClose.push(closeFn)
   },
   closeOtherSubMenu() {
+    clearLeaveTimeout()
     openedSubMenuClose.forEach(fn => fn())
     openedSubMenuClose.splice(0, openedSubMenuClose.length)
     globalSetCurrentSubMenu(thisMenuInsContext)
   },
   checkCloseOtherSubMenuTimeout() {
     if (leaveTimeout) {
-      clearTimeout(leaveTimeout)
-      leaveTimeout = 0
+      clearLeaveTimeout()
       return true
     }
     return false
   },
   closeOtherSubMenuWithTimeout() {
+    // 没有打开的子菜单就没必要挂计时器
+    if (openedSubMenuClose.length === 0)
+      return
+    // 重新计时：连续扫过多个同级项时，只以最后一次为准
+    clearLeaveTimeout()
+    const delay = options.value.subMenuCloseDelay ?? MENU_CONST_OPTIONS.defaultSubMenuCloseDelay
+    if (delay <= 0) {
+      thisMenuContext.closeOtherSubMenu()
+      return
+    }
     leaveTimeout = setTimeout(() => {
       leaveTimeout = 0
-      this.closeOtherSubMenu()
-    }, 200) as unknown as number
+      thisMenuContext.closeOtherSubMenu()
+    }, delay) as unknown as number
   },
   openSubMenuWithDelay(openFn: () => void, menuItemEl: HTMLElement) {
-    if (pendingOpenTimeout) {
-      clearTimeout(pendingOpenTimeout)
-      pendingOpenTimeout = 0
-    }
+    clearPendingOpenTimeout()
+    // 即将打开新的子菜单，之前挂起的收起已无意义
+    clearLeaveTimeout()
     const delay = options.value.subMenuOpenDelay ?? MENU_CONST_OPTIONS.defaultSubMenuOpenDelay
     const hasOpenedSubMenu = openedSubMenuClose.length > 0
 
     if (delay === 0 || !hasOpenedSubMenu) {
-      this.closeOtherSubMenu()
+      thisMenuContext.closeOtherSubMenu()
       openFn()
     }
     else {
@@ -220,17 +245,19 @@ const thisMenuContext: SubMenuParentContext = {
         pendingOpenTimeout = 0
         // 延迟期间鼠标可能已经移开，只对仍处于 hover 的项生效
         if (menuItemEl.matches(':hover')) {
-          this.closeOtherSubMenu()
+          thisMenuContext.closeOtherSubMenu()
           openFn()
+        }
+        else {
+          // 这次打开没等到：指针已经飘走，按「离开当前子菜单」处理，
+          // 否则被这次打开取消掉的挂起收起就再也不会触发了。
+          thisMenuContext.closeOtherSubMenuWithTimeout()
         }
       }, delay) as unknown as number
     }
   },
   cancelPendingOpen() {
-    if (pendingOpenTimeout) {
-      clearTimeout(pendingOpenTimeout)
-      pendingOpenTimeout = 0
-    }
+    clearPendingOpenTimeout()
   },
   addChildMenuItem: (item: MenuItemContext, index?: number) => {
     if (index === undefined)
@@ -264,6 +291,28 @@ const thisMenuContext: SubMenuParentContext = {
   getSubMenuInstanceContext: () => thisMenuInsContext,
 }
 provide('menuContext', thisMenuContext)
+
+/**
+ * 指针进入子菜单：取消祖先链上所有挂起的「延迟收起」与「延迟打开」。
+ *
+ * 子菜单是 teleport 出来的，DOM 上并不是父菜单的后代，所以从外层子菜单移进
+ * 内层子菜单时，外层先收到 mouseleave 并排了一次收起。这里把祖先链上的挂起
+ * 操作全部取消，避免刚指向内层就把整条分支关掉、或让某个早已离开的兄弟项
+ * 把当前子菜单覆盖掉。
+ */
+function onSubMenuMouseEnter() {
+  let ctx: SubMenuParentContext | null = parentContext
+  while (ctx) {
+    ctx.checkCloseOtherSubMenuTimeout()
+    ctx.cancelPendingOpen()
+    ctx = ctx.getParentContext()
+  }
+}
+
+/** 指针离开子菜单：进入宽限期，移回父项或进入内层子菜单时会被取消。 */
+function onSubMenuMouseLeave() {
+  parentContext.closeOtherSubMenuWithTimeout()
+}
 
 // #endregion
 
@@ -380,9 +429,16 @@ function doAdjustPosition() {
         overflow.value = yOverflow > 0
 
         if (adjustPosition.value && xOverflow > 0) {
-          const ox = parentWidth + menuEl.offsetWidth - fillPaddingX
+          // 水平翻到锚点左侧。默认右缘对齐锚点 x（右键菜单按光标翻转）；
+          // 根菜单若传了 anchorWidth（元素锚定的下拉），改对齐到 x + anchorWidth，
+          // 也就是触发元素的右缘，翻过去仍然贴着按钮。
+          // 子菜单不参与：它翻转时必须完整让开父菜单，不能用锚点宽度缩水，
+          // 否则会盖到父菜单上。`globalOptions` 是所有层级共享的，所以要按层级判断。
+          const isTopLevel = parentContext.getParentContext() === null
+          const anchorWidth = isTopLevel ? (options.value.anchorWidth ?? 0) : 0
+          const ox = parentWidth + menuEl.offsetWidth - fillPaddingX - anchorWidth
           const maxSubWidth = absX
-          position.value.x -= ox > maxSubWidth ? maxSubWidth : ox
+          position.value.x -= Math.max(0, ox > maxSubWidth ? maxSubWidth : ox)
         }
 
         if (overflow.value) {
@@ -443,6 +499,8 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   mounted.value = false
+  clearLeaveTimeout()
+  clearPendingOpenTimeout()
   if (menuItemInstance)
     menuItemInstance.getSubMenuInstance = () => undefined
 })
@@ -474,6 +532,8 @@ defineExpose(exposeContext)
           top: `${position.y}px`,
         }"
         data-type="ContextSubMenu"
+        @mouseenter="onSubMenuMouseEnter"
+        @mouseleave="onSubMenuMouseLeave"
         @click="onSubMenuBodyClick"
       >
         <!-- 原生滚动容器：只保留结构，滚动条外观走 .vgo-u-scrollbar -->

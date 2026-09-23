@@ -11,13 +11,29 @@ body.vgo-theme-default {
     background-color: var(--vgo-border);
   }
 
+  // 菜单项自己的 hover / 选中态。选中态写在 hover 之后，同特异度下由源码顺序
+  // 保证悬停中的选中项不会退回 hover 底色。
+  .vgo-context-menu__item {
+    &:hover {
+      background-color: var(--vgo-hover);
+    }
+
+    &.is-active {
+      background-color: var(--vgo-primary-opacity);
+    }
+  }
+
   // .vgo-badge 已经给出盒模型，这里只把它压成菜单里的弱提示
   .vgo-context-menu__shortcut {
     color: var(--vgo-text-secondary);
     background-color: var(--vgo-hover);
   }
 
+  // color 必须显式声明：is-dark 把暗色令牌钉在这层，但 body 上算好的 color
+  // 已经作为「已解析值」继承下来，不重新取一次 var(--vgo-text) 就会是亮色主题的
+  // 深色字压在暗色底上。
   .vgo-context-menu-bar {
+    color: var(--vgo-text);
     background-color: var(--vgo-surface-raised);
   }
 

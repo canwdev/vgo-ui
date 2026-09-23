@@ -61,6 +61,43 @@ export function transformMenuPosition(
  */
 export const NO_CLICK_CLASS = 'vgo-context-menu__no-click'
 
+// #region 触摸补发的 click 重定向
+
+let touchStartTarget: HTMLElement | null = null
+let touchStartTime = 0
+const TOUCH_CLICK_WINDOW = 700
+
+/**
+ * 记录一次 touchstart 的落点。
+ *
+ * 触摸屏上 tap 之后浏览器会补发 mouseenter → mousedown → click。如果 mouseenter
+ * 里展开了子菜单，而子菜单正好出现在手指下方，浏览器会把同一次 tap 的 click
+ * 派发到**新出现的**那个菜单项上——叶子项的 `clickClose` 会顺手把整个菜单关掉。
+ * 三级菜单在窄屏上最容易被翻转/夹回父菜单上，所以这个现象最常出现在三级。
+ */
+export function recordTouchStart(target: EventTarget | null): void {
+  touchStartTarget = (target as HTMLElement | null) ?? null
+  touchStartTime = Date.now()
+}
+
+/**
+ * 这个 click 是不是触摸后被浏览器重定向了：click 的 target 和 touchstart 的
+ * 落点不在同一条路径上。是的话忽略这次点击，菜单保持打开。
+ */
+export function isRetargetedTouchClick(e: MouseEvent): boolean {
+  if (!touchStartTarget || Date.now() - touchStartTime > TOUCH_CLICK_WINDOW)
+    return false
+  const clickTarget = e.target as Node | null
+  if (!clickTarget)
+    return false
+  const retargeted = !touchStartTarget.contains(clickTarget) && !clickTarget.contains(touchStartTarget)
+  if (retargeted)
+    touchStartTarget = null
+  return retargeted
+}
+
+// #endregion
+
 const DEFAULT_CONTAINER_ID = 'vgo-menu-container'
 const GENERATED_CONTAINER_ID = 'vgo-menu-container-'
 let containerId = 0

@@ -11,7 +11,7 @@ import { computed, h, onBeforeUnmount, onMounted, provide, ref, renderSlot, toRe
 import ContextSubMenu from './ContextSubMenu.vue'
 import { addOpenedContextMenu, removeOpenedContextMenu } from './mutex'
 import { MENU_CONST_OPTIONS } from './types'
-import { isDarkThemeName } from './utils'
+import { isDarkThemeName, recordTouchStart } from './utils'
 
 defineOptions({
   name: 'ContextSubMenuWrapper',
@@ -111,6 +111,7 @@ function installBodyEvents() {
   setTimeout(() => {
     document.addEventListener('click', onBodyClick, true)
     document.addEventListener('contextmenu', onBodyClick, true)
+    document.addEventListener('touchstart', onBodyTouchStart, true)
     document.addEventListener('scroll', onBodyScroll, true)
     if (props.useCustomContainer && container.value)
       container.value.addEventListener('scroll', onBodyScroll, true)
@@ -121,6 +122,7 @@ function installBodyEvents() {
 function removeBodyEvents() {
   document.removeEventListener('contextmenu', onBodyClick, true)
   document.removeEventListener('click', onBodyClick, true)
+  document.removeEventListener('touchstart', onBodyTouchStart, true)
   document.removeEventListener('scroll', onBodyScroll, true)
   if (props.useCustomContainer && container.value)
     container.value.removeEventListener('scroll', onBodyScroll, true)
@@ -185,7 +187,29 @@ function onBodyScroll(e: Event) {
 function onBodyClick(e: MouseEvent) {
   checkTargetAndClose(e.target as HTMLElement, e)
 }
+function onBodyTouchStart(e: TouchEvent) {
+  recordTouchStart(e.target)
+}
+
+/** 从 target 沿父链找，看路径上是否有元素带指定 class。 */
+function hasClassInPath(target: HTMLElement | null, className: string | undefined): boolean {
+  if (!className)
+    return false
+  let el: HTMLElement | null = target
+  while (el) {
+    if (el.classList?.contains(className))
+      return true
+    el = el.parentNode as HTMLElement | null
+  }
+  return false
+}
+
 function checkTargetAndClose(target: HTMLElement, e: MouseEvent | null) {
+  // 命中 ignoreClickClassName 的点击即使落在菜单外也忽略：这正是「按钮触发菜单」
+  // 需要的语义——点触发按钮的那一下先由 document 捕获阶段跑到这里，放过它，
+  // 按钮自己的 click 才能把菜单关掉，而不是关掉又被重新打开。
+  if (hasClassInPath(target, options.value.ignoreClickClassName))
+    return
   // 沿 target 向上找菜单根元素；点击发生在菜单内部时不关闭
   while (target) {
     if (target.classList && target.classList.contains('vgo-context-menu'))

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { MenuBarOptions, MenuItem } from './types'
 import { computed, h, ref } from 'vue'
+import { useContextMenuTrigger } from '../../hooks/use-context-menu-trigger'
 import ContextMenuBar from './ContextMenuBar.vue'
 import ContextMenu from './show'
 
@@ -38,16 +39,15 @@ function notify(label: string) {
 function buildItems(): MenuItem[] {
   return [
     { label: 'Open', icon: menuIcon(I.folder), shortcut: 'Enter', onClick: () => notify('Open') },
-    { label: 'Open in new tab', icon: menuIcon(I.openInNew), onClick: () => notify('Open in new tab') },
+    { label: 'Open in new tab', icon: menuIcon(I.openInNew), onClick: () => notify('Open in new tab'), divided: true },
     {
       label: 'Open with',
       icon: menuIcon(I.dots),
       children: [
         { label: 'Browser', icon: menuIcon(I.openInNew), onClick: () => notify('Open with Browser') },
-        { label: 'Text editor', icon: menuIcon(I.doc), onClick: () => notify('Open with Text editor') },
+        { label: 'Text editor', icon: menuIcon(I.doc), onClick: () => notify('Open with Text editor'), divided: true },
         {
           label: 'More apps',
-          divided: true,
           children: [
             { label: 'Terminal', icon: menuIcon(I.doc), onClick: () => notify('Open with Terminal') },
             { label: 'Image viewer', icon: menuIcon(I.doc), disabled: true },
@@ -55,8 +55,20 @@ function buildItems(): MenuItem[] {
         },
       ],
     },
+    {
+      label: 'Submenu (n subs)',
+      icon: menuIcon(I.dots),
+      children: [...Array.from({ length: 50 }, (_, i) => ({ label: `Submenu ${String(i + 1).padStart(3, '0')}` })), {
+        label: 'Submenu 3',
+        icon: menuIcon(I.dots),
+        children: [
+          { label: 'Submenu A' },
+          { label: 'Submenu B' },
+        ],
+      }],
+    },
     { label: 'Cut', icon: menuIcon(I.cut), shortcut: 'Ctrl+X', onClick: () => notify('Cut') },
-    { label: 'Copy', icon: menuIcon(I.copy), shortcut: 'Ctrl+C', divided: true, onClick: () => notify('Copy') },
+    { label: 'Copy', icon: menuIcon(I.copy), shortcut: 'Ctrl+C', onClick: () => notify('Copy') },
     {
       label: 'Show hidden files',
       checked: computed(() => showHidden.value),
@@ -67,7 +79,7 @@ function buildItems(): MenuItem[] {
     },
     { divided: 'self' },
     { label: 'Refresh', icon: menuIcon(I.refresh), onClick: () => notify('Refresh') },
-    { label: 'Delete', icon: menuIcon(I.delete), divided: true, onClick: () => notify('Delete') },
+    { label: 'Delete', icon: menuIcon(I.delete), onClick: () => notify('Delete') },
   ]
 }
 
@@ -82,6 +94,17 @@ function showMenu(event: MouseEvent, theme?: string) {
   })
 }
 
+// 函数式：按钮触发、菜单贴在按钮下方、按钮保持激活 / 再点关闭。
+// 开 / 关、定位、以及和「点击外部关闭」的时序都抽在 useContextMenuTrigger 里。
+const {
+  setTriggerRef: setDropdownTriggerRef,
+  isOpen: dropdownOpen,
+  toggle: toggleDropdownMenu,
+} = useContextMenuTrigger({
+  items: buildItems,
+  onClose: item => notify(`菜单关闭，最后点击：${item?.label ?? '无'}`),
+})
+
 const menuBarOptions = computed((): MenuBarOptions => ({
   theme: barDark.value ? 'dark' : '',
   closeWhenScroll: false,
@@ -90,8 +113,8 @@ const menuBarOptions = computed((): MenuBarOptions => ({
       label: 'File',
       children: [
         { label: 'New', icon: menuIcon(I.doc), shortcut: 'Ctrl+N', onClick: () => notify('File → New') },
-        { label: 'Open…', icon: menuIcon(I.folder), shortcut: 'Ctrl+O', onClick: () => notify('File → Open') },
-        { label: 'Save', shortcut: 'Ctrl+S', divided: true, onClick: () => notify('File → Save') },
+        { label: 'Open…', icon: menuIcon(I.folder), shortcut: 'Ctrl+O', onClick: () => notify('File → Open'), divided: true },
+        { label: 'Save', shortcut: 'Ctrl+S', onClick: () => notify('File → Save') },
       ],
     },
     {
@@ -114,16 +137,17 @@ const menuBarOptions = computed((): MenuBarOptions => ({
 
 <template>
   <div class="vgo-u-flex-column" :style="{ gap: 'var(--vgo-space-3)' }">
-    <div
-      class="context-menu-demo__target"
-      @contextmenu="showMenu"
-    >
+    <div class="context-menu-demo__target" @contextmenu="showMenu">
       在此区域内点击右键
     </div>
 
     <div class="vgo-u-flex-wrap-center">
       <button class="vgo-button" @click="showMenu($event as MouseEvent)">
         在按钮处弹出
+      </button>
+      <button :ref="setDropdownTriggerRef" class="vgo-button" :class="dropdownOpen ? 'is-active' : ''"
+        @click="toggleDropdownMenu">
+        按钮菜单{{ dropdownOpen ? '（点击关闭）' : '' }}
       </button>
       <button class="vgo-button" @click="showMenu($event as MouseEvent, 'dark')">
         强制暗色菜单

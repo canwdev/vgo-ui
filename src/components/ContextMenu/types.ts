@@ -13,6 +13,7 @@ export const MENU_CONST_OPTIONS = {
   defaultZoom: 1,
   defaultAdjustPadding: { x: 0, y: 10 },
   defaultSubMenuOpenDelay: 200,
+  defaultSubMenuCloseDelay: 200,
 } as const
 
 /** 菜单相对弹出锚点的方向：上/下 × 左/中/右。 */
@@ -191,6 +192,16 @@ export interface MenuOptions {
    */
   subMenuOpenDelay?: number
   /**
+   * 鼠标离开已展开的子菜单、或扫过无子项的菜单项后，延迟收起子菜单的毫秒数。
+   * 设为 0 表示立即收起。
+   *
+   * 斜向移动时指针常会短暂划过同级其它菜单项，这段宽限期让指针来得及进入
+   * 子菜单；期间指针一旦进入子菜单，挂起的收起会被取消。
+   *
+   * @default 200
+   */
+  subMenuCloseDelay?: number
+  /**
    * 用户滚动页面时是否关闭菜单。
    *
    * @default true
@@ -208,6 +219,18 @@ export interface MenuOptions {
    * @default true
    */
   adjustPosition?: boolean
+  /**
+   * 锚点元素的宽度（像素），只在根菜单向右弹出、且水平翻到左边时参与计算。
+   *
+   * 菜单因为贴到容器右缘而水平翻到锚点左侧时，默认把菜单右缘对齐到锚点坐标
+   * `x`（即光标处，右键菜单想要的）；传了触发元素宽度后改对齐到 `x + anchorWidth`，
+   * 也就是触发元素的右缘，翻过去仍贴着按钮。子菜单不使用本值——子菜单翻转必须
+   * 完整让开父菜单。
+   *
+   * `useContextMenuTrigger` 会自动填，手动用 `showContextMenu` 做下拉时才需要传；
+   * 光标锚定的右键菜单不传，保持对齐光标。
+   */
+  anchorWidth?: number
   /**
    * 菜单的挂载节点。
    *

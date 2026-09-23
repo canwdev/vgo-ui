@@ -5,7 +5,7 @@ import type { MenuItem, MenuItemContext, MenuOptions } from './types'
 import { computed, inject, nextTick, onBeforeUnmount, onMounted, provide, ref, toRefs } from 'vue'
 import ContextMenuIconArrow from './ContextMenuIconArrow.vue'
 import ContextMenuIconCheck from './ContextMenuIconCheck.vue'
-import { hashCode, VNodeRender } from './utils'
+import { hashCode, isRetargetedTouchClick, VNodeRender } from './utils'
 
 defineOptions({
   name: 'ContextMenuItem',
@@ -175,6 +175,11 @@ function onClick(e: MouseEvent | KeyboardEvent) {
   if (disabled.value)
     return
 
+  // 触摸补发的 mouseenter 展开子菜单后，同一次 tap 的 click 可能被浏览器
+  // 重定向到新出现的菜单项上；忽略它，否则叶子项会顺手关掉整个菜单。
+  if (e instanceof MouseEvent && isRetargetedTouchClick(e))
+    return
+
   // 命中特殊元素时忽略
   if (e) {
     const currentTarget = e.target as HTMLElement
@@ -216,6 +221,14 @@ function onMouseEnter(e?: MouseEvent) {
     menuContext.markActiveMenuItem(menuItemInstance)
 
     if (hasChildren.value) {
+      // 子菜单还开着（例如从兄弟项斜向移回来）：只取消挂起的收起，
+      // 不要再走一遍延迟打开，否则会先关再开闪一下。
+      if (showSubMenu.value) {
+        menuContext.cancelPendingOpen()
+        menuContext.checkCloseOtherSubMenuTimeout()
+        return
+      }
+
       if (!e)
         menuContext.markThisOpenedByKeyboard()
 
@@ -227,7 +240,9 @@ function onMouseEnter(e?: MouseEvent) {
     }
     else {
       menuContext.cancelPendingOpen()
-      menuContext.closeOtherSubMenu()
+      // 不立即收起：斜向移动时常会短暂扫过无子项的行，给一段宽限期；
+      // 指针若在宽限期内进入子菜单，这次收起会被取消。
+      menuContext.closeOtherSubMenuWithTimeout()
     }
   }
 }
@@ -286,7 +301,7 @@ defineExpose(menuItemInstance)
     <!-- 默认菜单项 -->
     <div
       v-else
-      class="vgo-list-item vgo-context-menu__item" :class="[
+      class="vgo-context-menu__item" :class="[
         disabled ? 'is-disabled' : '',
         keyboardFocusMenu || showSubMenu ? 'is-active' : '',
         customClass ? ` ${customClass}` : '',

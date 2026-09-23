@@ -77,4 +77,9 @@ export type { OnMoveParams } from './components/ViewPortWindow/window-controller
 export { default as VueRender } from './components/VueRender.vue'
 // ---- Hooks ----
 export { useBeforeUnload, useSaveShortcut, useUnSavedChanges } from './hooks/use-beforeunload'
+export type {
+  UseContextMenuTriggerOptions,
+  UseContextMenuTriggerReturn,
+} from './hooks/use-context-menu-trigger'
+export { useContextMenuTrigger } from './hooks/use-context-menu-trigger'
 export { rgbToHex, syncPrimaryColor, useElementPlusTheme } from './hooks/use-element-plus-theme'
