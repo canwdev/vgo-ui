@@ -9,11 +9,19 @@ import type {
   MenuOptions,
   MenuPopDirection,
 } from './types'
-import { inject, nextTick, onBeforeUnmount, onMounted, provide, ref, toRefs, watch } from 'vue'
+import { computed, inject, nextTick, onBeforeUnmount, onMounted, provide, ref, toRefs, watch } from 'vue'
 import ContextMenuItem from './ContextMenuItem.vue'
 import ContextMenuSeparator from './ContextMenuSeparator.vue'
 import { MENU_CONST_OPTIONS } from './types'
-import { getOffsetLeft, getOffsetTop, resolveSize, unwrapBoolean } from './utils'
+import {
+  clampBoxToContainer,
+  getOffsetLeft,
+  getOffsetTop,
+  isRecentTouchInput,
+  resolveMenuTransitionProps,
+  resolveSize,
+  unwrapBoolean,
+} from './utils'
 
 defineOptions({
   name: 'ContextSubMenu',
@@ -68,13 +76,13 @@ const debugMenuItemName = inject<Ref<string>>('MenuItemName', debugMenuItemNameD
 
 // #endregion
 
-const { zIndex, getParentWidth, getParentHeight, getZoom } = parentContext
+const { zIndex, getParentWidth, getZoom } = parentContext
 const { adjustPosition } = toRefs(props)
 
 const scrollRef = ref<HTMLElement>()
 const submenuRoot = ref<HTMLElement>()
 const menu = ref<HTMLElement>()
-const openedSubMenuClose = [] as (() => void)[]
+const openedSubMenus = [] as (() => void)[]
 
 // #region 键盘控制上下文
 
@@ -198,12 +206,12 @@ const thisMenuContext: SubMenuParentContext = {
   getPosition: () => [position.value.x, position.value.y],
   getZoom: () => options.value.zoom || MENU_CONST_OPTIONS.defaultZoom,
   addOpenedSubMenu(closeFn: () => void) {
-    openedSubMenuClose.push(closeFn)
+    openedSubMenus.push(closeFn)
   },
   closeOtherSubMenu() {
     clearLeaveTimeout()
-    openedSubMenuClose.forEach(fn => fn())
-    openedSubMenuClose.splice(0, openedSubMenuClose.length)
+    openedSubMenus.forEach(fn => fn())
+    openedSubMenus.splice(0, openedSubMenus.length)
     globalSetCurrentSubMenu(thisMenuInsContext)
   },
   checkCloseOtherSubMenuTimeout() {
@@ -215,7 +223,12 @@ const thisMenuContext: SubMenuParentContext = {
   },
   closeOtherSubMenuWithTimeout() {
     // 没有打开的子菜单就没必要挂计时器
-    if (openedSubMenuClose.length === 0)
+    if (openedSubMenus.length === 0)
+      return
+    // 触摸屏上补发的 mouseleave 不算「离开」：子菜单刚展开、正好落在手指下方时，
+    // 指针其实已经进到子菜单里，但事件顺序是先 mouseenter 再 mouseleave，
+    // 照单收下就会在 subMenuCloseDelay 之后把刚打开的子菜单收掉（见 isRecentTouchInput）。
+    if (isRecentTouchInput())
       return
     // 重新计时：连续扫过多个同级项时，只以最后一次为准
     clearLeaveTimeout()
@@ -234,7 +247,7 @@ const thisMenuContext: SubMenuParentContext = {
     // 即将打开新的子菜单，之前挂起的收起已无意义
     clearLeaveTimeout()
     const delay = options.value.subMenuOpenDelay ?? MENU_CONST_OPTIONS.defaultSubMenuOpenDelay
-    const hasOpenedSubMenu = openedSubMenuClose.length > 0
+    const hasOpenedSubMenu = openedSubMenus.length > 0
 
     if (delay === 0 || !hasOpenedSubMenu) {
       thisMenuContext.closeOtherSubMenu()
@@ -355,13 +368,62 @@ if (menuItemInstance)
 
 // #endregion
 
-const contentHeight = ref(0)
 const scrollMaxHeight = ref(0)
-const overflow = ref(false)
+const scrollMaxWidth = ref(0)
 const position = ref({ x: 0, y: 0 } as ContextMenuPositionData)
 
 /**
- * 计算子菜单相对父项的位置，并在溢出容器时翻转 / 限制高度。
+ * max-width 的上限：使用方给的（含菜单项自己的）优先，否则按层级取默认值。
+ *
+ * 子菜单默认比根菜单窄一档：几层子菜单一起展开时，窄一点才不容易顶到容器边缘，
+ * 也就更少出现「被迫盖住父菜单」的情况。
+ */
+const configuredMaxWidth = computed(() => {
+  const configured = props.maxWidth ? Number.parseFloat(resolveSize(props.maxWidth)) || 0 : 0
+  if (configured > 0)
+    return configured
+  return parentContext.getParentContext() === null
+    ? MENU_CONST_OPTIONS.defaultMaxWidth
+    : MENU_CONST_OPTIONS.defaultSubMenuMaxWidth
+})
+// 再和「回夹后能放下的宽度」取小值
+const resolvedMaxWidth = computed(() => {
+  const limit = Math.min(configuredMaxWidth.value, scrollMaxWidth.value || Infinity)
+  return Number.isFinite(limit) ? `${limit}px` : 'none'
+})
+
+/** 菜单到可用区域边缘的最小留白（像素）。 */
+const MENU_VIEWPORT_MARGIN = 4
+
+/**
+ * 子菜单要避开的横向区间 —— 也就是父菜单元素自己占据的范围。
+ *
+ * 用 `getBoundingClientRect` 取边框盒，而不是 offsetLeft + offsetWidth：菜单根元素
+ * 带 1px 边框，offsetWidth 不含它，照着摆会让子菜单压进父菜单边缘 2px。
+ * 而且父菜单贴到容器边缘时位置会被回夹改掉，从本菜单的位置反推只会算到它「本来想在哪」，
+ * 子菜单就以为自己已经让开了。
+ *
+ * 返回 `undefined` 表示没有父菜单（根菜单），只按视口边距回夹。
+ */
+function getParentAvoid(
+  isTopLevel: boolean,
+  parentWidth: number,
+  parentElement: HTMLElement | null,
+): { left: number, right: number } | undefined {
+  const container = parentContext.container
+  if (isTopLevel || parentWidth <= 0 || !parentElement || !container)
+    return undefined
+  // 换算到容器坐标系：容器的 rect 左上角就是原点
+  const base = container.getBoundingClientRect()
+  const rect = parentElement.getBoundingClientRect()
+  return { left: rect.left - base.left, right: rect.right - base.left }
+}
+
+/**
+ * 从父项（或根配置坐标）出发，按弹出方向摆开，再在溢出容器时翻转 / 回夹 / 限制尺寸。
+ *
+ * 每次都从锚点重新算：菜单是绝对定位、位置完全由锚点和自身尺寸决定，重入时若在
+ * 上一次的结果上继续偏移，就会出现「位置越算越远」。
  */
 function doAdjustPosition() {
   nextTick(() => {
@@ -372,21 +434,38 @@ function doAdjustPosition() {
       const { container } = parentContext
 
       const parentWidth = getParentWidth?.() ?? 0
-      const parentHeight = getParentHeight?.() ?? 0
 
       const rootStyle = getComputedStyle(submenuRootEl)
       // 用菜单自身的内边距做翻转时的留白，避免翻过来后紧贴父菜单。
       // getComputedStyle 在某些时序下会返回空串，兜底成 0 以免坐标算成 NaN。
       const fillPaddingX = Number.parseFloat(rootStyle.paddingLeft) || 0
-      const fillPaddingYAlways = Number.parseFloat(rootStyle.paddingTop) || 0
-      const fillPaddingY = parentHeight > 0 ? fillPaddingYAlways : 0
+      const fillPaddingYTop = Number.parseFloat(rootStyle.paddingTop) || 0
+      const fillPaddingYBottom = Number.parseFloat(rootStyle.paddingBottom) || 0
+      const fillBorderY = (Number.parseFloat(rootStyle.borderTopWidth) || 0)
+        + (Number.parseFloat(rootStyle.borderBottomWidth) || 0)
 
-      const zoom = getZoom()
-      const windowHeight = document.documentElement.scrollHeight / zoom
-      const windowWidth = document.documentElement.scrollWidth / zoom
+      const zoom = getZoom() || MENU_CONST_OPTIONS.defaultZoom
+      // 可用区域取 clientWidth/Height（不含边框），才是可以真正放下菜单的盒子。
+      // 容器被 transform: scale() 缩放过时这两个值仍是未缩放尺寸，要除回 zoom，
+      // 才能和菜单自身的 offsetWidth/Height 放在同一坐标系里比。
+      const availableWidth = container.clientWidth / zoom
+      const availableHeight = container.clientHeight / zoom
 
-      const availableWidth = Math.min(windowWidth, container.offsetWidth)
-      const availableHeight = Math.min(windowHeight, container.offsetHeight)
+      // 基准位置：有父菜单项就贴父项，根菜单用配置里的 x / y
+      const parentElement = props.parentMenuItemContext?.getElement()
+      if (parentElement) {
+        position.value.x = getOffsetLeft(parentElement, container)
+        position.value.y = getOffsetTop(parentElement, container)
+      }
+      else {
+        const [x, y] = parentContext.getPosition()
+        position.value.x = x
+        position.value.y = y
+      }
+
+      // 方向偏移相对「父项」算：父项的 y 不一定要减内边距（子菜单向下弹时
+      // 减了反而会压到父项上），只有父菜单存在时才让开这层留白。
+      const fillPaddingY = parentContext.getParentContext() !== null ? fillPaddingYTop : 0
 
       // x 方向
       if (props.direction.includes('l')) {
@@ -402,74 +481,85 @@ function doAdjustPosition() {
 
       // y 方向
       if (props.direction.includes('t')) {
-        const parentElement = props.parentMenuItemContext?.getElement()
-        if (parentElement)
-          position.value.y += parentElement.offsetHeight
-        position.value.y -= (menuEl.offsetHeight + fillPaddingYAlways) / zoom
+        const parentElement2 = props.parentMenuItemContext?.getElement()
+        if (parentElement2)
+          position.value.y += parentElement2.offsetHeight
+        position.value.y -= (menuEl.offsetHeight + fillPaddingYTop) / zoom
       }
       else if (props.direction.includes('b')) {
-        position.value.y -= fillPaddingYAlways / zoom
+        position.value.y -= fillPaddingY / zoom
       }
       else {
         position.value.y -= (menuEl.offsetHeight / 2) / zoom
       }
 
-      // 溢出修正
-      nextTick(() => {
-        const absX = getOffsetLeft(menuEl, container)
-        const absY = getOffsetTop(menuEl, container)
+      // 溢出修正：先按老规矩从锚点方向翻到反侧，再统一回夹进可用区域。
+      // 翻转只处理「从锚点弹出去越界」；右 / 下越界、菜单比可用区域还大、
+      // 以及锚点本身贴着左 / 上边缘这三种情况由 clampBoxToContainer 兜底。
+      const xOverflow = (getOffsetLeft(menuEl, container) + menuEl.offsetWidth) - availableWidth
+      const isTopLevel = parentContext.getParentContext() === null
+      const parentElementSelf = parentContext.getElement?.() ?? null
+      // 菜单没被夹过的自然高度 = 滚动区内容高度 + 菜单根自身的上下内边距 / 边框
+      const itemsHeight = scrollRef.value?.scrollHeight || 0
+      // 内容自然宽度：夹得比它窄就会出横向滚动条
+      const itemsScrollWidth = scrollRef.value?.scrollWidth || 0
+      const requestedMaxHeight = props.maxHeight || 0
+      const naturalHeight = itemsHeight + fillPaddingYTop + fillPaddingYBottom + fillBorderY
+      const yOverflow = (getOffsetTop(menuEl, container) + naturalHeight) - availableHeight
 
-        const height = scrollRef.value?.scrollHeight || 0
-        const maxHeight = props.maxHeight
+      if (adjustPosition.value && xOverflow > 0) {
+        // 水平翻到锚点左侧。默认右缘对齐锚点 x（右键菜单按光标翻转）；
+        // 根菜单若传了 anchorWidth（元素锚定的下拉），改对齐到 x + anchorWidth，
+        // 也就是触发元素的右缘，翻过去仍然贴着按钮。
+        // 子菜单不参与：它翻转时必须完整让开父菜单，不能用锚点宽度缩水，
+        // 否则会盖到父菜单上。`globalOptions` 是所有层级共享的，所以要按层级判断。
+        const anchorWidth = isTopLevel ? (options.value.anchorWidth ?? 0) : 0
+        const ox = parentWidth + menuEl.offsetWidth - fillPaddingX - anchorWidth
+        const maxSubWidth = getOffsetLeft(menuEl, container)
+        position.value.x -= Math.max(0, ox > maxSubWidth ? maxSubWidth : ox)
+      }
 
-        contentHeight.value = props.maxHeight ? Math.min(height, props.maxHeight) : height
+      const clampedYOverflow = adjustPosition.value && yOverflow > 0
+      if (clampedYOverflow)
+        position.value.y -= yOverflow
 
-        const xOverflow = (absX + menuEl.offsetWidth) - availableWidth
-        const yOverflow = (absY + contentHeight.value + fillPaddingY * 2) - availableHeight
-        overflow.value = yOverflow > 0
+      const parentAvoid = getParentAvoid(isTopLevel, parentWidth, parentElementSelf)
 
-        if (adjustPosition.value && xOverflow > 0) {
-          // 水平翻到锚点左侧。默认右缘对齐锚点 x（右键菜单按光标翻转）；
-          // 根菜单若传了 anchorWidth（元素锚定的下拉），改对齐到 x + anchorWidth，
-          // 也就是触发元素的右缘，翻过去仍然贴着按钮。
-          // 子菜单不参与：它翻转时必须完整让开父菜单，不能用锚点宽度缩水，
-          // 否则会盖到父菜单上。`globalOptions` 是所有层级共享的，所以要按层级判断。
-          const isTopLevel = parentContext.getParentContext() === null
-          const anchorWidth = isTopLevel ? (options.value.anchorWidth ?? 0) : 0
-          const ox = parentWidth + menuEl.offsetWidth - fillPaddingX - anchorWidth
-          const maxSubWidth = absX
-          position.value.x -= Math.max(0, ox > maxSubWidth ? maxSubWidth : ox)
-        }
-
-        if (overflow.value) {
-          if (adjustPosition.value) {
-            const oy = yOverflow
-            const maxSubHeight = absY
-            position.value.y -= oy > maxSubHeight ? maxSubHeight - fillPaddingY : oy - fillPaddingY
-          }
-          scrollMaxHeight.value = availableHeight - (position.value.y + fillPaddingYAlways)
-        }
-        else {
-          scrollMaxHeight.value = maxHeight || 0
-        }
+      const clamped = clampBoxToContainer({
+        x: position.value.x,
+        y: position.value.y,
+        width: menuEl.offsetWidth,
+        height: naturalHeight,
+        containerWidth: availableWidth,
+        containerHeight: availableHeight,
+        margin: MENU_VIEWPORT_MARGIN,
+        avoid: parentAvoid,
+        minContentWidth: itemsScrollWidth,
+        maxHeight: requestedMaxHeight,
       })
+
+      position.value.x = clamped.x
+      position.value.y = clamped.y
+      scrollMaxWidth.value = clamped.maxWidth ?? 0
+
+      // 给内层滚动容器封顶。上限是所有约束里最紧的那条：
+      // 回夹算出来的可用高度、使用方给的 maxHeight、以及自然高度本身。
+      // 封顶只作用在滚动区上，所以还要把菜单根元素自己的内边距 / 边框减掉，
+      // 否则菜单连同内边距会比可用区域高出一点，正好被贴边的容器切掉。
+      const heightLimit = Math.min(
+        clamped.maxHeight ?? Infinity,
+        requestedMaxHeight || Infinity,
+        naturalHeight,
+      )
+      scrollMaxHeight.value = Number.isFinite(heightLimit)
+        ? Math.max(0, heightLimit - fillPaddingYTop - fillPaddingYBottom - fillBorderY)
+        : 0
     }
   })
 }
 
 /** 展开时的处理。 */
 function showSolve() {
-  const parentElement = props.parentMenuItemContext?.getElement()
-  if (parentElement) {
-    position.value.x = getOffsetLeft(parentElement, parentContext.container)
-    position.value.y = getOffsetTop(parentElement, parentContext.container)
-  }
-  else {
-    const [x, y] = parentContext.getPosition()
-    position.value.x = x
-    position.value.y = y
-  }
-
   nextTick(() => {
     globalSetCurrentSubMenu(thisMenuInsContext)
     menu.value?.focus({ preventScroll: true })
@@ -481,6 +571,7 @@ function showSolve() {
     isMenuItemDataCollectedFlag = true
   })
 
+  // 位置每次展开都从锚点重算，关闭时销毁的菜单因此每次都从同一处摆开
   doAdjustPosition()
 }
 
@@ -491,6 +582,8 @@ watch(() => props.show, (value) => {
 
 onMounted(() => {
   mounted.value = true
+  // 初值就是显示的菜单（函数式菜单的根菜单永远走这条）不会触发 watch，
+  // 要在这里补一次布局；`show` 中途变化的情况由 watch 负责。
   if (props.show)
     showSolve()
   else
@@ -511,8 +604,7 @@ defineExpose(exposeContext)
 <template>
   <Teleport v-if="mounted" :to="`#${globalGetMenuHostId}`">
     <Transition
-      appear
-      v-bind="options.menuTransitionProps || { duration: 10 }"
+      v-bind="resolveMenuTransitionProps(options.menuTransitionProps)"
       @after-leave="emit('closeAnimFinished')"
     >
       <div
@@ -525,7 +617,7 @@ defineExpose(exposeContext)
           globalIsDark ? 'is-dark' : '',
         ]"
         :style="{
-          maxWidth: (maxWidth ? resolveSize(maxWidth) : `${MENU_CONST_OPTIONS.defaultMaxWidth}px`),
+          maxWidth: resolvedMaxWidth,
           minWidth: minWidth ? resolveSize(minWidth) : `${MENU_CONST_OPTIONS.defaultMinWidth}px`,
           zIndex,
           left: `${position.x}px`,

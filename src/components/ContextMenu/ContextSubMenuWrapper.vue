@@ -11,7 +11,7 @@ import { computed, h, onBeforeUnmount, onMounted, provide, ref, renderSlot, toRe
 import ContextSubMenu from './ContextSubMenu.vue'
 import { addOpenedContextMenu, removeOpenedContextMenu } from './mutex'
 import { MENU_CONST_OPTIONS } from './types'
-import { isDarkThemeName, recordTouchStart } from './utils'
+import { hasMenuTransitionAnimation, isDarkThemeName, recordTouchInput, recordTouchStart } from './utils'
 
 defineOptions({
   name: 'ContextSubMenuWrapper',
@@ -98,7 +98,10 @@ function closeMenu(fromItem?: MenuItem) {
   closed = true
   innerShow.value = false
   emit('close', fromItem)
-  if (!options.value.menuTransitionProps)
+  // 有动画时卸载要等菜单自己的 after-leave，在这里就 render(null) 会把退场动画
+  // 从中间掐断；`menuTransitionProps: { css: false }` 关掉了动画，after-leave
+  // 永远不来，这时才需要自己收尾。
+  if (!hasMenuTransitionAnimation(options.value.menuTransitionProps))
     emit('closeAnimFinished')
   removeOpenedContextMenu(instance)
 }
@@ -189,6 +192,7 @@ function onBodyClick(e: MouseEvent) {
 }
 function onBodyTouchStart(e: TouchEvent) {
   recordTouchStart(e.target)
+  recordTouchInput()
 }
 
 /** 从 target 沿父链找，看路径上是否有元素带指定 class。 */

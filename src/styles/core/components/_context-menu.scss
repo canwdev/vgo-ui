@@ -9,6 +9,22 @@
   pointer-events: none;
 }
 
+// 弹出 / 收起动画：只做淡入淡出，不做缩放。
+//
+// 缩放会和菜单的定位打架：菜单是先量尺寸再摆位置，缩放动画期间它仍占着最终尺寸，
+// 视觉上「从某个角长出来」需要 transform-origin 跟着弹出方向 / 翻转一起变，规则一多
+// 就很容易和翻转后的实际锚点对不上；淡入淡出没有这个耦合，够用且不容易出错。
+// 时长走令牌，reduce-motion 会把它压到 0.01ms。
+.vgo-context-menu-pop-enter-active,
+.vgo-context-menu-pop-leave-active {
+  transition: opacity var(--vgo-duration-fast) ease;
+}
+
+.vgo-context-menu-pop-enter-from,
+.vgo-context-menu-pop-leave-to {
+  opacity: 0;
+}
+
 .vgo-context-menu {
   position: absolute;
   display: inline-block;
@@ -21,13 +37,19 @@
   // offsetParent，才能把滚动位移减掉。
   &__scroll {
     position: relative;
+    // 只允许纵向滚动：菜单被回夹变窄时宁可让内容顶出去，也不要冒出一条横向滚动条
+    // （横向滚动条会让菜单项半遮半掩，比截断更难用）。纵向仍按需出现。
+    overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
   }
 
   &__items {
     position: relative;
-    overflow: visible;
+    // 撑满菜单内容盒：菜单宽度由「内容自然宽度 + max-width」决定（见外层），
+    // 这里跟着走，不再用 max-content —— 否则菜单被回夹变窄时内容仍按自然宽度排版，
+    // 文案不会收缩、省略号也就不生效。
+    width: 100%;
     outline: none;
   }
 
@@ -53,6 +75,24 @@
     white-space: nowrap;
     cursor: pointer;
 
+    // 两行式菜单项（左：图标 + 文案，右：快捷键 / 箭头）：只有第一行参与伸缩，
+    // 第二行按自然宽度排。否则两行等比例收缩，文案会被挤成「Pl…」而快捷键占着位。
+    // 这两条要写在 item 层：两行是 item 的子项，用 :first-child / :not(:first-child)
+    // 才指得准（写在 __row 里 `&:last-child` 会指到错误的那一行）。
+    > .vgo-context-menu__row:first-child {
+      flex: 1 1 auto;
+    }
+
+    > .vgo-context-menu__row:not(:first-child) {
+      flex: 0 0 auto;
+    }
+
+    // 行内只有文案列收缩，图标 / 箭头 / 快捷键保持自然宽度
+    > .vgo-context-menu__row > .vgo-context-menu__icon,
+    > .vgo-context-menu__row > .vgo-context-menu__shortcut {
+      flex-shrink: 0;
+    }
+
     &.is-disabled {
       pointer-events: none;
       cursor: not-allowed;
@@ -64,6 +104,8 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    // 行本身可以收缩（菜单被回夹变窄时），但不要溢出菜单
+    min-width: 0;
     max-width: 100%;
   }
 
@@ -74,6 +116,8 @@
     align-items: center;
     height: auto;
     overflow: hidden;
+
+    flex-shrink: 0;
 
     // 图标列宽度借用控件高度刻度，保证无图标项与有图标项左对齐
     &--preserve {
@@ -100,6 +144,8 @@
   }
 
   &__label {
+    // flex 子项默认 min-width:auto，不收缩就永远不触发省略号
+    min-width: 0;
     overflow: hidden;
     font-size: var(--vgo-font-md);
     text-overflow: ellipsis;
@@ -108,6 +154,7 @@
   }
 
   &__shortcut {
+    flex-shrink: 0;
     white-space: nowrap;
   }
 

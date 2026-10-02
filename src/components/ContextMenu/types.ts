@@ -9,7 +9,22 @@ export const MENU_CONST_OPTIONS = {
   defaultDirection: 'br',
   defaultMinWidth: 100,
   defaultMaxWidth: 600,
-  defaultZIndex: 100,
+  /**
+   * 子菜单默认最大宽度。
+   *
+   * 比根菜单窄一档：子菜单是逐层往旁边铺开的，宽度不收着点很容易顶到容器边缘，
+   * 一旦放不下就只能和父菜单重叠。菜单项自己的 `maxWidth` 优先。
+   */
+  defaultSubMenuMaxWidth: 300,
+  /**
+   * 菜单容器默认层级，与 `--vgo-z-menu` 令牌保持一致。
+   *
+   * 菜单是浮在当前界面之上的东西，默认要压过 `--vgo-z-window`（100）和
+   * `--vgo-z-preview`（1000），否则会被常驻界面或全屏容器盖住，直接不可用。
+   * 这里必须是具体数字而不是读 CSS 变量：菜单容器挂在 body 上，用内联 z-index
+   * 才能不依赖样式表是否已加载。需要让菜单待在更低的层里时传 `MenuOptions.zIndex`。
+   */
+  defaultZIndex: 1100,
   defaultZoom: 1,
   defaultAdjustPadding: { x: 0, y: 10 },
   defaultSubMenuOpenDelay: 200,
