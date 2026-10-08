@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { VgoOptionItem } from './types.ts'
 import { computed, h, ref } from 'vue'
-import { VgoOptionType } from './types.ts'
 import OptionUI from './OptionUI.vue'
+import { VgoOptionType } from './types.ts'
 
 const options = computed((): VgoOptionItem[] => {
   return [

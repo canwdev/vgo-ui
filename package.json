@@ -52,7 +52,7 @@
     "lint": "eslint src vite.config.ts",
     "lint:docs": "eslint \"docs/src/**/*.{ts,vue}\" docs/vite.config.ts",
     "lint:fix": "bun run lint --fix",
-    "publish-npm": "bun run build && bun publish --access public"
+    "publish-npm": "bun run build && npm publish --access public"
   },
   "peerDependencies": {
     "@vueuse/core": "^14.3.0",

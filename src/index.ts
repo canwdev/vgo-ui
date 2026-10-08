@@ -58,17 +58,15 @@ export type {
 
 export { showModalWindow } from './components/ModalWindow/show'
 // OptionUI
+export { default as ItemAction } from './components/OptionUI/ItemAction.vue'
+
+export { default as OptionItem } from './components/OptionUI/OptionItem.vue'
+export { default as OptionUI } from './components/OptionUI/OptionUI.vue'
+
 export type { VgoOptionItem, VgoSelectItem } from './components/OptionUI/types'
 
 export { VgoOptionType } from './components/OptionUI/types'
 
-// ---- Types ----
-
-export { default as ItemAction } from './components/OptionUI/ItemAction.vue'
-
-export { default as OptionItem } from './components/OptionUI/OptionItem.vue'
-// OptionUI
-export { default as OptionUI } from './components/OptionUI/OptionUI.vue'
 // Transitions
 export { default as TransitionBodyCollapse } from './components/Transitions/TransitionBodyCollapse.vue'
 
