@@ -1,0 +1,28 @@
+.vgo-window-stack__content {
+  box-sizing: border-box;
+  height: 100%;
+  overflow: auto;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+// 任务栏是无头组件：这里只排布局，尺寸、颜色、指示点、状态样式都由使用方写
+.vgo-window-dock {
+  display: flex;
+  align-items: flex-end;
+}
+
+.vgo-window-dock__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.vgo-window-dock__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

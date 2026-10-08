@@ -1,7 +1,11 @@
 {
-  "[typescript]": {
-    "editor.defaultFormatter": "explicit"
+  // @antfu/eslint-config (formatters: true) already formats on save via ESLint.
+  // Leaving formatOnSave on runs Vue.volar as well, so a .vue file is formatted twice.
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
   },
+  "editor.formatOnSave": false,
+
   "files.encoding": "utf8",
   "files.autoGuessEncoding": false,
   "files.eol": "\n"

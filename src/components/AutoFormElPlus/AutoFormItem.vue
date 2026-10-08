@@ -1,11 +1,11 @@
 <script lang="ts">
 import type { PropType } from 'vue'
-import type { AutoFormItem } from './enum'
+import type { AutoFormItem } from './types'
 import _get from 'lodash-es/get'
 import _set from 'lodash-es/set'
 import { computed, defineComponent, isRef, toRefs } from 'vue'
 import VueRender from '../VueRender.vue'
-import { AutoFormItemType } from './enum'
+import { AutoFormItemType } from './types'
 
 export default defineComponent({
   name: 'AutoFormItem',

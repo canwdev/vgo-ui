@@ -1,15 +1,17 @@
 <script lang="ts" setup>
-import type { MenuBarOptions } from './types'
+import type { MenuBarOptions, MenuInteraction } from './types'
 import { computed, ref } from 'vue'
 import { useContextMenuTrigger } from '../../hooks/use-context-menu-trigger'
 import ContextMenuBar from './ContextMenuBar.vue'
-import { buildMenuItems, lastAction, menuIcon, menuIconPaths, notify } from './demo-menu'
+import { buildMenuItems, lastAction, notify } from './demo-menu'
 import DemoContextMenuFullscreen from './DemoContextMenuFullscreen.vue'
 import ContextMenu from './show'
 
 const barDark = ref(false)
 /** 是否切到覆盖整个视口的全屏 demo。 */
 const fullscreen = ref(false)
+const interactionModes: MenuInteraction[] = ['auto', 'pc', 'mobile']
+const interaction = ref<MenuInteraction>('auto')
 
 function showMenu(event: MouseEvent, theme?: string) {
   event.preventDefault()
@@ -17,6 +19,7 @@ function showMenu(event: MouseEvent, theme?: string) {
     x: event.x,
     y: event.y,
     theme,
+    interaction: interaction.value,
     items: buildMenuItems(),
     onClose: item => notify(`菜单关闭，最后点击：${item?.label ?? '无'}`),
   })
@@ -28,43 +31,35 @@ const {
   setTriggerRef: setDropdownTriggerRef,
   isOpen: dropdownOpen,
   toggle: toggleDropdownMenu,
-} = useContextMenuTrigger({
+} = useContextMenuTrigger(() => ({
+  interaction: interaction.value,
   items: () => buildMenuItems(),
   onClose: item => notify(`菜单关闭，最后点击：${item?.label ?? '无'}`),
-})
+}))
 
 const menuBarOptions = computed((): MenuBarOptions => ({
   theme: barDark.value ? 'dark' : '',
+  interaction: interaction.value,
   closeWhenScroll: false,
-  items: [
-    {
-      label: 'File',
-      children: [
-        { label: 'New', icon: menuIcon(menuIconPaths.doc), shortcut: 'Ctrl+N', onClick: () => notify('File → New') },
-        { label: 'Open…', icon: menuIcon(menuIconPaths.folder), shortcut: 'Ctrl+O', onClick: () => notify('File → Open'), divided: true },
-        { label: 'Save', shortcut: 'Ctrl+S', onClick: () => notify('File → Save') },
-      ],
-    },
-    {
-      label: 'View',
-      children: [
-        { label: 'List', icon: menuIcon(menuIconPaths.list), onClick: () => notify('View → List') },
-        { label: 'Icons', icon: menuIcon(menuIconPaths.palette), divided: true, onClick: () => notify('View → Icons') },
-        { label: 'Refresh', icon: menuIcon(menuIconPaths.refresh), onClick: () => notify('View → Refresh') },
-      ],
-    },
-    {
-      label: 'Help',
-      children: [
-        { label: 'About', icon: menuIcon(menuIconPaths.info), onClick: () => notify('Help → About') },
-      ],
-    },
-  ],
+  items: ['File', 'View', 'Help'].map(label => ({
+    label,
+    children: buildMenuItems(`${label} / `),
+  })),
 }))
 </script>
 
 <template>
   <div class="vgo-u-flex-column" :style="{ gap: 'var(--vgo-space-3)' }">
+    <div class="vgo-u-flex-wrap-center">
+      <span :style="{ color: 'var(--vgo-text-secondary)' }">子菜单</span>
+      <button
+        v-for="mode in interactionModes" :key="mode" class="vgo-button vgo-button--sm"
+        :class="{ 'is-active': interaction === mode }" @click="interaction = mode"
+      >
+        {{ mode }}
+      </button>
+    </div>
+
     <div class="vgo-u-flex-wrap-center">
       <button class="vgo-button vgo-button--primary" @click="fullscreen = true">
         打开全屏 demo
@@ -103,7 +98,7 @@ const menuBarOptions = computed((): MenuBarOptions => ({
 
     <ContextMenuBar :options="menuBarOptions" />
 
-    <DemoContextMenuFullscreen v-if="fullscreen" @close="fullscreen = false" />
+    <DemoContextMenuFullscreen v-if="fullscreen" v-model:interaction="interaction" @close="fullscreen = false" />
   </div>
 </template>
 

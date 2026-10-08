@@ -46,6 +46,22 @@
     opacity: 0.5;
   }
 
+  // 异步操作进行中。旋转一圈用几倍的基础时长，单圈太快看不清
+  &.is-loading {
+    cursor: progress;
+
+    &::before {
+      content: '';
+      box-sizing: border-box;
+      width: 1em;
+      height: 1em;
+      border: 2px solid currentColor;
+      border-inline-end-color: transparent;
+      border-radius: var(--vgo-radius-pill);
+      animation: vgo-spin calc(var(--vgo-duration-base) * 4) linear infinite;
+    }
+  }
+
   // 尺寸修饰只管盒子，图标字号见下方 :where() 规则
   &--sm {
     height: var(--vgo-control-sm);

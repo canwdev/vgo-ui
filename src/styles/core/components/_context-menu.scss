@@ -9,6 +9,19 @@
   pointer-events: none;
 }
 
+// 函数式菜单各自的挂载点。菜单本体 teleport 到宿主上，这个节点本身不参与命中。
+.vgo-context-menu-mount {
+  position: absolute;
+  pointer-events: none;
+}
+
+// mobile 子菜单盖在直接父菜单上的命中层。不画颜色，只挡住点击。
+// pointer-events 会从宿主继承成 none，这里要打开。
+.vgo-context-menu__mask {
+  position: absolute;
+  pointer-events: auto;
+}
+
 // 弹出 / 收起动画：只做淡入淡出，不做缩放。
 //
 // 缩放会和菜单的定位打架：菜单是先量尺寸再摆位置，缩放动画期间它仍占着最终尺寸，

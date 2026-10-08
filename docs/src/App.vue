@@ -10,6 +10,9 @@ const navOpen = ref(false)
 <template>
   <div class="app-root">
     <div data-docs-header class="nav-menu vgo-panel vgo-panel--flat">
+      <div class="nav-menu-warning">
+        ⚠️ Vgo UI 处于快速迭代阶段，API 可能会有较大变化，并且版本号不严格遵守语义化版本号规范，请勿用于生产环境。
+      </div>
       <div class="nav-content">
         <router-link to="/" class="vgo-button vgo-button--text">
           <span class="logo-title">Vgo UI</span>
@@ -99,6 +102,13 @@ const navOpen = ref(false)
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+}
+
+.nav-menu-warning {
+  background-color: var(--vgo-primary-opacity);
+  padding: var(--vgo-space-2);
+  font-size: var(--vgo-font-md);
+  text-align: center;
 }
 
 .nav-menu {

@@ -13,6 +13,7 @@ export type {
   ContextSubMenuInstance,
   MenuBarOptions,
   MenuChildren,
+  MenuInteraction,
   MenuItem,
   MenuItemContext,
   MenuItemRenderData,

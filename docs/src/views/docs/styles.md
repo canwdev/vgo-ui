@@ -21,9 +21,7 @@
   <symbol id="vgo-i-reload" viewBox="0 0 24 24"><path fill="currentColor" d="M2 12a9 9 0 0 0 9 9c2.39 0 4.68-.94 6.4-2.6l-1.5-1.5A6.7 6.7 0 0 1 11 19c-6.24 0-9.36-7.54-4.95-11.95S18 5.77 18 12h-3l4 4h.1l3.9-4h-3a9 9 0 0 0-18 0"/></symbol>
 </svg></div>
 
-库的样式契约：CSS变量、原生元素增强、基元、工具类，一份封闭的词汇表。业务代码里的颜色、间距、按钮、面板、列表都从这里取，不要新建自定义类；页尾是禁止清单。
-
-只需要加类名即可生效。样式加载与主题挂载方式见安装文档。
+颜色、间距、按钮、面板和列表都用本页的 CSS 变量和类名，加类名即可生效。样式怎么引入、主题类挂在哪，见[快速上手](/docs/install)。页尾是不要自己写的清单。
 
 ## CSS变量
 
@@ -45,26 +43,26 @@
 
 <!-- @scss:theme-tokens-dark -->
 
-### 覆盖库样式
+### 覆盖外观
 
-主题选择器是 `body.vgo-theme-default .vgo-x`，特异度 (0,2,1)，比一个 Vue scoped 类（`.x[data-v-xxx]`，(0,2,0)）高一档，所以不是所有东西都能直接覆盖：
+覆盖外观时按下表。面板可以直接改；按钮和列表项优先用现成变体，改动较大时多包一层父级，或在元素上重设 CSS 变量。
 
-| 想改                               | 怎么做                                                     |
-| ---------------------------------- | ---------------------------------------------------------- |
-| 面板外观（圆角、边框、阴影、底色） | 直接写 scoped 类，能盖住——面板的主题规则包在 `:where()` 里 |
-| 按钮、列表项等其余基元             | 优先用现成的变体 / 修饰；确实要改就多嵌一层父选择器        |
-| 任何吃CSS变量的属性                | 在元素上重新声明那个CSS变量，绕开特异度                    |
-
-最后一条往往最省事，CSS变量是按元素解析的，不用比特异度也不用 `!important`：
+| 想改 | 怎么做 |
+| --- | --- |
+| 面板的圆角、边框、阴影、底色 | 直接写自己的类 |
+| 按钮、列表项等 | 优先用本页的变体和修饰。还要改时，多包一层父选择器 |
+| 使用了 CSS 变量的属性 | 在元素上重设那个变量，子元素会跟着变 |
 
 ```scss
-// 让这个面板用胶囊圆角，两种写法都可以
+/* 面板可以直接改圆角 */
 .zoom-toolbar {
   border-radius: var(--vgo-radius-pill);
-} // 面板可以直接写
+}
+
+/* 重设变量时，用到它的子元素一起变 */
 .zoom-toolbar {
   --vgo-radius: var(--vgo-radius-pill);
-} // 换CSS变量，连带子元素一起
+}
 ```
 
 ## 按钮
@@ -84,6 +82,7 @@
 .vgo-button--sm / --lg      尺寸，默认 md
 
 .vgo-button.is-active       选中态（运行时状态，非变体）
+.vgo-button.is-loading      进行中：按钮文字前显示一圈旋转指示，通常同时 disabled
 ```
 
 ### 配色变体
@@ -130,9 +129,21 @@
 `--icon` 是正方形，`--round` 是圆形，两者都跟随尺寸修饰。示例里的 `<svg>` 只是占位图标，换你实际用的图标即可（详见文末「图标字号」）。
 
 ```html
-<button class="vgo-button vgo-button--icon"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-cog"/></svg></button>
-<button class="vgo-button vgo-button--text vgo-button--icon"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-cog"/></svg></button>
-<button class="vgo-button vgo-button--primary vgo-button--round"><svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-plus"/></svg></button>
+<button class="vgo-button vgo-button--icon">
+  <svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true">
+    <use href="#vgo-i-cog" />
+  </svg>
+</button>
+<button class="vgo-button vgo-button--text vgo-button--icon">
+  <svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true">
+    <use href="#vgo-i-cog" />
+  </svg>
+</button>
+<button class="vgo-button vgo-button--primary vgo-button--round">
+  <svg class="vgo-u-icon-md" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true">
+    <use href="#vgo-i-plus" />
+  </svg>
+</button>
 ```
 
 <div class="vgo-u-flex-wrap-center">
@@ -173,6 +184,19 @@
 ```
 
 `.vgo-list-item`、`.vgo-rect-switch__item`、`.vgo-window` 用同一个 `.is-active` 约定。
+
+### 进行中：`is-loading`
+
+异步操作没返回前加上 `.is-loading`，按钮文字前面会出现一圈 `currentColor` 的旋转指示。配合 `disabled`，避免重复点击。
+
+```html
+<button class="vgo-button vgo-button--primary is-loading" disabled>保存中</button>
+```
+
+<div class="vgo-u-flex-wrap-center">
+  <button class="vgo-button vgo-button--primary is-loading" disabled>保存中</button>
+  <button class="vgo-button vgo-button--danger is-loading" disabled>删除中</button>
+</div>
 
 ### 按钮组
 
@@ -245,12 +269,12 @@
 
 模糊由这两个修饰统一管理，业务代码不要自己写 `backdrop-filter`。按钮有对应的 `.vgo-button--overlay` / `--overlay-light`，可与 `--text`、`--round`、`--icon`、尺寸修饰自由组合。
 
-把 `--overlay-light` 挂在容器上，内部的 `--overlay` 子元素会继承同一套配色：
+把 `--overlay-light` 写在容器上，里面的 `--overlay` 按钮会跟着变成浅色：
 
 ```html
 <div class="vgo-panel vgo-panel--overlay">
   <button class="vgo-button vgo-button--overlay vgo-button--icon vgo-button--round">
-    <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-minus"/></svg>
+    <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-minus" /></svg>
   </button>
   <button class="vgo-button vgo-button--overlay vgo-button--text">Dismiss</button>
 </div>
@@ -282,15 +306,15 @@
   <button class="vgo-button vgo-button--overlay-light" disabled>禁用</button>
 </div>
 
-上面这组里，缩放条只在**容器**上写了 `--overlay-light`，内部三个控件仍是 `--overlay`，靠继承拿到浅色CSS变量。
+上面缩放条只在容器上写了 `--overlay-light`，里面的按钮仍是 `--overlay`，会跟着变成浅色。
 
-可用CSS变量：`--vgo-overlay-surface`、`--vgo-overlay-border`、`--vgo-overlay-blur`、`--vgo-overlay-text`、`--vgo-overlay-text-secondary`、`--vgo-overlay-control`（及 `-hover` / `-active`）。
-
-浮层面板内部把 `--vgo-text`、`--vgo-text-secondary`、`--vgo-border`、`--vgo-hover` 重指向浮层CSS变量，所以嵌进去的 `.vgo-empty`、`.vgo-list-item` 自动就是浮层配色，不用各写一份覆盖：
+浮层颜色用 `--vgo-overlay-surface`、`--vgo-overlay-text`、`--vgo-overlay-blur` 等变量，数值在上面的主题变量里。放进浮层面板的 `.vgo-empty`、`.vgo-list-item` 会使用这套颜色。
 
 ```html
 <div class="vgo-panel vgo-panel--overlay vgo-empty">
-  <div class="vgo-empty__icon"><svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-image-off-outline"/></svg></div>
+  <div class="vgo-empty__icon">
+    <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-image-off-outline" /></svg>
+  </div>
   <div class="vgo-empty__title">没有更多了</div>
   <div class="vgo-empty__desc">已经到底部</div>
 </div>
@@ -325,7 +349,9 @@
 
 ```html
 <div class="vgo-empty">
-  <div class="vgo-empty__icon"><svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-folder-open-outline"/></svg></div>
+  <div class="vgo-empty__icon">
+    <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-folder-open-outline" /></svg>
+  </div>
   <div class="vgo-empty__title">这里什么都没有</div>
   <div class="vgo-empty__desc">拖拽文件到此处上传</div>
 </div>
@@ -375,7 +401,7 @@
 
 ## 工具类
 
-最简单的字体、布局与表面类，不附带多余样式。
+字体、布局和表面色。另外还有 `.vgo-u-full-width`（宽度 100%）和 `.vgo-u-text-overflow`（单行省略）。
 
 ```html
 <div class="vgo-u-flex-column" style="gap: 10px">
@@ -424,17 +450,19 @@
 
 ### 图标字号
 
-> 图标库与 vgo-ui 无关。本页实时示例用 `@iconify-json/mdi` 的内联 svg 演示字形：页面顶部隐藏了一份符号表，示例里 `<svg><use href="#vgo-i-*"/></svg>` 只是**引用它来显示字形**，这份符号表只在文档页内存在。实际项目请用你选的图标方案——Vue + unplugin-icons 的等价写法是 `<i-mdi-reload />` 这类组件，或者直接把 mdi 的 svg 字形内联；下面的尺寸类与符号表无关，加在图标元素上即可。
+`.vgo-u-icon-sm` / `-md` / `-lg` 是三档字号，加在图标元素上，字体图标、内联 svg、图标组件都可以。本页示例里的 `<svg>` 只是占位，换成你自己的图标即可。
 
-`.vgo-u-icon-sm` / `-md` / `-lg` 就是三条 `font-size`，**加在图标元素本身**（字体图标的 span、内联 svg、`<i-mdi-* />` 组件都适用），所以和具体用什么图标库无关。
-
-按钮**不会**自动放大图标：图标默认随所在按钮的字号（内联 svg 为 1em）渲染，尺寸修饰只改盒子不改图标字号。要图标固定按某个刻度，就在图标元素上显式加工具类，特异度足够直接覆盖：
+按钮不会跟着尺寸修饰放大图标，图标默认跟按钮字号走。要固定某一档，把工具类写在图标上：
 
 ```html
 <button class="vgo-button vgo-button--icon vgo-button--sm">
-  <svg class="vgo-u-icon-sm" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-reload"/></svg>
+  <svg class="vgo-u-icon-sm" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true">
+    <use href="#vgo-i-reload" />
+  </svg>
 </button>
-<svg class="vgo-u-icon-lg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><use href="#vgo-i-star"/></svg>
+<svg class="vgo-u-icon-lg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true">
+  <use href="#vgo-i-star" />
+</svg>
 ```
 
 <div class="vgo-u-flex-wrap-center">
@@ -450,11 +478,9 @@
 
 ## 减少动态效果
 
-系统的 `prefers-reduced-motion: reduce` 会把两个时长CSS变量压到 `0.01ms`，并对 `*` 兜底压住 `animation-duration` / `transition-duration`，一并覆盖 element-plus、播放器这类硬编码时长的第三方。
+系统开启「减少动态效果」后，过渡和动画会缩短到几乎看不出来，其中也包括写死时长的第三方组件。
 
-`html.reduce-motion` 是留给应用挂的持久化开关，做上述全部，外加去掉文字阴影与背景模糊（降低墨水屏刷新负担）。
-
-库的过渡时长统一走 `--vgo-duration-fast` / `--vgo-duration-base`。给 `html` 加 `reduce-motion` 类即可压掉全部过渡，系统级 `prefers-reduced-motion: reduce` 也会自动生效：
+给 `html` 加上 `reduce-motion` 会做同样的事，并去掉文字阴影和背景模糊，方便墨水屏刷新。库自己的时长使用 `--vgo-duration-fast` 和 `--vgo-duration-base`。
 
 ```ts
 document.documentElement.classList.toggle('reduce-motion', enabled)

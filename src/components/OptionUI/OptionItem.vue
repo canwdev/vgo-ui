@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { StOptionItem } from './enum'
+import type { VgoOptionItem } from './types'
 import { computed, toRefs } from 'vue'
 import TransitionBodyCollapse from '../Transitions/TransitionBodyCollapse.vue'
 import VueRender from '../VueRender.vue'
@@ -7,7 +7,7 @@ import ItemAction from './ItemAction.vue'
 
 const props = withDefaults(
   defineProps<{
-    item: StOptionItem
+    item: VgoOptionItem
     foldedKeyMap?: Record<string, boolean>
   }>(),
   {
@@ -20,7 +20,7 @@ const isExpanded = computed(() => {
   return !foldedKeyMap.value[item.value.key]
 })
 
-function handleItemClick(e: MouseEvent, fn: StOptionItem['clickFn']) {
+function handleItemClick(e: MouseEvent, fn: VgoOptionItem['clickFn']) {
   if (typeof fn === 'function') {
     fn(e, item.value)
   }

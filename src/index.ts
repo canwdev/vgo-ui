@@ -6,16 +6,15 @@ import './styles/core.scss'
 export { default as AutoFormElPlus } from './components/AutoFormElPlus/AutoFormElPlus.vue'
 export { default as AutoFormItem } from './components/AutoFormElPlus/AutoFormItem.vue'
 
-// AutoFormElPlus（与组件同名的表单项类型请从 AutoFormSchema / 源码 enum 推断）
+// AutoFormElPlus（与组件同名的表单项类型请从 AutoFormSchema / 源码 types 推断）
 export type {
   AutoFormRow,
   AutoFormSchema,
-  IOptionItem,
   MixedFormItems,
-} from './components/AutoFormElPlus/enum'
-export { AutoFormItemType } from './components/AutoFormElPlus/enum'
+} from './components/AutoFormElPlus/types'
+export { AutoFormItemType } from './components/AutoFormElPlus/types'
 
-export type { AutoFormItem as AutoFormField } from './components/AutoFormElPlus/enum'
+export type { AutoFormItem as AutoFormField } from './components/AutoFormElPlus/types'
 // AutoTableElPlus
 export { default as AutoTableElPlus } from './components/AutoTableElPlus/AutoTableElPlus.vue'
 
@@ -40,32 +39,42 @@ export type {
   ContextSubMenuInstance,
   MenuBarOptions,
   MenuChildren,
+  MenuInteraction,
   MenuItem,
   MenuItemContext,
   MenuItemRenderData,
   MenuOptions,
   MenuPopDirection,
 } from './components/ContextMenu'
+export { default as ModalWindow } from './components/ModalWindow/ModalWindow.vue'
+
+export type {
+  ModalWindowButton,
+  ModalWindowContext,
+  ModalWindowHandle,
+  ModalWindowOptions,
+  ModalWindowRender,
+} from './components/ModalWindow/show'
+
+export { showModalWindow } from './components/ModalWindow/show'
 // OptionUI
-export type { StOptionItem, SwitchOption } from './components/OptionUI/enum'
+export type { VgoOptionItem, VgoSelectItem } from './components/OptionUI/types'
 
-export { StOptionType, swatches } from './components/OptionUI/enum'
-
-export { default as ItemAction } from './components/OptionUI/ItemAction.vue'
-export { default as OptionItem } from './components/OptionUI/OptionItem.vue'
-
-// OptionUI
-export { default as OptionUI } from './components/OptionUI/OptionUI.vue'
+export { VgoOptionType } from './components/OptionUI/types'
 
 // ---- Types ----
 
+export { default as ItemAction } from './components/OptionUI/ItemAction.vue'
+
+export { default as OptionItem } from './components/OptionUI/OptionItem.vue'
+// OptionUI
+export { default as OptionUI } from './components/OptionUI/OptionUI.vue'
 // Transitions
 export { default as TransitionBodyCollapse } from './components/Transitions/TransitionBodyCollapse.vue'
 
 // ViewPortWindow
-export type { ILayout, WinOptions } from './components/ViewPortWindow/enum'
-export { LayoutPreset } from './components/ViewPortWindow/enum'
-
+export type { ILayout, LayoutRatios, StoredWindowState, WinOptions } from './components/ViewPortWindow/enum'
+export { layoutList, LayoutPreset, loadWindowState, removeWindowState } from './components/ViewPortWindow/enum'
 export { default as LayoutPreview } from './components/ViewPortWindow/LayoutPreview.vue'
 // ViewPortWindow
 export { default as ViewPortWindow } from './components/ViewPortWindow/ViewPortWindow.vue'
@@ -75,6 +84,20 @@ export type { OnMoveParams } from './components/ViewPortWindow/window-controller
 
 // VueRender
 export { default as VueRender } from './components/VueRender.vue'
+
+// WindowManager
+export type {
+  CloseGuard,
+  ManagedWindow,
+  OpenWindowOptions,
+  WindowDockMenuLabels,
+  WindowManager,
+  WindowManagerOptions,
+  WindowView,
+} from './components/WindowManager/window-manager'
+export { createWindowManager } from './components/WindowManager/window-manager'
+export { default as WindowDock } from './components/WindowManager/WindowDock.vue'
+export { default as WindowStack } from './components/WindowManager/WindowStack.vue'
 // ---- Hooks ----
 export { useBeforeUnload, useSaveShortcut, useUnSavedChanges } from './hooks/use-beforeunload'
 export type {

@@ -24,6 +24,8 @@
   --vgo-control-close-active: rgba(151, 23, 34, 0.7);
   --vgo-scrollbar: rgba(192, 192, 192, 0.5);
   --vgo-scrollbar-hover: #bebebe;
+  // 模态遮罩。盖住后面的页面，窗口本身浮在遮罩之上
+  --vgo-mask: rgba(0, 0, 0, 0.62);
 }
 
 body.vgo-theme-default {
@@ -53,6 +55,8 @@ body.vgo-theme-default {
   --vgo-control-close-active: #ff6a72;
   --vgo-scrollbar: rgba(192, 192, 192, 0.63);
   --vgo-scrollbar-hover: #bebebe;
+  // 模态遮罩。盖住后面的页面，窗口本身浮在遮罩之上
+  --vgo-mask: rgba(0, 0, 0, 0.45);
 
   --vgo-overlay-blur: 8px;
 

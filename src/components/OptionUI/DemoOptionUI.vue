@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import type { StOptionItem } from './enum.ts'
+import type { VgoOptionItem } from './types.ts'
 import { computed, h, ref } from 'vue'
-import { StOptionType } from './enum.ts'
+import { VgoOptionType } from './types.ts'
 import OptionUI from './OptionUI.vue'
 
-const options = computed((): StOptionItem[] => {
+const options = computed((): VgoOptionItem[] => {
   return [
     {
       label: '选项组 1',
@@ -14,12 +14,12 @@ const options = computed((): StOptionItem[] => {
           label: '切换开关',
           key: 'switch',
           // 可选：iconRender（Vue 组件/图标）> iconClass（自定义类）> icon（图片）
-          type: StOptionType.SWITCH,
+          type: VgoOptionType.SWITCH,
         },
         {
           label: '多切换开关',
           key: 'multiple_switch',
-          type: StOptionType.MULTIPLE_SWITCH,
+          type: VgoOptionType.MULTIPLE_SWITCH,
           options: [
             {
               label: '选项 1',
@@ -38,7 +38,7 @@ const options = computed((): StOptionItem[] => {
         {
           label: '选择框',
           key: 'select',
-          type: StOptionType.SELECT,
+          type: VgoOptionType.SELECT,
           options: [
             {
               label: '选项 1',
@@ -57,27 +57,27 @@ const options = computed((): StOptionItem[] => {
         {
           label: '文本输入框',
           key: 'input',
-          type: StOptionType.INPUT,
+          type: VgoOptionType.INPUT,
         },
         {
           label: '数字输入框',
           key: 'input_number',
-          type: StOptionType.INPUT_NUMBER,
+          type: VgoOptionType.INPUT_NUMBER,
         },
         {
           label: '日期选择器',
           key: 'date_picker',
-          type: StOptionType.DATE_PICKER,
+          type: VgoOptionType.DATE_PICKER,
         },
         {
           label: '颜色选择器',
           key: 'color_picker',
-          type: StOptionType.COLOR_PICKER,
+          type: VgoOptionType.COLOR_PICKER,
         },
         {
           label: '动态标签',
           key: 'dynamic_tags',
-          type: StOptionType.DYNAMIC_TAGS,
+          type: VgoOptionType.DYNAMIC_TAGS,
         },
       ],
     },
@@ -88,7 +88,7 @@ const options = computed((): StOptionItem[] => {
         {
           label: '按钮',
           key: 'button',
-          type: StOptionType.BUTTON,
+          type: VgoOptionType.BUTTON,
           value: '点击我',
           props: {
             class: 'vgo-button--primary',

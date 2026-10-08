@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { FormRules } from 'element-plus'
-import type { MixedFormItems } from './enum'
+import type { MixedFormItems } from './types'
 import { computed, ref } from 'vue'
 import AutoFormElPlus from './AutoFormElPlus.vue'
-import { AutoFormItemType } from './enum'
+import { AutoFormItemType } from './types'
 
 const dataForm = ref({
   test_input: '',

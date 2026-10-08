@@ -1,11 +1,6 @@
 import type { FormRules } from 'element-plus'
 import type { VNode } from 'vue'
-
-export interface IOptionItem {
-  value: string | number | boolean | null | undefined
-  label: string
-  disabled?: boolean
-}
+import type { VgoSelectItem } from '../OptionUI/types'
 
 export enum AutoFormItemType {
   INPUT = 'input',
@@ -33,7 +28,7 @@ export interface AutoFormItem {
   rules?: FormRules
   formItemProps?: Record<string, any>
   // SELECT下拉选项
-  options?: IOptionItem[]
+  options?: VgoSelectItem[]
   // 渲染函数 h('div', {}, null)
   render?: () => VNode
   renderLabel?: () => VNode

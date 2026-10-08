@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import type { Ref } from 'vue'
-import type { StOptionItem } from './enum'
+import type { VgoOptionItem } from './types'
 import { computed, inject, toRefs } from 'vue'
 import VueRender from '../VueRender.vue'
 import DynamicTags from './components/DynamicTags.vue'
 import RectSwitch from './components/RectSwitch.vue'
-import { StOptionType, swatches } from './enum'
+import { swatches, VgoOptionType } from './types'
 
 const props = defineProps<{
-  item: StOptionItem
+  item: VgoOptionItem
 }>()
 const emit = defineEmits(['updateValue'])
 const { item } = toRefs(props)
@@ -38,20 +38,20 @@ const dynamicValue = computed({
 <template>
   <el-space class="vgo-option-action" size="small" align="center">
     <el-switch
-      v-if="item.type === StOptionType.SWITCH"
+      v-if="item.type === VgoOptionType.SWITCH"
       v-model="dynamicValue"
       v-bind="item.props"
     />
 
     <RectSwitch
-      v-else-if="item.type === StOptionType.MULTIPLE_SWITCH"
+      v-else-if="item.type === VgoOptionType.MULTIPLE_SWITCH"
       v-model="dynamicValue"
       :options="item.options"
       v-bind="item.props"
     />
 
     <el-input
-      v-else-if="item.type === StOptionType.INPUT"
+      v-else-if="item.type === VgoOptionType.INPUT"
       v-model="dynamicValue"
       class="vgo-option-action__control vgo-option-action__input"
       clearable
@@ -59,7 +59,7 @@ const dynamicValue = computed({
     />
 
     <el-select
-      v-else-if="item.type === StOptionType.SELECT"
+      v-else-if="item.type === VgoOptionType.SELECT"
       v-model="dynamicValue"
       :placeholder="item.placeholder"
       class="vgo-option-action__control"
@@ -70,14 +70,14 @@ const dynamicValue = computed({
     </el-select>
 
     <DynamicTags
-      v-else-if="item.type === StOptionType.DYNAMIC_TAGS"
+      v-else-if="item.type === VgoOptionType.DYNAMIC_TAGS"
       v-model="dynamicValue"
       class="vgo-option-action__tags"
       v-bind="item.props"
     />
 
     <el-color-picker
-      v-else-if="item.type === StOptionType.COLOR_PICKER"
+      v-else-if="item.type === VgoOptionType.COLOR_PICKER"
       v-model="dynamicValue"
       v-bind="item.props"
       :predefine="swatches"
@@ -85,14 +85,14 @@ const dynamicValue = computed({
 
     <!-- 高级的数字输入框 -->
     <el-input-number
-      v-else-if="item.type === StOptionType.INPUT_NUMBER"
+      v-else-if="item.type === VgoOptionType.INPUT_NUMBER"
       v-model="dynamicValue"
       :disabled="item.disabled"
       v-bind="item.props"
     />
 
     <el-date-picker
-      v-else-if="item.type === StOptionType.DATE_PICKER"
+      v-else-if="item.type === VgoOptionType.DATE_PICKER"
       v-model="dynamicValue"
       :disabled="item.disabled"
       class="vgo-option-action__control"
@@ -100,7 +100,7 @@ const dynamicValue = computed({
     />
 
     <button
-      v-else-if="item.type === StOptionType.BUTTON"
+      v-else-if="item.type === VgoOptionType.BUTTON"
       :disabled="item.disabled"
       v-bind="item.props"
       class="vgo-button"

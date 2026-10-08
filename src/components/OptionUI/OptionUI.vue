@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import type { StOptionItem } from './enum'
+import type { VgoOptionItem } from './types'
 import { provide, ref, toRefs } from 'vue'
 import OptionItem from './OptionItem.vue'
 
 const props = withDefaults(
   defineProps<{
     // 选项列表
-    optionList: StOptionItem[]
+    optionList: VgoOptionItem[]
     // 可选 配置存储对象 Ref，可以是 pinia store
     store?: unknown
     expandId?: string
@@ -32,7 +32,7 @@ const foldedKeyMap = ref(
 )
 
 // 切换展开状态
-function handleToggleExpand(item: StOptionItem) {
+function handleToggleExpand(item: VgoOptionItem) {
   if (foldedKeyMap.value[item.key]) {
     delete foldedKeyMap.value[item.key]
   }

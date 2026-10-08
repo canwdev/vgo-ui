@@ -1,4 +1,4 @@
-import type { AutoFormItem, MixedFormItems } from './enum'
+import type { AutoFormItem, MixedFormItems } from './types'
 
 /**
  * 遍历所有表单item，执行操作

@@ -254,6 +254,19 @@ body.vgo-theme-default {
       background-color: var(--vgo-window-active);
     }
 
+    // 无标题栏：窗口本身不带边框、背景、圆角和阴影。
+    // 写在 .is-active 之后，激活时也不会把标题栏那层底色涂回来。
+    &.is-titleless {
+      background-color: transparent;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+
+      &.is-active {
+        background-color: transparent;
+      }
+    }
+
     &.is-maximized {
       border: 0;
       border-radius: 0;
@@ -297,8 +310,8 @@ body.vgo-theme-default {
 
         // 图标由 ::before 用 mask 画出：背景色取 currentColor，形状来自
         // .vgo-window 上的 --vgo-window-icon-* 令牌。不用 mask 简写，因为
-        // 简写会把 mask-image 重置为 none。
-        &::before {
+        // 简写会把 mask-image 重置为 none。只作用于内置按钮，插槽里的自定义按钮不画图标。
+        &:is(.is-minimize, .is-maximize, .is-restore, .is-close)::before {
           content: '';
           width: 20px;
           height: 20px;
@@ -359,8 +372,42 @@ body.vgo-theme-default {
     }
   }
 
+  .vgo-window__layout {
+    overflow: hidden;
+    background-color: var(--vgo-hover);
+    border-radius: var(--vgo-radius);
+
+    &:hover,
+    &.is-active {
+      background-color: var(--vgo-primary-opacity);
+    }
+  }
+
+  .vgo-window__layout-preview {
+    background-color: var(--vgo-text-secondary);
+  }
+
+  .vgo-window__layout:hover .vgo-window__layout-preview,
+  .vgo-window__layout.is-active .vgo-window__layout-preview {
+    background-color: var(--vgo-primary);
+  }
+
   .vgo-layout-preview {
     background-color: var(--vgo-primary-opacity);
     border: 2px solid var(--vgo-primary);
+  }
+
+  .vgo-window-stack__content {
+    color: var(--vgo-text);
+    background-color: var(--vgo-surface);
+    border-radius: inherit;
+  }
+
+  .vgo-window.is-maximized > .vgo-window__content > .vgo-window__body > .vgo-window-stack__content {
+    border-radius: 0;
+  }
+
+  .vgo-window-modal__mask {
+    background-color: var(--vgo-mask);
   }
 }

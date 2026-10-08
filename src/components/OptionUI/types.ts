@@ -1,13 +1,14 @@
 import type { VNode } from 'vue'
 
-export interface SwitchOption {
+/** Select / segmented-switch option. Extra fields are allowed for callers. */
+export interface VgoSelectItem {
   label: string
   value: any
   disabled?: boolean
+  [key: string]: any
 }
 
-// 选项Item
-export interface StOptionItem {
+export interface VgoOptionItem {
   // 选项标题
   label: string
   // 键值
@@ -16,16 +17,16 @@ export interface StOptionItem {
   store?: unknown
   // 选项实际值
   value?: boolean | string | number
-  type?: StOptionType
+  type?: VgoOptionType
   // 传递给组件的自定义属性
   props?: Record<string, any>
   itemProps?: Record<string, any>
   // 当type为 SELECT | MULTIPLE_SWITCH 时，选项的下拉数据
-  options?: SwitchOption[]
+  options?: VgoSelectItem[]
   // 是否已禁用
   disabled?: boolean
   hidden?: boolean
-  children?: StOptionItem[]
+  children?: VgoOptionItem[]
   // 图标
   icon?: string
   iconRender?: () => VNode
@@ -42,13 +43,12 @@ export interface StOptionItem {
   // 整体渲染函数
   render?: () => VNode
   // 点击item执行函数
-  clickFn?: (event: MouseEvent, item: StOptionItem) => void
+  clickFn?: (event: MouseEvent, item: VgoOptionItem) => void
   // 隐藏展开按钮图标
   hideExpandIcon?: boolean
 }
 
-// 选项的类型
-export enum StOptionType {
+export enum VgoOptionType {
   SWITCH = 'switch',
   MULTIPLE_SWITCH = 'multiple_switch',
   SELECT = 'select',

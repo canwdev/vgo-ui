@@ -1,83 +1,196 @@
 <script lang="ts" setup="">
-import { reactive } from 'vue'
+import { computed, reactive, ref } from 'vue'
+import { LayoutPreset, removeWindowState } from './enum'
 import ViewPortWindow from './ViewPortWindow.vue'
 
-const win1 = reactive({
-  visible: true,
-  minimized: false,
+const MAIN_WID = 'vgo-demo-main-window'
+
+function createState() {
+  return {
+    main: {
+      visible: false,
+      minimized: false,
+      maximized: false,
+      allowMove: true,
+      allowSnap: true,
+    },
+    titleless: false,
+    unclosable: false,
+    fixedSize: false,
+  }
+}
+
+const state = reactive(createState())
+// 重置时换 key，让所有窗口重新挂载，回到初始位置和尺寸
+const renderKey = ref(0)
+const mainRef = ref<InstanceType<typeof ViewPortWindow>>()
+
+function resetDemo() {
+  removeWindowState(MAIN_WID)
+  Object.assign(state, createState())
+  renderKey.value++
+}
+
+const snapNames: Record<string, string> = {
+  LEFT: '左半屏',
+  RIGHT: '右半屏',
+  TOP_LEFT: '左上',
+  TOP_RIGHT: '右上',
+  BOTTOM_LEFT: '左下',
+  BOTTOM_RIGHT: '右下',
+}
+
+const mainStatus = computed(() => {
+  const { main } = state
+  if (!main.visible) {
+    return main.minimized ? '已最小化' : '已关闭'
+  }
+  const snap = mainRef.value?.snapLayout
+  if (main.maximized) {
+    return snap ? '最大化（还原后回到分屏）' : '最大化'
+  }
+  if (snap) {
+    const key = Object.keys(snapNames).find(name => LayoutPreset[name] === snap)
+    return `分屏：${key ? snapNames[key] : '自定义'}`
+  }
+  return '浮动'
 })
 
-// 点击标题栏「最小化」后触发：组件内部已把 minimized 置为 true，
-// 这里负责把窗口从屏幕上收起（最小化的窗口收进"任务栏"等待还原）
-function handleMinimized() {
-  win1.visible = false
-}
-
-function restoreWin1() {
-  win1.minimized = false
-  win1.visible = true
-}
-
-function toggleWin1Visible() {
-  if (win1.visible) {
-    win1.visible = false
+function toggleMain() {
+  if (state.main.visible) {
+    state.main.visible = false
+    return
   }
-  else {
-    restoreWin1()
-  }
+  state.main.minimized = false
+  state.main.visible = true
 }
 </script>
 
 <template>
   <div class="vgo-window-demo">
-    <div class="vgo-u-flex-row" style="flex-wrap: wrap; gap: var(--vgo-space-2); align-items: center;">
-      <button class="vgo-button" @click="toggleWin1Visible">
-        {{ win1.visible ? '隐藏窗口1' : '显示窗口1' }}
-      </button>
-      <button v-if="win1.minimized" class="vgo-button vgo-button--primary" @click="restoreWin1">
-        还原窗口1
-      </button>
-      <span v-if="win1.minimized">窗口1已最小化</span>
+    <div class="vgo-u-flex-column" style="gap: var(--vgo-space-2); ">
+      <div class="vgo-u-flex-wrap-center" style="justify-content: flex-start;">
+        <button class="vgo-button" :class="{ 'is-active': state.main.visible }" @click="toggleMain">
+          主窗口
+        </button>
+        <button
+          class="vgo-button" :class="{ 'is-active': state.titleless }"
+          @click="state.titleless = !state.titleless"
+        >
+          无标题栏窗口
+        </button>
+        <button
+          class="vgo-button" :class="{ 'is-active': state.unclosable }"
+          @click="state.unclosable = !state.unclosable"
+        >
+          不可关闭窗口
+        </button>
+        <button
+          class="vgo-button" :class="{ 'is-active': state.fixedSize }"
+          @click="state.fixedSize = !state.fixedSize"
+        >
+          固定尺寸窗口
+        </button>
+        <button class="vgo-button vgo-button--danger" @click="resetDemo">
+          重置
+        </button>
+      </div>
+
+      <div class="vgo-u-flex-wrap-center" style="justify-content: flex-start;">
+        <span>主窗口：</span>
+        <span class="vgo-badge vgo-badge--primary">{{ mainStatus }}</span>
+        <label><input v-model="state.main.allowMove" type="checkbox"> 允许移动</label>
+        <label><input v-model="state.main.allowSnap" type="checkbox"> 允许贴边与布局菜单</label>
+      </div>
     </div>
+
     <ViewPortWindow
-      v-model:visible="win1.visible" v-model:minimized="win1.minimized" allow-maximum allow-minimum
-      :init-center="false" :init-win-options="{
-        top: '300px',
-        left: '300px',
-        width: '400px',
-        height: '200px',
-      }" @on-minimized="handleMinimized"
+      :key="`main-${renderKey}`" ref="mainRef" v-model:visible="state.main.visible"
+      v-model:minimized="state.main.minimized" v-model:maximized="state.main.maximized" :wid="MAIN_WID" allow-maximum
+      allow-minimum :allow-move="state.main.allowMove" :allow-snap="state.main.allowSnap"
+      :init-win-options="{ width: '420px', height: '260px' }" @on-minimized="state.main.visible = false"
     >
       <template #titleBarLeft>
-        <svg
-          viewBox="0 0 24 24"
-          width="1em" height="1em"
-          aria-hidden="true"
-          @dblclick.stop="toggleWin1Visible"
-        ><path fill="currentColor" d="M2.67 5.3v.61l-.71.3V5.6zm0 5.94v.62l-.71.29v-.59zm0 6.03v.62l-.71.29v-.59zM2.6 7.29v.55l-.57.26v-.54zm0 1.99v.54l-.57.26v-.54zm0 4.03v.53l-.57.26v-.54zm0 2.02v.54l-.57.26v-.53zm1.9-9.69v.72l-1 .37V6zm0 6.02v.71l-1 .37v-.71zm0 6.04v.71l-1 .4v-.71zm-.07-9.98v.66l-.79.3V8zm0 2.01v.64l-.78.3V10zm0 4.01v.64l-.78.31v-.66zm0 2.02v.65l-.78.31v-.66zm1.88-9.67v.85l-1.26.49v-.84zm0 6.02v.85l-1.26.49v-.84zm0 5.97v.85l-1.26.5v-.85zm-.06-9.9v.76l-1.06.4v-.73zm0 2v.75l-1.06.42v-.75zm0 4.01v.75l-1.06.43v-.75zm0 1.95v.76l-1.06.42v-.75zm2.04-10.1v1.12l-1.57.62V6.67zm0 6.02v1.13l-1.57.61v-1.12zm0 5.97v1.12l-1.57.62v-1.11zm-.09-9.9v1.03l-1.31.53V8.66zm0 2v1.02l-1.31.53v-1.03zm0 4.02v1.03l-1.31.52v-1.03zm0 1.95v1.02l-1.31.52v-1.01zm2.14-10.25v1.47L8.61 8V6.56zm0 6.02v1.46l-1.73.7v-1.47zm0 5.97v1.46l-1.73.7v-1.46zm-.08-9.79v1.23l-1.48.59V8.64zm0 1.92v1.23l-1.48.58v-1.22zm0 4.09v1.25l-1.48.57v-1.23zm0 1.94v1.25l-1.48.59V16.6zm2.19-10.88v2l-1.86.77V6c.64-.35 1.26-.65 1.86-.88m0 2.21v1.73l-1.86.78V8.1zm0 1.95v1.76l-1.86.78v-1.76zm0 1.97V13l-1.86.77V12zm0 1.96V15l-1.86.78V14zm0 2v1.75l-1.86.8V16zm0 1.96v1.87c-.73.28-1.35.55-1.86.8v-1.88zm9.59-11.99v14.05c-1.19-.79-2.67-1.18-4.45-1.18c-1.47 0-3.12.3-4.94.91v-1.9c.97-.37 2.03-.64 3.19-.8v-4.57c-.98.12-2.04.46-3.19 1.02V11.4c.99-.46 2.06-.77 3.19-.94V6c-1.02.18-2.08.53-3.19 1V5.03C14.27 4.34 15.86 4 17.41 4c1.68 0 3.22.39 4.63 1.18m-1.89 1.23c-.76-.41-1.65-.59-2.73-.59c-.13 0-.25.01-.37.02v4.54l.41-.01c.91 0 1.81.13 2.69.43zm0 5.69c-.81-.36-1.72-.54-2.71-.54c-.13 0-.26.01-.39.02v4.58h.41c.99 0 1.89.12 2.69.37z" /></svg>
-        <span>窗口1</span>
+        <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M3 12V6.75l6-1.32v6.48zm17-9v8.75l-10 .15V5.21zM3 13l6 .09v6.81l-6-1.15zm17 .25V22l-10-1.91V13.1z"
+          />
+        </svg>
+        <span>主窗口</span>
       </template>
-      <div style="padding:  var(--vgo-space-4); overflow: auto; height: 100%;">
-        <div class="vgo-panel vgo-u-flex-wrap-center" style="padding: var(--vgo-space-4);">
-          <input type="text" class="vgo-input" placeholder="Input">
-          <button class="vgo-button">
-            OK
-          </button>
-        </div>
+      <template #titleBarRightControls>
+        <button
+          title="居中"
+          @click="mainRef?.setWindowLayout({ xRatio: 0.2, yRatio: 0.2, widthRatio: 0.6, heightRatio: 0.6, floating: true })"
+        >
+          <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M12 9a3 3 0 1 1 0 6a3 3 0 0 1 0-6M3 5a2 2 0 0 1 2-2h4v2H5v4H3zm0 14v-4h2v4h4v2H5a2 2 0 0 1-2-2M21 5v4h-2V5h-4V3h4a2 2 0 0 1 2 2m0 14a2 2 0 0 1-2 2h-4v-2h4v-4h2z"
+            />
+          </svg>
+        </button>
+      </template>
+      <div
+        class="vgo-u-flex-column"
+        style="gap: var(--vgo-space-2); padding: var(--vgo-space-4); overflow: auto; height: 100%; box-sizing: border-box;"
+      >
+        <span>拖动标题栏到左 / 右边缘分屏，拖到顶部最大化。</span>
+        <span>悬停最大化按钮，选择布局。</span>
+        <span>拖动最大化或分屏窗口的标题栏即可还原。</span>
+        <span>位置和尺寸会被记住，刷新页面试试。</span>
       </div>
     </ViewPortWindow>
-    <ViewPortWindow visible :show-close="false">
+
+    <ViewPortWindow
+      :key="`titleless-${renderKey}`" v-model:visible="state.titleless" no-title-bar
+      :init-win-options="{ width: '260px', height: '140px' }"
+    >
+      <div class="vgo-panel vgo-panel--overlay vgo-window-demo__glass">
+        <span>没有标题栏。窗口本身没有边框和背景，这一层是内容自己画的。</span>
+        <button class="vgo-button vgo-button--overlay vgo-button--sm" @click="state.titleless = false">
+          关闭
+        </button>
+      </div>
+    </ViewPortWindow>
+
+    <ViewPortWindow
+      :key="`unclosable-${renderKey}`" v-model:visible="state.unclosable" :show-close="false"
+      :allow-out="false" :init-win-options="{ width: '280px', height: '160px' }"
+    >
       <template #titleBarLeft>
-        <svg
-          viewBox="0 0 24 24"
-          width="1em" height="1em"
-          aria-hidden="true"
-        ><path fill="currentColor" d="M3 12V6.75l6-1.32v6.48zm17-9v8.75l-10 .15V5.21zM3 13l6 .09v6.81l-6-1.15zm17 .25V22l-10-1.91V13.1z" /></svg>
-        <span>窗口2</span>
+        <span>不可关闭窗口</span>
       </template>
-      <div style="padding: 100px; overflow: auto;height: 100%;">
-        窗口内容2
+      <div style="padding: var(--vgo-space-4);">
+        隐藏了关闭按钮，并且不能拖出视口。
+      </div>
+    </ViewPortWindow>
+
+    <ViewPortWindow
+      :key="`fixed-size-${renderKey}`" v-model:visible="state.fixedSize" :allow-resize="false"
+      :allow-snap="false" :init-win-options="{ width: '300px', height: '150px' }"
+    >
+      <template #titleBarLeft>
+        <span>固定尺寸窗口</span>
+      </template>
+      <div style="padding: var(--vgo-space-4);">
+        不能拖动边框调整大小，也不会贴边分屏。
       </div>
     </ViewPortWindow>
   </div>
 </template>
+
+<style scoped lang="scss">
+.vgo-window-demo__glass {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vgo-space-2);
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 100%;
+  padding: var(--vgo-space-3);
+  box-shadow: var(--vgo-window-shadow);
+}
+</style>

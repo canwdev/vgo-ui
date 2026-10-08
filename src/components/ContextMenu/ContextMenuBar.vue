@@ -40,6 +40,9 @@ watch(() => props.options, () => {
 
 let currentMenu: ContextMenuInstance | null = null
 let currentMenuIndex = -1
+// 切换到旁边的项目时，关闭当前菜单会同步触发它的 onClose。
+// 那一下不是「用户点到了外面」，不能把菜单栏的激活状态清掉。
+let closingForSwitch = false
 
 function showNextSubMenu() {
   if (currentMenuIndex < menuItems.value.length - 1)
@@ -83,7 +86,9 @@ function showSubMenu(index: number, item: MenuItem) {
   if (!item.children)
     return
   if (currentMenu) {
+    closingForSwitch = true
     currentMenu.closeMenu()
+    closingForSwitch = false
     currentMenu = null
     menuBarActive.value = true
   }
@@ -104,7 +109,7 @@ function showSubMenu(index: number, item: MenuItem) {
         showNextSubMenu()
       },
       onClose() {
-        if (menuActiveIndex.value === index) {
+        if (!closingForSwitch && menuActiveIndex.value === index) {
           menuBarActive.value = false
           menuActiveIndex.value = -1
         }

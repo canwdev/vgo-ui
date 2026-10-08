@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { PropType } from 'vue'
-import type { SwitchOption } from '../enum.ts'
+import type { VgoSelectItem } from '../types.ts'
 import { useVModel } from '@vueuse/core'
 import { watch } from 'vue'
 
@@ -11,7 +11,7 @@ const props = defineProps({
     default: false,
   },
   options: {
-    type: Array as PropType<SwitchOption[]>,
+    type: Array as PropType<VgoSelectItem[]>,
     default: () => [],
   },
   disabled: {

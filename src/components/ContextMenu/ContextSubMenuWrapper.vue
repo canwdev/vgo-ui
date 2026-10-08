@@ -11,7 +11,7 @@ import { computed, h, onBeforeUnmount, onMounted, provide, ref, renderSlot, toRe
 import ContextSubMenu from './ContextSubMenu.vue'
 import { addOpenedContextMenu, removeOpenedContextMenu } from './mutex'
 import { MENU_CONST_OPTIONS } from './types'
-import { hasMenuTransitionAnimation, isDarkThemeName, recordTouchInput, recordTouchStart } from './utils'
+import { hasMenuTransitionAnimation, isDarkThemeName, MOBILE_MENU_INTERACTION_QUERY, resolveMenuInteraction } from './utils'
 
 defineOptions({
   name: 'ContextSubMenuWrapper',
@@ -97,6 +97,7 @@ function openMenu() {
 function closeMenu(fromItem?: MenuItem) {
   closed = true
   innerShow.value = false
+  removeBodyEvents()
   emit('close', fromItem)
   // 有动画时卸载要等菜单自己的 after-leave，在这里就 render(null) 会把退场动画
   // 从中间掐断；`menuTransitionProps: { css: false }` 关掉了动画，after-leave
@@ -109,12 +110,17 @@ function isClosed() {
   return closed
 }
 
+let bodyEventsTimer = 0
 function installBodyEvents() {
-  // 延迟安装：本次右键的 contextmenu 事件还在冒泡，立即安装会被自己触发而立刻关闭
-  setTimeout(() => {
+  // 延迟安装：本次右键的 contextmenu 事件还在冒泡，立即安装会被自己触发而立刻关闭。
+  // 关掉时必须取消这个定时器，否则监听会装到已经关闭的菜单上，外面的点击就关不掉当前菜单。
+  window.clearTimeout(bodyEventsTimer)
+  bodyEventsTimer = window.setTimeout(() => {
+    bodyEventsTimer = 0
+    if (closed)
+      return
     document.addEventListener('click', onBodyClick, true)
     document.addEventListener('contextmenu', onBodyClick, true)
-    document.addEventListener('touchstart', onBodyTouchStart, true)
     document.addEventListener('scroll', onBodyScroll, true)
     if (props.useCustomContainer && container.value)
       container.value.addEventListener('scroll', onBodyScroll, true)
@@ -123,9 +129,10 @@ function installBodyEvents() {
   }, 50)
 }
 function removeBodyEvents() {
+  window.clearTimeout(bodyEventsTimer)
+  bodyEventsTimer = 0
   document.removeEventListener('contextmenu', onBodyClick, true)
   document.removeEventListener('click', onBodyClick, true)
-  document.removeEventListener('touchstart', onBodyTouchStart, true)
   document.removeEventListener('scroll', onBodyScroll, true)
   if (props.useCustomContainer && container.value)
     container.value.removeEventListener('scroll', onBodyScroll, true)
@@ -190,10 +197,6 @@ function onBodyScroll(e: Event) {
 function onBodyClick(e: MouseEvent) {
   checkTargetAndClose(e.target as HTMLElement, e)
 }
-function onBodyTouchStart(e: TouchEvent) {
-  recordTouchStart(e.target)
-  recordTouchInput()
-}
 
 /** 从 target 沿父链找，看路径上是否有元素带指定 class。 */
 function hasClassInPath(target: HTMLElement | null, className: string | undefined): boolean {
@@ -213,6 +216,9 @@ function checkTargetAndClose(target: HTMLElement, e: MouseEvent | null) {
   // 需要的语义——点触发按钮的那一下先由 document 捕获阶段跑到这里，放过它，
   // 按钮自己的 click 才能把菜单关掉，而不是关掉又被重新打开。
   if (hasClassInPath(target, options.value.ignoreClickClassName))
+    return
+  // 遮罩自己负责关一层。这里在捕获阶段先跑，不放过的话会把整棵菜单关掉。
+  if (hasClassInPath(target, 'vgo-context-menu__mask'))
     return
   // 沿 target 向上找菜单根元素；点击发生在菜单内部时不关闭
   while (target) {
@@ -234,6 +240,46 @@ function checkTargetAndClose(target: HTMLElement, e: MouseEvent | null) {
     closeMenu()
   }
 }
+
+// 已打开的子菜单，从外到内。遮罩点击和键盘回退都只弹出最上面一层。
+const subMenuLayerStack: (() => void)[] = []
+function pushSubMenuLayer(close: () => void) {
+  if (!subMenuLayerStack.includes(close))
+    subMenuLayerStack.push(close)
+}
+function removeSubMenuLayer(close: () => void) {
+  const index = subMenuLayerStack.lastIndexOf(close)
+  if (index >= 0)
+    subMenuLayerStack.splice(index, 1)
+}
+function popSubMenuLayer() {
+  const close = subMenuLayerStack.pop()
+  close?.()
+}
+provide('globalPushSubMenuLayer', pushSubMenuLayer)
+provide('globalRemoveSubMenuLayer', removeSubMenuLayer)
+provide('globalPopSubMenuLayer', popSubMenuLayer)
+
+const mobileQueryMatches = ref(resolveMenuInteraction(options.value.interaction) === 'mobile')
+let mobileQuery: MediaQueryList | null = null
+function syncMobileQuery() {
+  mobileQueryMatches.value = mobileQuery?.matches ?? false
+}
+onMounted(() => {
+  mobileQuery = window.matchMedia(MOBILE_MENU_INTERACTION_QUERY)
+  mobileQuery.addEventListener('change', syncMobileQuery)
+  syncMobileQuery()
+})
+onBeforeUnmount(() => {
+  mobileQuery?.removeEventListener('change', syncMobileQuery)
+})
+const interaction = computed<'pc' | 'mobile'>(() => {
+  const specified = options.value.interaction
+  if (specified === 'pc' || specified === 'mobile')
+    return specified
+  return mobileQueryMatches.value ? 'mobile' : 'pc'
+})
+provide('globalInteraction', interaction)
 
 // 提供给子级
 provide('globalOptions', options)
@@ -266,6 +312,7 @@ provide('menuContext', {
   getParentContext: () => null,
   getSubMenuInstanceContext: () => null,
   getElement: () => null,
+  getMenuRoot: () => null,
   addChildMenuItem: () => {},
   removeChildMenuItem: () => {},
   markActiveMenuItem: () => {},

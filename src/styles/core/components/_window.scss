@@ -32,6 +32,10 @@
     }
   }
 
+  &.is-resize-locked > .vgo-window__resize-handle {
+    display: none;
+  }
+
   &.is-transitioning {
     transition: all var(--vgo-duration-base) !important;
   }
@@ -40,10 +44,18 @@
     pointer-events: none;
   }
 
+  &:focus {
+    outline: none;
+  }
+
+  // 无标题栏窗口只留可拖动的框。边框、背景、圆角都在主题层清掉，
+  // 内容区也不铺底色，外观由使用者自己画。
   &.is-titleless > .vgo-window__content > .vgo-window__body {
     height: 100%;
     pointer-events: auto;
+    background-color: transparent;
     border: 0;
+    border-radius: 0;
     box-shadow: none;
   }
 
@@ -89,6 +101,108 @@
       background-color: transparent;
       transition: background-color var(--vgo-duration-fast);
     }
+  }
+}
+
+.vgo-window__layouts {
+  position: fixed;
+  z-index: var(--vgo-z-menu);
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: var(--vgo-space-1);
+  padding: var(--vgo-space-1);
+
+  // 淡出中的菜单不再响应指针，避免重新触发悬停
+  &.fade-leave-active {
+    pointer-events: none;
+  }
+}
+
+.vgo-window__layout {
+  position: relative;
+  width: 40px;
+  height: 25px;
+  cursor: pointer;
+  transition: background-color var(--vgo-duration-fast);
+}
+
+.vgo-window__layout-preview {
+  position: absolute;
+  pointer-events: none;
+  transition: background-color var(--vgo-duration-fast);
+}
+
+.vgo-window-modal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--vgo-z-modal);
+  // 关掉之后层还在，好让窗口播完退场；不拦截后面的点击
+  pointer-events: none;
+
+  &.is-open {
+    pointer-events: auto;
+  }
+
+  &__mask {
+    position: absolute;
+    inset: 0;
+  }
+
+  // height:auto 时按内容撑开；碰到 max-height 再卡在视口里。
+  // flex-basis 用 auto，避免 flex:1（basis 0%）把内容高度压没。
+  // 内联 height 比视口大时仍靠 max-height 卡住，百分比高度不参与计算。
+  .vgo-window:not(.is-maximized) {
+    display: flex;
+    flex-direction: column;
+    max-width: calc(100vw - var(--vgo-space-4) * 2);
+    max-height: calc(100vh - var(--vgo-space-4) * 2);
+  }
+
+  .vgo-window__content {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    height: auto;
+  }
+
+  .vgo-window__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    overflow: hidden;
+  }
+}
+
+.vgo-modal-window {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+
+  // 渲染函数返回多个节点时的包裹，不产生盒子
+  &__render {
+    display: contents;
+  }
+
+  &__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: var(--vgo-space-4);
+    overflow: auto;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    flex-shrink: 0;
+    gap: var(--vgo-space-2);
+    align-items: center;
+    justify-content: flex-end;
+    padding: var(--vgo-space-3) var(--vgo-space-4);
   }
 }
 

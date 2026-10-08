@@ -14,11 +14,10 @@ body.vgo-theme-default {
   // 菜单项自己的 hover / 选中态。选中态写在 hover 之后，同特异度下由源码顺序
   // 保证悬停中的选中项不会退回 hover 底色。
   .vgo-context-menu__item {
-    &:hover {
+    &.is-active {
       background-color: var(--vgo-hover);
     }
-
-    &.is-active {
+    &:hover {
       background-color: var(--vgo-primary-opacity);
     }
   }

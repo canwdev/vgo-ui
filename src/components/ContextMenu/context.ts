@@ -70,5 +70,8 @@ export interface SubMenuParentContext {
   // 其他
   getSubMenuInstanceContext: () => SubMenuContext | null
   getParentContext: () => SubMenuParentContext | null
+  /** 菜单项容器，用来按 DOM 顺序找回菜单项。 */
   getElement: () => HTMLElement | null
+  /** 菜单外框（`.vgo-context-menu`）。根包装没有父菜单，返回 `null`。 */
+  getMenuRoot: () => HTMLElement | null
 }

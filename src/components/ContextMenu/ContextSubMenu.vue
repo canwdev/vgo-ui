@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Ref } from 'vue'
+import type { ComputedRef, Ref } from 'vue'
 import type { SubMenuContext, SubMenuParentContext } from './context'
 import type {
   ContextMenuPositionData,
@@ -17,7 +17,6 @@ import {
   clampBoxToContainer,
   getOffsetLeft,
   getOffsetTop,
-  isRecentTouchInput,
   resolveMenuTransitionProps,
   resolveSize,
   unwrapBoolean,
@@ -71,6 +70,10 @@ const globalGetMenuHostId = inject('globalGetMenuHostId', '')
 const globalIsDark = inject('globalIsDark') as Ref<boolean>
 const parentContext = inject('menuContext') as SubMenuParentContext
 const options = inject('globalOptions') as Ref<MenuOptions>
+const interaction = inject<ComputedRef<'pc' | 'mobile'>>('globalInteraction', computed(() => 'pc'))
+const pushSubMenuLayer = inject<(close: () => void) => void>('globalPushSubMenuLayer', () => {})
+const removeSubMenuLayer = inject<(close: () => void) => void>('globalRemoveSubMenuLayer', () => {})
+const popSubMenuLayer = inject<() => void>('globalPopSubMenuLayer', () => {})
 const debugMenuItemNameDefault = ref('UnknownOrRoot')
 const debugMenuItemName = inject<Ref<string>>('MenuItemName', debugMenuItemNameDefault)
 
@@ -207,6 +210,7 @@ const thisMenuContext: SubMenuParentContext = {
   getZoom: () => options.value.zoom || MENU_CONST_OPTIONS.defaultZoom,
   addOpenedSubMenu(closeFn: () => void) {
     openedSubMenus.push(closeFn)
+    pushSubMenuLayer(closeFn)
   },
   closeOtherSubMenu() {
     clearLeaveTimeout()
@@ -222,13 +226,11 @@ const thisMenuContext: SubMenuParentContext = {
     return false
   },
   closeOtherSubMenuWithTimeout() {
+    // 点击模式不靠指针离开收起，遮罩负责关一层
+    if (interaction.value === 'mobile')
+      return
     // 没有打开的子菜单就没必要挂计时器
     if (openedSubMenus.length === 0)
-      return
-    // 触摸屏上补发的 mouseleave 不算「离开」：子菜单刚展开、正好落在手指下方时，
-    // 指针其实已经进到子菜单里，但事件顺序是先 mouseenter 再 mouseleave，
-    // 照单收下就会在 subMenuCloseDelay 之后把刚打开的子菜单收掉（见 isRecentTouchInput）。
-    if (isRecentTouchInput())
       return
     // 重新计时：连续扫过多个同级项时，只以最后一次为准
     clearLeaveTimeout()
@@ -246,6 +248,12 @@ const thisMenuContext: SubMenuParentContext = {
     clearPendingOpenTimeout()
     // 即将打开新的子菜单，之前挂起的收起已无意义
     clearLeaveTimeout()
+    // 点击模式立即打开，不走悬停延迟
+    if (interaction.value === 'mobile') {
+      thisMenuContext.closeOtherSubMenu()
+      openFn()
+      return
+    }
     const delay = options.value.subMenuOpenDelay ?? MENU_CONST_OPTIONS.defaultSubMenuOpenDelay
     const hasOpenedSubMenu = openedSubMenus.length > 0
 
@@ -302,6 +310,7 @@ const thisMenuContext: SubMenuParentContext = {
   getElement: () => menu.value || null,
   getParentContext: () => parentContext,
   getSubMenuInstanceContext: () => thisMenuInsContext,
+  getMenuRoot: () => submenuRoot.value || null,
 }
 provide('menuContext', thisMenuContext)
 
@@ -314,6 +323,8 @@ provide('menuContext', thisMenuContext)
  * 把当前子菜单覆盖掉。
  */
 function onSubMenuMouseEnter() {
+  if (interaction.value === 'mobile')
+    return
   let ctx: SubMenuParentContext | null = parentContext
   while (ctx) {
     ctx.checkCloseOtherSubMenuTimeout()
@@ -324,7 +335,15 @@ function onSubMenuMouseEnter() {
 
 /** 指针离开子菜单：进入宽限期，移回父项或进入内层子菜单时会被取消。 */
 function onSubMenuMouseLeave() {
+  if (interaction.value === 'mobile')
+    return
   parentContext.closeOtherSubMenuWithTimeout()
+}
+
+/** 点遮罩只关最上面一层，不关整棵菜单。 */
+function onMaskClick(e: MouseEvent) {
+  e.stopPropagation()
+  popSubMenuLayer()
 }
 
 // #endregion
@@ -371,6 +390,23 @@ if (menuItemInstance)
 const scrollMaxHeight = ref(0)
 const scrollMaxWidth = ref(0)
 const position = ref({ x: 0, y: 0 } as ContextMenuPositionData)
+const maskBox = ref({ left: 0, top: 0, width: 0, height: 0 })
+
+/** mobile 下，子菜单展开时盖住直接父菜单，点它只关一层。根菜单没有父级。 */
+const showMask = computed(() => interaction.value === 'mobile' && props.show && !!parentContext.getMenuRoot())
+
+function updateMaskBox() {
+  const parentRoot = parentContext.getMenuRoot()
+  const container = parentContext.container
+  if (!parentRoot || !container)
+    return
+  maskBox.value = {
+    left: getOffsetLeft(parentRoot, container),
+    top: getOffsetTop(parentRoot, container),
+    width: parentRoot.offsetWidth,
+    height: parentRoot.offsetHeight,
+  }
+}
 
 /**
  * max-width 的上限：使用方给的（含菜单项自己的）优先，否则按层级取默认值。
@@ -396,27 +432,24 @@ const resolvedMaxWidth = computed(() => {
 const MENU_VIEWPORT_MARGIN = 4
 
 /**
- * 子菜单要避开的横向区间 —— 也就是父菜单元素自己占据的范围。
+ * 子菜单要避开的横向区间：父菜单外框。
  *
- * 用 `getBoundingClientRect` 取边框盒，而不是 offsetLeft + offsetWidth：菜单根元素
- * 带 1px 边框，offsetWidth 不含它，照着摆会让子菜单压进父菜单边缘 2px。
- * 而且父菜单贴到容器边缘时位置会被回夹改掉，从本菜单的位置反推只会算到它「本来想在哪」，
- * 子菜单就以为自己已经让开了。
+ * 量的是 `.vgo-context-menu` 自己的 `offsetLeft` + `offsetWidth`（含边框），
+ * 和子菜单的 `left` 用同一套坐标，两边外框相接、中间不留缝。
+ * 父菜单被回夹之后这里读到的是它实际占据的位置。
  *
  * 返回 `undefined` 表示没有父菜单（根菜单），只按视口边距回夹。
  */
-function getParentAvoid(
-  isTopLevel: boolean,
-  parentWidth: number,
-  parentElement: HTMLElement | null,
-): { left: number, right: number } | undefined {
+function getParentAvoid(isTopLevel: boolean): { left: number, right: number } | undefined {
   const container = parentContext.container
-  if (isTopLevel || parentWidth <= 0 || !parentElement || !container)
+  const parentRoot = parentContext.getMenuRoot()
+  if (isTopLevel || !parentRoot || !container)
     return undefined
-  // 换算到容器坐标系：容器的 rect 左上角就是原点
-  const base = container.getBoundingClientRect()
-  const rect = parentElement.getBoundingClientRect()
-  return { left: rect.left - base.left, right: rect.right - base.left }
+  const left = getOffsetLeft(parentRoot, container)
+  const width = parentRoot.offsetWidth
+  if (width <= 0)
+    return undefined
+  return { left, right: left + width }
 }
 
 /**
@@ -466,9 +499,20 @@ function doAdjustPosition() {
       // 方向偏移相对「父项」算：父项的 y 不一定要减内边距（子菜单向下弹时
       // 减了反而会压到父项上），只有父菜单存在时才让开这层留白。
       const fillPaddingY = parentContext.getParentContext() !== null ? fillPaddingYTop : 0
+      const parentMenuRoot = parentContext.getMenuRoot()
 
-      // x 方向
-      if (props.direction.includes('l')) {
+      // 有父菜单时，水平位置贴着父菜单外框，不再按内容盒加一截缝。
+      if (parentMenuRoot) {
+        const parentLeft = getOffsetLeft(parentMenuRoot, container)
+        const parentBoxWidth = parentMenuRoot.offsetWidth
+        if (props.direction.includes('l'))
+          position.value.x = parentLeft - menuEl.offsetWidth
+        else if (props.direction.includes('r'))
+          position.value.x = parentLeft + parentBoxWidth
+        else
+          position.value.x = parentLeft + (parentBoxWidth - menuEl.offsetWidth) / 2
+      }
+      else if (props.direction.includes('l')) {
         position.value.x -= menuEl.offsetWidth + fillPaddingX
       }
       else if (props.direction.includes('r')) {
@@ -498,7 +542,6 @@ function doAdjustPosition() {
       // 以及锚点本身贴着左 / 上边缘这三种情况由 clampBoxToContainer 兜底。
       const xOverflow = (getOffsetLeft(menuEl, container) + menuEl.offsetWidth) - availableWidth
       const isTopLevel = parentContext.getParentContext() === null
-      const parentElementSelf = parentContext.getElement?.() ?? null
       // 菜单没被夹过的自然高度 = 滚动区内容高度 + 菜单根自身的上下内边距 / 边框
       const itemsHeight = scrollRef.value?.scrollHeight || 0
       // 内容自然宽度：夹得比它窄就会出横向滚动条
@@ -507,7 +550,8 @@ function doAdjustPosition() {
       const naturalHeight = itemsHeight + fillPaddingYTop + fillPaddingYBottom + fillBorderY
       const yOverflow = (getOffsetTop(menuEl, container) + naturalHeight) - availableHeight
 
-      if (adjustPosition.value && xOverflow > 0) {
+      // 子菜单的左右翻转交给下面的回夹：它按父菜单外框贴边摆，这里再翻一次会对不齐。
+      if (adjustPosition.value && xOverflow > 0 && !parentMenuRoot) {
         // 水平翻到锚点左侧。默认右缘对齐锚点 x（右键菜单按光标翻转）；
         // 根菜单若传了 anchorWidth（元素锚定的下拉），改对齐到 x + anchorWidth，
         // 也就是触发元素的右缘，翻过去仍然贴着按钮。
@@ -523,7 +567,7 @@ function doAdjustPosition() {
       if (clampedYOverflow)
         position.value.y -= yOverflow
 
-      const parentAvoid = getParentAvoid(isTopLevel, parentWidth, parentElementSelf)
+      const parentAvoid = getParentAvoid(isTopLevel)
 
       const clamped = clampBoxToContainer({
         x: position.value.x,
@@ -560,6 +604,7 @@ function doAdjustPosition() {
 
 /** 展开时的处理。 */
 function showSolve() {
+  updateMaskBox()
   nextTick(() => {
     globalSetCurrentSubMenu(thisMenuInsContext)
     menu.value?.focus({ preventScroll: true })
@@ -594,6 +639,8 @@ onBeforeUnmount(() => {
   mounted.value = false
   clearLeaveTimeout()
   clearPendingOpenTimeout()
+  openedSubMenus.forEach(fn => removeSubMenuLayer(fn))
+  openedSubMenus.splice(0, openedSubMenus.length)
   if (menuItemInstance)
     menuItemInstance.getSubMenuInstance = () => undefined
 })
@@ -603,6 +650,18 @@ defineExpose(exposeContext)
 
 <template>
   <Teleport v-if="mounted" :to="`#${globalGetMenuHostId}`">
+    <div
+      v-if="showMask"
+      class="vgo-context-menu__mask"
+      :style="{
+        zIndex,
+        left: `${maskBox.left}px`,
+        top: `${maskBox.top}px`,
+        width: `${maskBox.width}px`,
+        height: `${maskBox.height}px`,
+      }"
+      @click="onMaskClick"
+    />
     <Transition
       v-bind="resolveMenuTransitionProps(options.menuTransitionProps)"
       @after-leave="emit('closeAnimFinished')"

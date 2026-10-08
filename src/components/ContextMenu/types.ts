@@ -34,6 +34,15 @@ export const MENU_CONST_OPTIONS = {
 /** 菜单相对弹出锚点的方向：上/下 × 左/中/右。 */
 export type MenuPopDirection = 'br' | 'b' | 'bl' | 'tr' | 't' | 'tl' | 'l' | 'r'
 
+/**
+ * 子菜单怎么打开。
+ *
+ * - `auto`：宽屏鼠标悬停，触屏和小屏改为点击；
+ * - `pc`：悬停打开，移开关闭；
+ * - `mobile`：点击打开。上一层不能再点，点上一层只关闭最上面一层。
+ */
+export type MenuInteraction = 'auto' | 'pc' | 'mobile'
+
 export type MenuChildren = MenuItem[]
 
 /**
@@ -200,8 +209,18 @@ export interface MenuOptions {
    */
   destroyOnClose?: boolean
   /**
+   * 子菜单的打开方式。
+   *
+   * - `auto`（默认）：宽屏且是鼠标时悬停打开，触屏和小屏改为点击打开；
+   * - `pc`：始终悬停打开、移开关闭；
+   * - `mobile`：始终点击打开。打开后上一层不能再点，点上一层只关闭最上面一层子菜单。
+   *
+   * @default 'auto'
+   */
+  interaction?: MenuInteraction
+  /**
    * 已有子菜单展开时，悬停到另一个含子项的菜单项后延迟打开子菜单的毫秒数。
-   * 设为 0 表示立即打开。
+   * 设为 0 表示立即打开。只在 PC 悬停下生效。
    *
    * @default 200
    */
@@ -211,7 +230,7 @@ export interface MenuOptions {
    * 设为 0 表示立即收起。
    *
    * 斜向移动时指针常会短暂划过同级其它菜单项，这段宽限期让指针来得及进入
-   * 子菜单；期间指针一旦进入子菜单，挂起的收起会被取消。
+   * 子菜单；期间指针一旦进入子菜单，挂起的收起会被取消。只在 PC 悬停下生效。
    *
    * @default 200
    */

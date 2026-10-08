@@ -3,9 +3,11 @@ import { defineAsyncComponent } from 'vue'
 import docsContextMenu from '../views/docs/context-menu.md?raw'
 import docsForm from '../views/docs/form.md?raw'
 import docsInstall from '../views/docs/install.md?raw'
+import docsModalWindow from '../views/docs/modal-window.md?raw'
 import docsOptionUI from '../views/docs/option-ui.md?raw'
 import docsStyles from '../views/docs/styles.md?raw'
 import docsTable from '../views/docs/table.md?raw'
+import docsWindowManager from '../views/docs/window-manager.md?raw'
 import docsWindow from '../views/docs/window.md?raw'
 import { injectScssBlocks } from './scss-blocks'
 
@@ -64,6 +66,22 @@ export const docsRoutes: RouteRecordRaw[] = [
       title: 'ViewPortWindow',
       content: docsWindow,
       component: defineAsyncComponent(() => import('../../../src/components/ViewPortWindow/DemoViewPortWindow.vue')),
+    },
+  },
+  {
+    path: 'modal-window',
+    meta: {
+      title: 'ModalWindow',
+      content: docsModalWindow,
+      component: defineAsyncComponent(() => import('../../../src/components/ModalWindow/DemoModalWindow.vue')),
+    },
+  },
+  {
+    path: 'window-manager',
+    meta: {
+      title: 'WindowManager',
+      content: docsWindowManager,
+      component: defineAsyncComponent(() => import('../../../src/components/WindowManager/DemoWindowManager.vue')),
     },
   },
 ].map((i) => {

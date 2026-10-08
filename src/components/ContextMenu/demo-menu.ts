@@ -63,7 +63,7 @@ export function buildMenuItems(lead = ''): MenuItem[] {
     },
     {
       label: 'Submenu (n subs)',
-      icon: menuIcon(menuIconPaths.dots),
+      icon: () => h('span', '🍃'),
       children: [...Array.from({ length: 50 }, (_, i) => ({ label: `Submenu ${String(i + 1).padStart(3, '0')}` })), {
         label: 'Submenu 3',
         icon: menuIcon(menuIconPaths.dots),

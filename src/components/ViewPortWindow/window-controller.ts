@@ -46,6 +46,8 @@ export interface OnMoveParams {
   left?: string
   attachLayout?: ILayout
   moveStop?: boolean
+  // 本次拖动开始前的内联位置，拖到顶边最大化后还原到这里
+  origin?: { left: string, top: string }
 }
 
 interface DraggableOptions {
@@ -60,6 +62,11 @@ interface DraggableOptions {
   // 移动中回调函数
   onMove?: (params: OnMoveParams) => void
   onActive?: () => void
+  // 拖动最大化或贴边的窗口时触发，回调需同步还原窗口尺寸（移除 is-maximized 类并写回浮动尺寸），
+  // 之后控制器按还原后的尺寸重新计算指针在窗口中的偏移
+  onDetach?: () => void
+  // 开始用边框调整窗口大小时触发
+  onResizeStart?: () => void
   // 包含在这个元素下面的子元素将不会触发移动
   preventNode?: HTMLElement
   // 调整窗口大小时始终让内容显示在视口内
@@ -83,6 +90,8 @@ interface ScreenPosition {
 const RESIZE_BAR_WITH = 6
 const RESIZE_BAR_OFFSET = 4
 const RESIZE_BAR_HALF_WITH = 2
+// 最大化或贴边的窗口需要拖出这段距离才还原，避免单击、双击标题栏时误触发
+const DETACH_THRESHOLD = 4
 
 // 管理多个窗口的状态
 const windowStateSet: Set<WindowController> = new Set()
@@ -170,7 +179,13 @@ export class WindowController {
   private alignWhenViewPortResize: 'start' | 'end'
   allowMove: boolean
   maximized: boolean
+  // 贴边分屏状态，几何尺寸由组件按视口比例维护
+  snapped: boolean
   private _prevDocWidth?: number
+  private dragStartXy = { x: 0, y: 0 }
+  private pendingDetach = false
+  private dragMoved = false
+  private dragOrigin = { left: '', top: '' }
 
   constructor(options: DraggableOptions) {
     const { dragHandleEl, dragTargetEl, onMove, autoPosOnResize } = options
@@ -182,6 +197,7 @@ export class WindowController {
     this.deltaY = 0
     this.allowMove = true
     this.maximized = options.maximized || false
+    this.snapped = false
     this.alignWhenViewPortResize = options.alignWhenViewPortResize || 'start'
 
     this.handleDragStart = this.handleDragStart.bind(this)
@@ -192,7 +208,8 @@ export class WindowController {
     // handle browser view port resize
     this.handleResizeDebounced = useThrottleFn(
       () => {
-        if (this.isHidden()) {
+        // 最大化时内联位置被 CSS 覆盖，读到的是 0,0，写回会丢失还原位置；贴边时由组件重新布局
+        if (this.isHidden() || this.maximized || this.snapped) {
           return
         }
         const { left, top } = this.setInScreenPosition({
@@ -266,7 +283,7 @@ export class WindowController {
   }
 
   handleDragStart(event: Event) {
-    if (!this.allowMove || this.maximized) {
+    if (!this.allowMove) {
       return
     }
     const { docEl } = this
@@ -282,6 +299,9 @@ export class WindowController {
 
     const xy = getPointerXy(event)
 
+    this.dragStartXy = xy
+    this.dragMoved = false
+    this.pendingDetach = this.maximized || this.snapped
     this.deltaX = xy.x - dragTargetEl.getBoundingClientRect().left
     this.deltaY = xy.y - dragTargetEl.getBoundingClientRect().top
     ;['mousemove', 'touchmove'].forEach((eventName) => {
@@ -296,11 +316,44 @@ export class WindowController {
     return false
   }
 
+  // 还原最大化或贴边的窗口，并保持指针落在标题栏中相同的横向比例位置（Windows 7 的手感）
+  private detach() {
+    const { dragTargetEl, onDetach } = this.options
+    const dockedRect = dragTargetEl.getBoundingClientRect()
+    const ratioX = dockedRect.width
+      ? (this.dragStartXy.x - dockedRect.left) / dockedRect.width
+      : 0
+    const offsetY = this.dragStartXy.y - dockedRect.top
+
+    this.maximized = false
+    this.snapped = false
+    onDetach?.()
+
+    const rect = dragTargetEl.getBoundingClientRect()
+    this.deltaX = Math.round(rect.width * ratioX)
+    this.deltaY = Math.min(offsetY, rect.height)
+  }
+
   handleDragMove(event: Event) {
-    const { deltaX, deltaY } = this
     const { dragTargetEl, onMove, opacify } = this.options
 
     const xy = getPointerXy(event)
+
+    if (this.pendingDetach) {
+      const distance = Math.hypot(xy.x - this.dragStartXy.x, xy.y - this.dragStartXy.y)
+      if (distance < DETACH_THRESHOLD) {
+        return
+      }
+      this.pendingDetach = false
+      this.detach()
+    }
+    if (!this.dragMoved) {
+      // 从最大化拖出时，内联位置仍是最大化前的浮动位置，正好作为还原点
+      this.dragOrigin = { left: dragTargetEl.style.left, top: dragTargetEl.style.top }
+    }
+    this.dragMoved = true
+
+    const { deltaX, deltaY } = this
     const x = xy.x - deltaX
     const y = xy.y - deltaY
 
@@ -339,9 +392,11 @@ export class WindowController {
 
     const { x, y } = getPointerXy(event)
 
-    if (onMove) {
+    // 没有真正移动（单击、双击标题栏）时不做贴边判断
+    if (onMove && this.dragMoved) {
       const obj: OnMoveParams = {
         moveStop: true,
+        origin: { ...this.dragOrigin },
       }
       obj.attachLayout = checkWindowAttach({ x, y })
 
@@ -359,6 +414,8 @@ export class WindowController {
       dragTargetEl.style.opacity = '1'
     }
     dragTargetEl.classList.remove(ClassNames.DRAGGING)
+    this.pendingDetach = false
+    this.dragMoved = false
   }
 
   handleResizeStart(event: Event) {
@@ -371,6 +428,8 @@ export class WindowController {
     this.deltaY = xy.y
 
     this.prevRect = dragTargetEl.getBoundingClientRect()
+    this.snapped = false
+    this.options.onResizeStart?.()
 
     // this.debugLog('handleDragStart', event)
 
@@ -494,9 +553,9 @@ export class WindowController {
   }: ScreenPosition) {
     const { docEl } = this
     const { dragTargetEl } = this.options
-    const rect = dragTargetEl.getBoundingClientRect()
-    const docWidth = docEl.clientWidth - rect.width
-    const docHeight = docEl.clientHeight - rect.height
+    // offset 尺寸不受进场动画的缩放影响
+    const docWidth = docEl.clientWidth - dragTargetEl.offsetWidth
+    const docHeight = docEl.clientHeight - dragTargetEl.offsetHeight
 
     // 靠右对齐
     if (this.alignWhenViewPortResize === 'end' && isViewPortResize) {
@@ -552,6 +611,15 @@ export class WindowController {
     // 获取当前元素的 z-index
     // const currentZIndex = getComputedStyle(dragTargetEl)['z-index']
 
+    // 模态窗口在自己的层里，不参加这套全局 z-index 轮换。
+    // 否则计数被减到 0 以下时，窗口会沉到自己的遮罩下面，点不到
+    if (dragTargetEl.closest('.vgo-window-modal')) {
+      if (dragTargetEl.classList.contains(ClassNames.VISIBLE)) {
+        dragTargetEl.classList.add(ClassNames.ACTIVE)
+      }
+      return
+    }
+
     // 获取同类型窗口最大的 z-index
     let maxZIndex = -1
     let maxZIndexEl: Element | null = null
@@ -559,7 +627,7 @@ export class WindowController {
       .map((item) => {
         return item.options.dragTargetEl
       })
-      .filter(Boolean) as HTMLElement[]
+      .filter((el): el is HTMLElement => el instanceof HTMLElement && !el.closest('.vgo-window-modal'))
 
     els.forEach((el) => {
       const val = getComputedStyle(el).zIndex

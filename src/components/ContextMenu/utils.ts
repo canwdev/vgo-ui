@@ -1,5 +1,5 @@
 import type { ComputedRef, VNode } from 'vue'
-import type { MenuOptions } from './types'
+import type { MenuInteraction, MenuOptions } from './types'
 import { defineComponent, toRefs } from 'vue'
 import { MENU_CONST_OPTIONS } from './types'
 
@@ -61,65 +61,22 @@ export function transformMenuPosition(
  */
 export const NO_CLICK_CLASS = 'vgo-context-menu__no-click'
 
-// #region 触摸补发的 click 重定向
-
-let touchStartTarget: HTMLElement | null = null
-let touchStartTime = 0
-const TOUCH_CLICK_WINDOW = 700
+// #region 子菜单交互
 
 /**
- * 记录一次 touchstart 的落点。
+ * `auto` 走 mobile 的条件：窄屏，或者主指针不能悬停 / 是粗指针。
  *
- * 触摸屏上 tap 之后浏览器会补发 mouseenter → mousedown → click。如果 mouseenter
- * 里展开了子菜单，而子菜单正好出现在手指下方，浏览器会把同一次 tap 的 click
- * 派发到**新出现的**那个菜单项上——叶子项的 `clickClose` 会顺手把整个菜单关掉。
- * 三级菜单在窄屏上最容易被翻转/夹回父菜单上，所以这个现象最常出现在三级。
+ * 横屏手机和 iPad 没有可用的悬停，也走点击。
  */
-export function recordTouchStart(target: EventTarget | null): void {
-  touchStartTarget = (target as HTMLElement | null) ?? null
-  touchStartTime = Date.now()
-}
+export const MOBILE_MENU_INTERACTION_QUERY = '(max-width: 719px), (hover: none), (pointer: coarse)'
 
-/**
- * 这个 click 是不是触摸后被浏览器重定向了：click 的 target 和 touchstart 的
- * 落点不在同一条路径上。是的话忽略这次点击，菜单保持打开。
- */
-export function isRetargetedTouchClick(e: MouseEvent): boolean {
-  if (!touchStartTarget || Date.now() - touchStartTime > TOUCH_CLICK_WINDOW)
-    return false
-  const clickTarget = e.target as Node | null
-  if (!clickTarget)
-    return false
-  const retargeted = !touchStartTarget.contains(clickTarget) && !clickTarget.contains(touchStartTarget)
-  if (retargeted)
-    touchStartTarget = null
-  return retargeted
-}
-
-// #endregion
-
-// #region 触摸输入标记
-
-let lastTouchAt = 0
-
-/**
- * 记录一次触摸输入。
- *
- * 触摸屏上 tap 之后浏览器会补发整套鼠标事件，而这些补发事件**可能出现在子菜单刚展开
- * 之后**：指针其实已经落在新展开的子菜单里，却先收到一个 `mouseleave`，于是
- * `subMenuCloseDelay` 一到就把刚打开的子菜单收掉（表现为「手机上点不开子菜单」）。
- *
- * 这种补发的 mouseleave 没法靠坐标区分：它的 clientX/clientY 是浏览器内部的指针位置，
- * 不一定等于 tap 点。所以改成认输入方式 —— 最近一次输入是触摸时，忽略紧随其后的
- * mouseleave 触发的延迟收起；真正的离开会由后续的鼠标事件（进入别的菜单项）重新排程。
- */
-export function recordTouchInput(): void {
-  lastTouchAt = Date.now()
-}
-
-/** 最近是否刚发生过触摸输入（补发的鼠标事件窗口内）。 */
-export function isRecentTouchInput(window = 350): boolean {
-  return Date.now() - lastTouchAt < window
+/** 把 `interaction` 解析成实际使用的 `pc` 或 `mobile`。 */
+export function resolveMenuInteraction(interaction: MenuInteraction | undefined): 'pc' | 'mobile' {
+  if (interaction === 'pc' || interaction === 'mobile')
+    return interaction
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function')
+    return 'pc'
+  return window.matchMedia(MOBILE_MENU_INTERACTION_QUERY).matches ? 'mobile' : 'pc'
 }
 
 // #endregion
@@ -274,11 +231,9 @@ export function clampBoxToContainer(input: ClampBoxInput): ClampBoxResult {
 
   let clampedMaxWidthFromParent = 0
   if (avoid && avoid.right > avoid.left && width > 0) {
-    // 和父菜单之间留出一点缝：两侧边界各自外扩 GAP，避免「刚好贴住」时因为
-    // 边框取整（offsetWidth 不含边框、rect 含边框）压进去 1~2px。
-    const GAP = 2
-    const avoidLeft = avoid.left - GAP
-    const avoidRight = avoid.right + GAP
+    // 子菜单外框贴住父菜单外框，中间不留缝。
+    const avoidLeft = avoid.left
+    const avoidRight = avoid.right
     const marginRight = containerWidth - margin
     const fitsOnScreen = (left: number, w: number) => left >= minX && left + w <= marginRight
     const clearsAvoid = (left: number, w: number) => left + w <= avoidLeft || left >= avoidRight
@@ -313,7 +268,7 @@ export function clampBoxToContainer(input: ClampBoxInput): ClampBoxResult {
     // 父菜单一部分。这是用户要的形态（左移、父菜单右侧仍露出来），比「夹窄出横向
     // 滚动条」和「让开父菜单但整块跑到屏幕外」都好用。
     // 只在并排放不下时启用；桌面/平板照常待在父菜单旁边。
-    const cannotFitBeside = containerWidth < (avoid.right - avoid.left) + boxWidth + GAP * 2
+    const cannotFitBeside = containerWidth < (avoid.right - avoid.left) + boxWidth
     const flushLeft = (w: number): [number, number] => [0, w]
     const shifted = Math.max(minX, marginRight - boxWidth)
     const candidates: [number, number][] = [

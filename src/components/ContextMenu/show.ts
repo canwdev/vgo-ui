@@ -29,19 +29,33 @@ function initInstance(
   useCustomContainer: boolean,
   customSlots?: Record<string, Slot>,
 ) {
+  // 每次弹出单独挂一个节点。宿主上如果反复 render 同一个组件类型，
+  // Vue 会复用正在关闭的实例：closed 已经是 true，新菜单就再也不会出现。
+  // 关动画结束时也只拆自己的节点，避免把后打开的菜单一起卸掉。
+  const mount = document.createElement('div')
+  mount.className = 'vgo-context-menu-mount'
+  container.appendChild(mount)
+
+  let disposed = false
+  const dispose = () => {
+    if (disposed)
+      return
+    disposed = true
+    render(null, mount)
+    mount.remove()
+  }
+
   const vnode = h(ContextSubMenuWrapper, {
     options,
     show: true,
     container,
     useCustomContainer,
-    onCloseAnimFinished: () => {
-      render(null, container)
-    },
+    onCloseAnimFinished: dispose,
     onClose: (item?: MenuItem) => {
       options.onClose?.(item)
     },
   }, customSlots)
-  render(vnode, container)
+  render(vnode, mount)
   return vnode.component
 }
 

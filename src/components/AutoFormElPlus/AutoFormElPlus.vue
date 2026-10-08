@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { FormInstance } from 'element-plus'
-import type { AutoFormSchema } from './enum'
+import type { AutoFormSchema } from './types'
 import { onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 import AutoFormItem from './AutoFormItem.vue'
-import { AutoFormItemType } from './enum'
+import { AutoFormItemType } from './types'
 /**
  * Element Plus 表单生成组件
  */

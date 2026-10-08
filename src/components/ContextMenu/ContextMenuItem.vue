@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import type { Ref, SVGAttributes } from 'vue'
-import type { GlobalHasSlot, GlobalRenderSlot, SubMenuParentContext } from './context'
+import type { ComputedRef, Ref, SVGAttributes } from 'vue'
+import type { GlobalHasSlot, GlobalRenderSlot, SubMenuContext, SubMenuParentContext } from './context'
 import type { MenuItem, MenuItemContext, MenuOptions } from './types'
 import { computed, inject, nextTick, onBeforeUnmount, onMounted, provide, ref, toRefs } from 'vue'
 import ContextMenuIconArrow from './ContextMenuIconArrow.vue'
 import ContextMenuIconCheck from './ContextMenuIconCheck.vue'
-import { hashCode, isRetargetedTouchClick, VNodeRender } from './utils'
+import { hashCode, VNodeRender } from './utils'
 
 defineOptions({
   name: 'ContextMenuItem',
@@ -98,6 +98,9 @@ const globalHasSlot = inject('globalHasSlot') as GlobalHasSlot
 const globalRenderSlot = inject('globalRenderSlot') as GlobalRenderSlot
 const globalCloseMenu = inject('globalCloseMenu') as (fromItem: MenuItem | undefined) => void
 const menuContext = inject('menuContext') as SubMenuParentContext
+const interaction = inject<ComputedRef<'pc' | 'mobile'>>('globalInteraction', computed(() => 'pc'))
+const removeSubMenuLayer = inject<(close: () => void) => void>('globalRemoveSubMenuLayer', () => {})
+const globalSetCurrentSubMenu = inject<(menu: SubMenuContext | null) => void>('globalSetCurrentSubMenu', () => {})
 
 const nameForDebug = computed(() => {
   if (typeof label.value === 'string')
@@ -113,15 +116,10 @@ provide('MenuItemName', nameForDebug)
 const menuItemInstance: MenuItemContext = {
   getSubMenuInstance: () => undefined,
   showSubMenu: () => {
-    if (showSubMenu.value) {
-      menuContext.markActiveMenuItem(menuItemInstance, true)
-      return true
-    }
-    else if (hasChildren.value) {
-      onMouseEnter()
-      return true
-    }
-    return false
+    if (!hasChildren.value)
+      return false
+    openSubMenu('keyboard')
+    return true
   },
   hideSubMenu: () => {
     menuContext.closeOtherSubMenu()
@@ -175,11 +173,6 @@ function onClick(e: MouseEvent | KeyboardEvent) {
   if (disabled.value)
     return
 
-  // 触摸补发的 mouseenter 展开子菜单后，同一次 tap 的 click 可能被浏览器
-  // 重定向到新出现的菜单项上；忽略它，否则叶子项会顺手关掉整个菜单。
-  if (e instanceof MouseEvent && isRetargetedTouchClick(e))
-    return
-
   // 命中特殊元素时忽略
   if (e) {
     const currentTarget = e.target as HTMLElement
@@ -200,8 +193,10 @@ function onClick(e: MouseEvent | KeyboardEvent) {
         clickHandler.value(e)
       emit('click', e)
     }
-    else if (!showSubMenu.value) {
-      onMouseEnter()
+    // mobile 没有悬停，点击是打开子菜单的唯一途径，即使该项自己也能点。
+    if (!clickableWhenHasChildren.value || interaction.value === 'mobile') {
+      if (!showSubMenu.value)
+        openSubMenu('click')
     }
   }
   else {
@@ -213,45 +208,60 @@ function onClick(e: MouseEvent | KeyboardEvent) {
   }
 }
 
-/** 鼠标进入：展开子菜单。 */
-function onMouseEnter(e?: MouseEvent) {
-  keyboardFocusMenu.value = false
+/** 展开本项子菜单。`pointer` 走悬停延迟，`click` / `keyboard` 由父级按交互模式决定是否立即打开。 */
+function openSubMenu(source: 'pointer' | 'click' | 'keyboard') {
+  if (disabled.value || !hasChildren.value)
+    return
 
-  if (!disabled.value) {
-    menuContext.markActiveMenuItem(menuItemInstance)
+  menuContext.markActiveMenuItem(menuItemInstance, source === 'keyboard')
 
-    if (hasChildren.value) {
-      // 子菜单还开着（例如从兄弟项斜向移回来）：只取消挂起的收起，
-      // 不要再走一遍延迟打开，否则会先关再开闪一下。
-      if (showSubMenu.value) {
-        menuContext.cancelPendingOpen()
-        menuContext.checkCloseOtherSubMenuTimeout()
-        return
-      }
-
-      if (!e)
-        menuContext.markThisOpenedByKeyboard()
-
-      menuContext.openSubMenuWithDelay(() => {
-        menuContext.addOpenedSubMenu(closeSubMenu)
-        showSubMenu.value = true
-        nextTick(() => emit('subMenuOpen', menuItemInstance))
-      }, menuItemRef.value!)
-    }
-    else {
+  if (showSubMenu.value) {
+    if (interaction.value === 'pc') {
       menuContext.cancelPendingOpen()
-      // 不立即收起：斜向移动时常会短暂扫过无子项的行，给一段宽限期；
-      // 指针若在宽限期内进入子菜单，这次收起会被取消。
-      menuContext.closeOtherSubMenuWithTimeout()
+      menuContext.checkCloseOtherSubMenuTimeout()
     }
+    return
+  }
+
+  if (source === 'keyboard')
+    menuContext.markThisOpenedByKeyboard()
+
+  menuContext.openSubMenuWithDelay(() => {
+    menuContext.addOpenedSubMenu(closeSubMenu)
+    showSubMenu.value = true
+    nextTick(() => emit('subMenuOpen', menuItemInstance))
+  }, menuItemRef.value!)
+}
+
+/** 鼠标进入：只在 PC 悬停下展开子菜单。 */
+function onMouseEnter() {
+  if (interaction.value === 'mobile')
+    return
+  keyboardFocusMenu.value = false
+  if (disabled.value)
+    return
+
+  menuContext.markActiveMenuItem(menuItemInstance)
+  if (hasChildren.value) {
+    openSubMenu('pointer')
+  }
+  else {
+    menuContext.cancelPendingOpen()
+    // 不立即收起：斜向移动时常会短暂扫过无子项的行，给一段宽限期；
+    // 指针若在宽限期内进入子菜单，这次收起会被取消。
+    menuContext.closeOtherSubMenuWithTimeout()
   }
 }
 
-/** 收起本项子菜单。 */
+/** 收起本项子菜单，并把键盘焦点交回父菜单。 */
 function closeSubMenu() {
+  if (!showSubMenu.value)
+    return
   keyboardFocusMenu.value = false
   showSubMenu.value = false
+  removeSubMenuLayer(closeSubMenu)
   emit('subMenuClose', menuItemInstance)
+  globalSetCurrentSubMenu(menuContext.getSubMenuInstanceContext())
 }
 
 /** 供自定义渲染使用的数据。 */

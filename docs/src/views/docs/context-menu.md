@@ -1,6 +1,6 @@
 # ContextMenu
 
-右键菜单。核心移植自 `@imengyu/vue3-context-menu`，去掉了多套皮肤、MenuTrigger 与文档站，外观改为走 vgo-ui 的 `--vgo-*` 令牌，明暗随 `html.dark`。
+右键菜单和下拉菜单。外观跟随页面的明暗主题。
 
 ## 导入
 
@@ -83,11 +83,11 @@ const { setTriggerRef, isOpen, toggle } = useContextMenuTrigger({
 
 要点：
 
-- **触发元素用函数 ref `:ref="setTriggerRef"` 绑定**，不要写 `ref="triggerRef"`。原因有两个：一是 hook 要在挂载 / 卸载时维护触发元素上那个「放过点击外部」的 class；二是 `:ref="triggerRef"` 在模板里会被自动解包成元素本身，传不进真 ref，而字符串 ref 又会被 `noUnusedLocals` 判成未使用变量。
-- `items` 可以是数组，也可以是 getter / `ref`（上面用 getter，每次打开都取最新值）。`x` / `y` 由触发元素的 `getBoundingClientRect()` 算出，配置里不能再传；`gap` 控制按钮与菜单的间距（默认 `4`）。菜单在右侧放不下时会翻到按钮左边，并对齐到按钮的右缘（靠 `anchorWidth`，hook 自动填），所以贴右边的按钮不会出现菜单整体跑到按钮左侧的错位。
-- 返回 `{ setTriggerRef, triggerRef, isOpen, triggerClass, toggle, show, close, getInstance }`。`isOpen` 是只读的，打开期间给按钮加 `.is-active` 即可；Esc、点外部、滚动关闭时它也会自动复位。
-- hook 会给触发元素自动加一个唯一 class 并把它设成 `ignoreClickClassName`。原因：菜单的「点击外部关闭」监听在 document 捕获阶段先跑，不放过点触发按钮这一下的话，按钮的 click 会「先把菜单关掉、再自己重新打开」，于是永远关不上。手动实现时才需要自己传这个 class。
-- 触发元素必须是**单个 HTMLElement**；如果包了一层 wrapper，把函数 ref 绑在真正被点击的那个元素上。
+- 触发元素用 `:ref="setTriggerRef"` 绑定。
+- `items` 可以是数组，也可以是 getter / `ref`，每次打开都取最新值。位置由触发元素算出，配置里不要再传 `x` / `y`。`gap` 是按钮和菜单的间距，默认 `4`。贴着右边缘时，菜单会翻到按钮左边，仍然对齐按钮。
+- 打开期间给按钮加 `.is-active`。Esc、点外部、滚动关闭时 `isOpen` 会自己变回 `false`。
+- 再点同一个按钮会关闭菜单，不会关了又马上打开。
+- 触发元素是单个元素。包了一层的话，把 `:ref` 绑在真正被点击的那个元素上。
 
 ### 手动实现
 
@@ -135,7 +135,7 @@ const menu = ContextMenu.showContextMenu({
 | `x` / `y`                             | 必填              | 显示坐标                                                               |
 | `items`                               | —                 | 菜单项数组                                                             |
 | `direction`                           | `'br'`            | 主菜单相对坐标点的方向：`br` `b` `bl` `tr` `t` `tl` `l` `r`            |
-| `adjustPosition`                      | `true`            | 自动翻转 / 回夹 / 限制高度以避免溢出容器                               |
+| `adjustPosition`                      | `true`            | 尽量留在屏幕内；贴边时翻到另一侧，太高则滚动                           |
 | `anchorWidth`                         | —                 | 锚点元素宽度（仅根菜单）；翻到左边时右缘对齐锚点右缘                   |
 | `minWidth` / `maxWidth` / `maxHeight` | `100` / `600` / — | 尺寸限制（像素）；子菜单的 `maxWidth` 默认 `300`                       |
 | `zIndex`                              | `1100`            | 菜单层级，默认与 `--vgo-z-menu` 一致                                   |
@@ -144,8 +144,9 @@ const menu = ContextMenu.showContextMenu({
 | `keyboardControl`                     | `true`            | 键盘操作：`Esc` / `Enter` / 方向键 / `Home` / `End`                    |
 | `clickCloseOnOutside`                 | `true`            | 点击菜单外部是否关闭                                                   |
 | `closeWhenScroll`                     | `true`            | 页面滚动是否关闭菜单                                                   |
-| `subMenuOpenDelay`                    | `200`             | 已有子菜单展开时，悬停打开另一个子菜单的延迟（毫秒）                   |
-| `subMenuCloseDelay`                   | `200`             | 离开子菜单或扫过无子项的行后，延迟收起的毫秒数（进入子菜单会取消）     |
+| `interaction`                         | `'auto'`          | 子菜单打开方式：`auto` / `pc` / `mobile`，见下方                       |
+| `subMenuOpenDelay`                    | `200`             | PC 悬停时，已有子菜单展开后再悬停另一项，延迟打开的毫秒数             |
+| `subMenuCloseDelay`                   | `200`             | PC 悬停时，离开子菜单或扫过其它行后，延迟收起的毫秒数                 |
 | `destroyOnClose`                      | `true`            | 关闭后是否销毁                                                         |
 | `customClass`                         | —                 | 菜单根元素自定义类名                                                   |
 | `ignoreClickClassName`                | —                 | 命中该 class 的点击被忽略（不关闭、不触发），菜单外同样生效            |
@@ -159,11 +160,23 @@ const menu = ContextMenu.showContextMenu({
 | `onClickOnOutside`                    | —                 | `clickCloseOnOutside: false` 时点击外部触发                            |
 | `mouseScroll`                         | —                 | **兼容位，已忽略**。菜单改用原生滚动，内容溢出时滚轮始终可用           |
 
-`subMenuOpenDelay` / `subMenuCloseDelay` 一起决定子菜单换向的手感。已展开子菜单时，悬停到另一个含子项的菜单项要等 `subMenuOpenDelay` 才切换；指针离开子菜单、或在斜向移向子菜单的途中扫过无子项的菜单项时，则给 `subMenuCloseDelay` 的宽限期，期间指针进入子菜单（或移回父项）就会取消这次收起。把 `subMenuCloseDelay` 设为 `0` 可退回「扫过同级项立即收起」的旧行为。
+## 子菜单
+
+`interaction` 决定子菜单怎么打开，默认 `auto`。
+
+| 值       | 行为                                                                                         |
+| -------- | -------------------------------------------------------------------------------------------- |
+| `auto`   | 宽屏鼠标用悬停。触屏和小屏用点击。                                                           |
+| `pc`     | 始终悬停打开，移开关闭。                                                                     |
+| `mobile` | 始终点击打开。打开后上一层不能再点；点上一层只关闭最上面一层。点菜单外面仍然关闭整个菜单。 |
+
+子菜单贴着父菜单，中间不留缝。旁边放不下时，子菜单会盖住父菜单的一部分，露出来的父菜单可以点，用来退回一层。
+
+`subMenuOpenDelay` / `subMenuCloseDelay` 只在 PC 悬停下生效。已经展开子菜单时，悬停到另一项要等 `subMenuOpenDelay` 才切换；斜着移进子菜单时，扫过旁边的行不会马上把子菜单关掉，这段时间是 `subMenuCloseDelay`。设为 `0` 就是马上切换、马上收起。
 
 ## 弹出动画
 
-菜单的进出场是**淡入淡出**（`opacity`，时长走 `--vgo-duration-fast` 令牌，`html.reduce-motion` / 系统 `prefers-reduced-motion` 都会把它压到接近 0），不做缩放。子菜单同理。
+菜单的进出场是淡入淡出。系统或页面开了「减少动态效果」时，这段动画会短到几乎看不见。子菜单一样。
 
 要换掉这段动画就传 `menuTransitionProps`，它会整体接管 `Transition`（包括 `name`、`css`、`duration`）：
 
@@ -177,42 +190,19 @@ ContextMenu.showContextMenu({
 })
 ```
 
-## 边界处理
+## 边界
 
-`adjustPosition`（默认开启）负责让菜单始终待在容器里，按这个顺序：
+`adjustPosition` 默认开着：菜单尽量留在屏幕里。贴边时会翻到另一侧；太高就在菜单里滚动；文字太长会省略。`adjustPosition: false` 时位置完全按 `x` / `y` 和 `direction` 来。
 
-1. **翻转**：菜单从锚点向右 / 向下弹出后越界时，翻到锚点的另一侧；根菜单用 `anchorWidth` 对齐触发元素的边缘；
-2. **让开父菜单**：子菜单放在父菜单的左侧或右侧（与父菜单之间留 2px 缝），方向逻辑给的位置如果会盖到父菜单上就换边 —— 典型是父菜单贴着容器右缘、子菜单从右边弹出时被回夹推了回来。取舍顺序是「不压父菜单 → 放得进可用区域 → 超出更少 → 离原位置更近」，并且**每个候选都可以夹窄**：
-    - 一侧放得下原宽度 → 直接放那一侧（桌面常态，子菜单保持自然宽度）；
-    - 两侧都放不下（窄屏常态：手机 390px 宽，父菜单 238、子菜单 220，横向根本没有并排空间）→ **把子菜单夹窄到那一侧的宽度**，仍然不压父菜单、也不出屏。手机上因此会出现一条较窄的子菜单（约 130~150px），长文案会省略号截断，但父菜单的入口完整保留、子菜单也点得到 —— 比「压住父菜单」和「一半在屏幕外」都好。菜单项自己的 `maxWidth` 仍然优先。
-3. **回夹**：翻转后仍越界（或锚点本身就贴着容器左 / 上边缘）时，把菜单挪回容器内，四周至少留 4px；
-4. **夹尺寸**：菜单比容器还高 / 还宽时没法靠挪位置解决 —— 高的情况贴住容器顶部，并把菜单项区域限制在剩余高度内，内容改为滚动（滚轮始终可用）；宽的情况把 `max-width` 收到容器宽度。子菜单默认 `max-width: 300`，比根菜单（`600`）窄一档，减少顶到容器边缘的机会。
-
-传 `adjustPosition: false` 可以整体关掉这套修正，位置就完全按 `x` / `y` 和 `direction` 来。自定义容器（`getContainer`）时上、下、左、右都以该容器的可视区域为准，`zoom` 用于容器被 `transform: scale()` 缩放的情况。
+子菜单默认比根菜单窄（最大宽度 300，根菜单 600）。旁边放得下时贴着父菜单展开；放不下时盖住父菜单的一部分，而不是跑到屏幕外。
 
 ## 全屏 demo
 
-本页顶部的「打开全屏 demo」会铺满整个视口，用来一次试完上面这些行为：
-
-- **四个角 + 中间各有一个按钮**，点击后在按钮下方弹出菜单 —— 按钮贴着视口四角时正好覆盖「向右弹出会越界，于是翻到左边 / 上边」以及回夹的分支；
-- **其他位置右键**，菜单在光标处弹出；
-- 每个按钮对应独立的菜单实例，各自保持自己的开 / 关与激活态；
-- 菜单内容照搬 file-lite 的全局菜单结构（`use-file-lite-menu.ts`）：多层嵌套、勾选项、动态文案、`disabled`、`divided`、以及把图标解析成 VNode；
-- 四角的按钮最容易试出「子菜单翻到父菜单左侧 / 右侧都不放不下」的边界情况。
-
-demo 组件是 `src/components/ContextMenu/DemoContextMenuFullscreen.vue`；内嵌 demo 的菜单数据在 `demo-menu.ts`。
+本页可以打开全屏 demo。四角和中间的按钮在按钮下方弹出菜单，其它位置右键在光标处弹出。页面上的 `auto` / `pc` / `mobile` 用来切换子菜单的打开方式，桌面上选 `mobile` 就能试「点击展开、点上一层退回一层」，不用把窗口缩窄。
 
 ### 层级
 
-菜单容器挂在 `body` 上，层级取 `MENU_CONST_OPTIONS.defaultZIndex`，默认 **1100**，和 `--vgo-z-menu` 令牌一致。它必须压过所有常驻界面层：
-
-| 层          | 令牌                | 值   |
-| ----------- | ------------------- | ---- |
-| 窗口        | `--vgo-z-window`    | 100  |
-| 拖拽 / 布局预览 | `--vgo-z-preview` | 1000 |
-| 弹出层（菜单） | `--vgo-z-menu`    | 1100 |
-
-写覆盖在页面之上的自定义层（全屏容器、抽屉、浮层）时，层级要**低于** `--vgo-z-menu`，否则菜单会被压在那层底下——上例的全屏容器就是用 `calc(var(--vgo-z-menu) - 1)`。确实需要反过来时，给 `showContextMenu` / `useContextMenuTrigger` 传 `zIndex` 把菜单提到更高。
+菜单默认画在窗口和预览层上面（`--vgo-z-menu`，1100）。全屏容器、抽屉、浮层要低于这个值，否则菜单会被盖住，例如 `z-index: calc(var(--vgo-z-menu) - 1)`。需要菜单待在更低的层时，给 `showContextMenu` / `useContextMenuTrigger` 传 `zIndex`。
 
 ## 明暗
 
