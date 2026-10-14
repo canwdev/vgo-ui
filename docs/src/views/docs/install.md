@@ -13,7 +13,7 @@ bun add @canwdev/vgo-ui
 不走 npm 时，安装对应 Release 里的 tgz。把下面 URL 中的版本号换成目标 Release：
 
 ```shell
-bun add https://github.com/canwdev/vgo-ui/releases/download/v0.4.3/canwdev-vgo-ui-0.4.3.tgz
+bun add https://github.com/canwdev/vgo-ui/releases/download/v0.4.4/canwdev-vgo-ui-0.4.4.tgz
 ```
 
 产物与 npm 上的相同，子路径导入可用。升级时改 URL。不要使用 `bun add github:canwdev/vgo-ui`，那样装到的是未构建的源码。

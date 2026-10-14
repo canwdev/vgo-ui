@@ -85,7 +85,11 @@ export interface ContextSubMenuInstance {
   getScrollHeight: () => number
   /** 手动重新计算位置与可滚动高度，通常在菜单内容变化后调用。 */
   adjustPosition: () => void
-  /** 当前允许的最大高度。 */
+  /**
+   * 滚动区当前的上限高度（像素）。
+   *
+   * `0` 表示没有上限：菜单放得下时不再套一个和内容等高的 cap，交给内容自己撑开。
+   */
   getMaxHeight: () => number
   /** 当前相对父项的位置。 */
   getPosition: () => { x: number, y: number }

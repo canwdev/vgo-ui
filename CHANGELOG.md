@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.4
+
+### Fixed
+
+- **A menu whose content is a fraction of a pixel taller than its own box no longer draws a scrollbar that cannot scroll.** The scroll area was capped at `scrollRef.scrollHeight` on every open, even when nothing constrained the menu — and `scrollHeight` is an integer, so a fractional content height (three 32.094px rows = 96.28px) was always left a little short. At device pixel ratio 1.75 and above that sub-pixel overflow reaches one device pixel and Chrome paints a scrollbar, while `scrollHeight - clientHeight` still reports 0 in CSS pixels: a bar with a one-device-pixel range, which reads as "scrollbar that does nothing". The cap is now only applied when there is a real constraint (the clamp's available height, or the caller's `maxHeight`); with no constraint the scroll area takes its natural height and no bar appears, and `ContextSubMenuInstance.getMaxHeight()` returns `0` to mean "no cap". Menus that genuinely do not fit are capped and scroll exactly as before.
+
 ## 0.4.3
 
 The context menu moved to its own top layer, gained a fade animation, and no longer lets itself be pushed off-screen: it is clamped inside the menu container on all four edges, submenus stay clear of the menu they belong to, and a menu that does not fit shrinks (with a scrollable body).

@@ -586,14 +586,19 @@ function doAdjustPosition() {
       position.value.y = clamped.y
       scrollMaxWidth.value = clamped.maxWidth ?? 0
 
-      // 给内层滚动容器封顶。上限是所有约束里最紧的那条：
-      // 回夹算出来的可用高度、使用方给的 maxHeight、以及自然高度本身。
+      // 给内层滚动容器封顶，只在真的有约束时封：回夹算出来的可用高度、使用方给的 maxHeight。
+      //
+      // 不能把 naturalHeight 也塞进 min()：scrollHeight 是整数，而菜单内容的真实高度常带小数
+      // （32.094 × 3 = 96.28），封到整数 96 就留下不到 1px 的溢出。DPR ≥ 1.75 时这点溢出够一个
+      // 设备像素，Chrome 于是画出一条滚动条；可 CSS 像素下的 scrollHeight - clientHeight 仍是 0，
+      // 滚动范围只有 1 个设备像素，看起来就是「有滚动条但滚不动」。没有约束时干脆不写 max-height，
+      // 滚动区按内容自然高度排布，这类幽灵滚动条就不会出现。
+      //
       // 封顶只作用在滚动区上，所以还要把菜单根元素自己的内边距 / 边框减掉，
       // 否则菜单连同内边距会比可用区域高出一点，正好被贴边的容器切掉。
       const heightLimit = Math.min(
         clamped.maxHeight ?? Infinity,
         requestedMaxHeight || Infinity,
-        naturalHeight,
       )
       scrollMaxHeight.value = Number.isFinite(heightLimit)
         ? Math.max(0, heightLimit - fillPaddingYTop - fillPaddingYBottom - fillBorderY)
