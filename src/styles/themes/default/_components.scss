@@ -147,10 +147,13 @@ body.vgo-theme-default {
   }
 
   .vgo-list-item {
+    outline-offset: -1px;
+    &:active,
+    &:focus {
+      outline: 1px dashed var(--vgo-primary);
+    }
     &.is-active {
       background-color: var(--vgo-primary-opacity);
-      outline: 1px solid var(--vgo-primary);
-      outline-offset: -1px;
     }
   }
 
