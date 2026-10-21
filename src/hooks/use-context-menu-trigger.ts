@@ -41,8 +41,10 @@ export interface UseContextMenuTriggerReturn {
 let triggerUid = 0
 
 /**
- * 让一个按钮点开一个函数式菜单：菜单贴在触发元素下方，打开期间触发元素保持激活，
- * 再次点击关闭。组件、样式仍由使用方自己写（通常配 `.vgo-button` + `.is-active`），
+ * 让一个按钮点开一个函数式菜单：菜单默认贴在触发元素下方；`direction` 以 `t`
+ * 开头时改贴上方，纯 `l` / `r` 时放到按钮左侧 / 右侧并垂直居中（`br` / `tl` 等
+ * 组合也各自贴着对应的角）。打开期间触发元素保持激活，再次点击关闭。
+ * 组件、样式仍由使用方自己写（通常配 `.vgo-button` + `.is-active`），
  * 本 hook 只负责定位、开 / 关状态，以及和菜单「点击外部关闭」的时序。
  *
  * 为什么需要这个 hook：菜单的「点击外部关闭」监听装在 document 捕获阶段，
@@ -111,23 +113,37 @@ export function useContextMenuTrigger(
     const { gap = 4, items, onClose, ...rest } = toValue(options)
     const rect = el.getBoundingClientRect()
 
-    // 按弹出方向决定锚点的哪条边对齐菜单：向右弹出对左缘，向左弹出对右缘，
-    // 居中弹出对中点。anchorWidth 只在向右弹出（默认 'br'）时给，右侧放不下时
-    // 库据此把菜单翻到左边并对齐触发元素右缘，而不是对齐按钮左缘。
+    // 按弹出方向决定锚点：
+    // - b* / t*：水平对齐按钮左/右/中缘，垂直贴下/上缘，菜单在按钮下方/上方展开；
+    // - 纯 r / l：菜单放到按钮右侧/左侧，垂直居中，锚点再加一个 gap；
+    // - br / tl 等组合按上面的规则各取一条边。
+    // anchorWidth 只在「贴着按钮水平展开」（b*/t* + r）时给：右侧放不下时，
+    // 库据此把菜单翻到左边并对齐按钮右缘，而不是对齐按钮左缘。
     const direction = rest.direction ?? MENU_CONST_OPTIONS.defaultDirection
-    const x = direction.includes('l')
-      ? rect.right
-      : direction.includes('r')
-        ? rect.left
-        : rect.left + rect.width / 2
+    const vertical = direction.includes('t') ? 't' : direction.includes('b') ? 'b' : ''
+    const horizontal = direction.includes('l') ? 'l' : direction.includes('r') ? 'r' : ''
+
+    let x: number
+    if (horizontal === 'r')
+      x = vertical ? rect.left : rect.right + gap
+    else if (horizontal === 'l')
+      x = vertical ? rect.right : rect.left - gap
+    else
+      x = rect.left + rect.width / 2
+
+    const y = vertical === 't'
+      ? rect.top - gap
+      : vertical === 'b'
+        ? rect.bottom + gap
+        : rect.top + rect.height / 2
 
     isOpen.value = true
     menu = ContextMenu.showContextMenu({
       ...rest,
       items: toValue(items),
       x,
-      y: rect.bottom + gap,
-      anchorWidth: direction.includes('r') ? rect.width : 0,
+      y,
+      anchorWidth: vertical && horizontal === 'r' ? rect.width : 0,
       ignoreClickClassName: triggerClass,
       onClose: (item) => {
         isOpen.value = false

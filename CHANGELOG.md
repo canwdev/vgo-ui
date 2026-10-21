@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.5
+
+### Fixed
+
+- **`useContextMenuTrigger` places its menu on the side chosen by `direction`.** The hook hardcoded the anchor at `rect.bottom` and used `direction` only for horizontal alignment, so `tr` / `t` / `tl` put the menu over the trigger instead of above it, and a pure `l` / `r` could not sit beside it at all. The anchor now follows the direction: `t*` uses the trigger's top edge, `b*` its bottom edge, and `l` / `r` centre vertically and leave a gap on the chosen side; `br` and the other corner directions keep their existing edge alignment. The default `br` is unchanged, and `context-menu.md` documents the mapping.
+
 ## 0.4.4
 
 ### Fixed

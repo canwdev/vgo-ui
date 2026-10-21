@@ -54,7 +54,7 @@ function onContextMenu(e: MouseEvent) {
 
 ## 按钮触发（下拉）
 
-「点按钮开菜单、再点关闭、按钮保持激活」用 `useContextMenuTrigger`。它是 headless 的：不渲染任何东西，触发元素和样式还是你自己的（通常配 `.vgo-button` + `.is-active`），hook 只负责定位到触发元素下方、开 / 关状态，以及和菜单「点击外部关闭」的时序。
+「点按钮开菜单、再点关闭、按钮保持激活」用 `useContextMenuTrigger`。它是 headless 的：不渲染任何东西，触发元素和样式还是你自己的（通常配 `.vgo-button` + `.is-active`），hook 负责按 `direction` 把菜单定位到触发元素上 / 下 / 左 / 右、开 / 关状态，以及和菜单「点击外部关闭」的时序。
 
 ```vue
 <script setup lang="ts">
@@ -85,6 +85,7 @@ const { setTriggerRef, isOpen, toggle } = useContextMenuTrigger({
 
 - 触发元素用 `:ref="setTriggerRef"` 绑定。
 - `items` 可以是数组，也可以是 getter / `ref`，每次打开都取最新值。位置由触发元素算出，配置里不要再传 `x` / `y`。`gap` 是按钮和菜单的间距，默认 `4`。贴着右边缘时，菜单会翻到按钮左边，仍然对齐按钮。
+- `direction` 决定菜单贴哪一侧：默认 `br` 在按钮下方；`tr` / `t` / `tl` 在上方；`r` / `l` 放在按钮右侧 / 左侧并垂直居中，`br` / `tl` 等组合各自贴着对应的角。上下方向仍按水平 `l` / `r` / 居中对齐按钮边缘。
 - 打开期间给按钮加 `.is-active`。Esc、点外部、滚动关闭时 `isOpen` 会自己变回 `false`。
 - 再点同一个按钮会关闭菜单，不会关了又马上打开。
 - 触发元素是单个元素。包了一层的话，把 `:ref` 绑在真正被点击的那个元素上。
