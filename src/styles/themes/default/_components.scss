@@ -244,21 +244,17 @@ body.vgo-theme-default {
     --vgo-window-icon-close: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20d%3D%22M4.089%204.216l.057-.07a.5.5%200%200%201%20.638-.057l.07.057L10%209.293l5.146-5.147a.5.5%200%200%201%20.638-.057l.07.057a.5.5%200%200%201%20.057.638l-.057.07L10.707%2010l5.147%205.146a.5.5%200%200%201%20.057.638l-.057.07a.5.5%200%200%201-.638.057l-.07-.057L10%2010.707l-5.146%205.147a.5.5%200%200%201-.638.057l-.07-.057a.5.5%200%200%201-.057-.638l.057-.07L9.293%2010L4.146%204.854a.5.5%200%200%201-.057-.638l.057-.07l-.057.07z%22%20fill%3D%22%23000%22%2F%3E%3C%2Fsvg%3E');
 
     padding: 0;
-    background-color: var(--vgo-window);
+    // 根节点不铺整窗底色：内容区自己铺 --vgo-surface，标题栏单独用
+    // --vgo-window。否则半透明主题下内容区会同时透出两层颜色。
+    background-color: transparent;
     border: 1px solid var(--vgo-window-border);
     border-radius: var(--vgo-radius);
     box-shadow: var(--vgo-window-shadow);
     transition:
       opacity var(--vgo-duration-base),
-      transform var(--vgo-duration-base),
-      background-color var(--vgo-duration-base);
-
-    &.is-active {
-      background-color: var(--vgo-window-active);
-    }
+      transform var(--vgo-duration-base);
 
     // 无标题栏：窗口本身不带边框、背景、圆角和阴影。
-    // 写在 .is-active 之后，激活时也不会把标题栏那层底色涂回来。
     &.is-titleless {
       background-color: transparent;
       border: 0;
@@ -287,7 +283,19 @@ body.vgo-theme-default {
       height: 30px;
       padding-right: 0;
       overflow: hidden;
+      background-color: var(--vgo-window);
+      border-radius: var(--vgo-radius) var(--vgo-radius) 0 0;
       text-shadow: var(--vgo-window-title-shadow);
+      transition: background-color var(--vgo-duration-base);
+    }
+
+    // 只改自己的标题栏，嵌套窗口的标题栏仍各自跟随自己的激活状态。
+    &.is-active > .vgo-window__content > .vgo-window__title-bar {
+      background-color: var(--vgo-window-active);
+    }
+
+    &.is-maximized > .vgo-window__content > .vgo-window__title-bar {
+      border-radius: 0;
     }
 
     &__title {
@@ -402,7 +410,6 @@ body.vgo-theme-default {
 
   .vgo-window-stack__content {
     color: var(--vgo-text);
-    background-color: var(--vgo-surface);
     border-radius: inherit;
   }
 
