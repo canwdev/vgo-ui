@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { Component } from 'vue'
-import type { ThemeMode } from '../hooks/use-site-theme'
 import { computed } from 'vue'
 import MdiMotionPauseOutline from '~icons/mdi/motion-pause-outline'
 import MdiMotionPlayOutline from '~icons/mdi/motion-play-outline'
@@ -8,12 +7,23 @@ import MdiPalette from '~icons/mdi/palette'
 import MdiThemeLightDark from '~icons/mdi/theme-light-dark'
 import MdiWeatherNight from '~icons/mdi/weather-night'
 import MdiWeatherSunny from '~icons/mdi/weather-sunny'
-import { primaryColor, reduceMotion, themeMode } from '../hooks/use-site-theme'
+import {
+  colorTheme,
+  colorThemeOptions,
+  customColor,
+  isDark,
+  primaryRgb,
+  reduceMotion,
+  setColorTheme,
+  setCustomColor,
+  ThemeMode,
+  themeMode,
+} from '../hooks/use-site-theme'
 
 const themeModes: { value: ThemeMode, label: string, icon: Component }[] = [
-  { value: 'auto', label: '跟随系统', icon: MdiThemeLightDark },
-  { value: 'light', label: '亮色', icon: MdiWeatherSunny },
-  { value: 'dark', label: '暗色', icon: MdiWeatherNight },
+  { value: ThemeMode.Auto, label: '跟随系统', icon: MdiThemeLightDark },
+  { value: ThemeMode.Light, label: '亮色', icon: MdiWeatherSunny },
+  { value: ThemeMode.Dark, label: '暗色', icon: MdiWeatherNight },
 ]
 
 const currentMode = computed(
@@ -25,34 +35,21 @@ function cycleThemeMode() {
   themeMode.value = themeModes[(index + 1) % themeModes.length].value
 }
 
-function toggleReduceMotion() {
-  reduceMotion.value = !reduceMotion.value
+function setReduceMotion(value: string | number | boolean) {
+  reduceMotion.value = Boolean(value)
 }
 
-const colorThemeOptions = [
-  { label: 'Node.js Green', rgb: '76,175,80' },
-  { label: 'Golang Blue', rgb: '83,173,228' },
-  { label: 'JavaScript Yellow', rgb: '247,223,30' },
-  { label: 'Python Gold', rgb: '255,193,7' },
-  { label: 'Swift Coral', rgb: '255,112,67' },
-  { label: 'Apple Pink', rgb: '255,45,85' },
-  { label: 'Ruby Red', rgb: '198,40,40' },
-  { label: 'Rust Brown', rgb: '121,85,72' },
-  { label: 'Kotlin Indigo', rgb: '63,81,181' },
-  { label: 'PHP Lavender', rgb: '149,117,205' },
-  { label: 'Haskell Slate', rgb: '96,125,139' },
-  { label: 'Dart Teal', rgb: '0,150,136' },
-]
+const selectedLabel = computed(() => customColor.value ? '' : colorTheme.value)
 
-const selectedColor = computed(() => primaryColor.value)
 const dotColor = computed(() => {
-  if (selectedColor.value)
-    return `rgb(${selectedColor.value})`
+  if (primaryRgb.value)
+    return `rgb(${primaryRgb.value})`
   return 'var(--vgo-primary)'
 })
 
-function selectPreset(rgb: string) {
-  primaryColor.value = rgb
+// 色块展示当前明暗模式下实际会应用的那一档颜色
+function swatchRgb(item: (typeof colorThemeOptions)[number]) {
+  return isDark.value ? item.rgb.dark : item.rgb.light
 }
 
 function hexToRgb(hex: string): string {
@@ -64,7 +61,7 @@ function hexToRgb(hex: string): string {
 
 function selectCustomColor(value: string | null) {
   if (value)
-    primaryColor.value = hexToRgb(value)
+    setCustomColor(hexToRgb(value))
 }
 </script>
 
@@ -78,36 +75,37 @@ function selectCustomColor(value: string | null) {
       <component :is="currentMode.icon" class="vgo-u-icon-md" />
     </button>
 
-    <button
-      class="vgo-button vgo-button--text vgo-button--icon"
-      :class="{ 'is-active': reduceMotion }"
-      :title="reduceMotion ? '动效：已减弱（点击恢复）' : '动效：正常（点击减弱）'"
-      @click="toggleReduceMotion"
-    >
-      <component
-        :is="reduceMotion ? MdiMotionPauseOutline : MdiMotionPlayOutline"
-        class="vgo-u-icon-md"
-      />
-    </button>
-
     <ElPopover trigger="click" :width="240" placement="bottom-end">
       <div class="theme-panel">
         <div class="theme-swatches">
           <button
             v-for="item in colorThemeOptions"
-            :key="item.rgb"
+            :key="item.label"
             class="vgo-button vgo-button--icon vgo-button--sm theme-swatch"
-            :class="{ 'is-active': selectedColor === item.rgb }"
-            :style="{ backgroundColor: `rgb(${item.rgb})` }"
+            :class="{ 'is-active': selectedLabel === item.label }"
+            :style="{ backgroundColor: `rgb(${swatchRgb(item)})` }"
             :title="item.label"
-            @click="selectPreset(item.rgb)"
+            @click="setColorTheme(item.label)"
           />
         </div>
         <div class="theme-custom vgo-u-flex-wrap-center">
           <span>自定义</span>
           <ElColorPicker
-            :predefine="colorThemeOptions.map(item => `rgb(${item.rgb})`)"
+            :predefine="colorThemeOptions.map(item => `rgb(${swatchRgb(item)})`)"
             @change="selectCustomColor"
+          />
+        </div>
+        <div
+          class="theme-motion"
+          :title="reduceMotion ? '动效：已减弱（点击恢复）' : '动效：正常（点击减弱）'"
+        >
+          <span>动效</span>
+          <ElSwitch
+            :model-value="reduceMotion"
+            :active-icon="MdiMotionPauseOutline"
+            :inactive-icon="MdiMotionPlayOutline"
+            inline-prompt
+            @update:model-value="setReduceMotion"
           />
         </div>
       </div>
@@ -140,6 +138,17 @@ function selectCustomColor(value: string | null) {
 }
 
 .theme-custom {
+  padding-top: var(--vgo-space-2);
+  font-size: var(--vgo-font-sm);
+  color: var(--vgo-text-secondary);
+  border-top: 1px solid var(--vgo-border);
+}
+
+.theme-motion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vgo-space-2);
   padding-top: var(--vgo-space-2);
   font-size: var(--vgo-font-sm);
   color: var(--vgo-text-secondary);

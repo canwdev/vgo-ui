@@ -480,10 +480,10 @@
 
 系统开启「减少动态效果」后，过渡和动画会缩短到几乎看不出来，其中也包括写死时长的第三方组件。
 
-给 `html` 加上 `reduce-motion` 会做同样的事，并去掉文字阴影和背景模糊，方便墨水屏刷新。库自己的时长使用 `--vgo-duration-fast` 和 `--vgo-duration-base`。
+给 `body` 加上 `reduce-motion` 会做同样的事，并去掉文字阴影和背景模糊，方便墨水屏刷新。库自己的时长使用 `--vgo-duration-fast` 和 `--vgo-duration-base`。
 
 ```ts
-document.documentElement.classList.toggle('reduce-motion', enabled)
+document.body.classList.toggle('reduce-motion', enabled)
 ```
 
 ## 禁止清单

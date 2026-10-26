@@ -70,7 +70,7 @@ Never write literal colors, literal `border-radius`, custom `box-shadow`, `backd
 
 Overlay panels remap `--vgo-text`, `--vgo-text-secondary`, `--vgo-border` and `--vgo-hover` onto the overlay palette, so nested primitives (`.vgo-empty`, `.vgo-list-item`) stay readable on top of the translucent surface without each needing its own override.
 
-Reduced motion lives in `core/_runtime.scss`, not in the consumer. `html.reduce-motion` (an app-managed persistent toggle) and the system `prefers-reduced-motion` query both compress the duration tokens *and* clamp `animation-duration` / `transition-duration` on `*` — tokens only reach the library's own transitions, while element-plus, players and context menus hardcode theirs. The manual class does one extra thing the system preference must not: it drops text shadows and backdrop blur to ease e-ink refresh.
+Reduced motion lives in `core/_runtime.scss`, not in the consumer. `body.reduce-motion` (an app-managed persistent toggle) and the system `prefers-reduced-motion` query both compress the duration tokens *and* clamp `animation-duration` / `transition-duration` on `*` — tokens only reach the library's own transitions, while element-plus, players and context menus hardcode theirs. The manual class does one extra thing the system preference must not: it drops text shadows and backdrop blur to ease e-ink refresh.
 
 The main consumer, `file-lite`, enforces the same contract in CI via `frontend/scripts/check-styles.mjs`. Changing the primitive vocabulary here means updating that script's rules and `styles.md` together.
 
