@@ -58,7 +58,7 @@ const props = withDefaults(
     clickHandler: null,
     label: '',
     icon: '',
-    iconFontClass: 'iconfont',
+    iconFontClass: '',
     checked: false,
     shortcut: '',
     svgIcon: '',

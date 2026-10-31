@@ -23,7 +23,7 @@ export default defineComponent({
     /** 菜单项图标。 */
     icon: { type: String, default: '' },
     /** 自定义图标字体类名。 */
-    iconFontClass: { type: String, default: 'iconfont' },
+    iconFontClass: { type: String, default: '' },
     /** 是否勾选。 */
     checked: { type: Boolean, default: false },
     /** 快捷键显示文本。 */
